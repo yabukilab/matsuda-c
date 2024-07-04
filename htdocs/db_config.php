@@ -1,7 +1,7 @@
 <?php
 $servername = "127.0.0.1";
-$username = "root";
-$password = "";
+$username = "testuser";
+$password = "pass";
 $dbname = "pm_train";
 
 // Create connection
