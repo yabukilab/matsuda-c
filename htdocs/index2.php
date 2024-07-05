@@ -21,7 +21,7 @@ echo "Connected successfully";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'];
-    $suica_Number = $_POST['suica_number'];?-
+    $suica_Number = $_POST['suica_number'];
 
 
     // 新規登録のSQLクエリを準備
