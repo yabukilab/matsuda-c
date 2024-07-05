@@ -5,7 +5,7 @@ session_start();
 $servername = "127.0.0.1";
 $username = "testuser";
 $password = "pass";
-$dbname = "soubu";
+$dbname = "train_pm";
 
 // MySQLiのインスタンスを作成
 $conn = new mysqli($servername, $username, $password, $dbname);

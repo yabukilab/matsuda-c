@@ -1,9 +1,9 @@
 <?php
 session_start();
 $servername = "127.0.0.1";
-$username = "root";
-$password = "";
-$dbname = "train";
+$username = "testuser";
+$password = "pass";
+$dbname = "train_pm";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
