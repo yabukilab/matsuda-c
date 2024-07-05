@@ -1,12 +1,9 @@
 <?php
-
-$servername = "127.0.0.1";
-$username = "testuaer";
-$password = "pass";
-$dbname = "pm_train";
-
-// データベース接続
-$conn = new mysql($servername, $username, $password, $dbname);
+// セッションのスタート及びセッション変数の定義
+session_start();
+if (!isset($_SESSION['index_err_msg'])) {
+    $_SESSION['index_err_msg'] = "";
+}
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
