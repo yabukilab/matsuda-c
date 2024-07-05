@@ -10,27 +10,29 @@ if (!isset($_SESSION['index_err_msg'])) {
 // ログインボタンが押された時の処理
 if (isset($_POST['login'])) {
     // 入力が空でないかをチェック
-    if (empty($_POST['user']) || empty($_POST['suica_number'])) {
+    if (empty($_POST['user_id']) || empty($_POST['suica_number'])) {
         $_SESSION['index_err_msg'] = "ID・Suica番号を入力してからログインボタンを押してください";
         header("Location: ".$_SERVER['HTTP_REFERER']);
         exit;
     } else {
         try {
             // データベースへの接続
-            $dsn = 'mysql:dbname=soubu;host=127.0.0.1';
-            $dbh = new PDO($dsn, 'db_admin', 'admin');
+            $dsn = 'mysql:dbname=soubu;host=127.0.0.1'; // データベース名とホスト名を指定
+            $username = 'testuser'; // ユーザ名
+            $password = 'pass'; // パスワード
+            $dbh = new PDO($dsn, $username, $password); // PDO インスタンスの作成
 
             // ユーザーIDに対応するSuica番号の取得
             $sql = 'SELECT suica_number FROM users WHERE user_id = :user_id';
-            $stmt = $dbh->prepare($sql);
-            $stmt->bindParam(':user_id', $_POST['user']); // name属性を修正
-            $stmt->execute();
-           
+            $stmt = $dbh->prepare($sql); // SQL 文の準備
+            $stmt->bindParam(':user_id', $_POST['user_id']); // ユーザーIDをバインド
+            $stmt->execute(); // SQL 文の実行
+            $suica_number_hash = $stmt->fetchColumn(); // 結果の取得（1つのカラムの値を取得）
 
             // ログイン認証処理
             if ($suica_number_hash && password_verify($_POST['suica_number'], $suica_number_hash)) {
                 // ログイン成功時の処理
-                $_SESSION['user_id'] = $_POST['user']; // ユーザーIDをセッションに保存
+                $_SESSION['user_id'] = $_POST['user_id']; // ユーザーIDをセッションに保存
                 $_SESSION['index_err_msg'] = ""; // エラーメッセージの初期化
                 header("Location: okyaku.php");
                 exit;
@@ -67,7 +69,7 @@ if (isset($_POST['register'])) {
     <h2>ログイン</h2>
     <form method="POST" action="index.php">
         ユーザID:<br>
-        <input type="text" name="user" required><br><br>
+        <input type="text" name="user_id" required><br><br>
         Suica番号:<br>
         <input type="password" name="suica_number" required><br><br>
         <button type="submit" name="login">ログイン</button>
