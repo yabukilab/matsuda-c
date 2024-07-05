@@ -1,38 +1,33 @@
 <?php
-
 session_start();
+
+// データベース接続情報
 $servername = "127.0.0.1";
-$username = "root";
+$username = "testuser";
 $password = "pass";
 $dbname = "soubu";
-// データベースに接続
+
+// MySQLiのインスタンスを作成
 $conn = new mysqli($servername, $username, $password, $dbname);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+// 接続をチェック
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("接続に失敗しました: " . $conn->connect_error);
 }
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-echo "Connected successfully";
-
-
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'];
     $suicaNumber = $_POST['suica-number'];
 
-
     // 新規登録のSQLクエリを準備
     $sql = "INSERT INTO users (suica_number, user_id) VALUES (?, ?)";
     $stmt = $conn->prepare($sql);
+
     if ($stmt === false) {
-        die("Prepare failed: " . $conn->error);
+        die("準備に失敗しました: " . $conn->error);
     }
 
-    // 正しい順序でバインド
+    // パラメータをバインド
     $stmt->bind_param("ss", $suicaNumber, $name);
 
     // クエリの実行
@@ -44,18 +39,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // ステートメントを閉じる
     $stmt->close();
+
     // ログイン画面に戻るボタンが押された時の処理
-if (isset($_POST['login'])) {
-    $_SESSION['register_msg'] = ""; // 登録成功のメッセージの削除
-    $_SESSION['register_err_msg'] = ""; // エラーメッセージの削除
-    header("Location:train/index.php"); // ログイン画面へ遷移
-  }
-  
+    if (isset($_POST['login'])) {
+        $_SESSION['register_msg'] = ""; // 登録成功のメッセージの削除
+        $_SESSION['register_err_msg'] = ""; // エラーメッセージの削除
+        header("Location: matsuda-c/index.php"); // ログイン画面へ遷移
+        exit(); // スクリプトを終了してリダイレクト
+    }
 }
 
 // データベース接続を閉じる
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>

@@ -29,7 +29,7 @@ if (!isset($_SESSION['index_err_msg'])) {
 // ログインボタンが押された時の処理
 if (isset($_POST['login'])) {
     // 入力枠に空が無いことをチェック
-    if (empty($_POST['user']) || empty($_POST['suica_number'])) {
+    if (empty($_POST['user_id']) || empty($_POST['suica_number'])) {
         $_SESSION['index_err_msg'] = "ID・suica番号を入力してからログインボタンを押して下さい";
         header("Location: ".$_SERVER['HTTP_REFERER']);  
         exit;
