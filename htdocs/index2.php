@@ -1,9 +1,13 @@
 <?php
-// セッションのスタート及びセッション変数の定義
+
 session_start();
-if (!isset($_SESSION['index_err_msg'])) {
-    $_SESSION['index_err_msg'] = "";
-}
+$servername = "127.0.0.1";
+$username = "root";
+$password = "";
+$dbname = "train";
+// データベースに接続
+$conn = new mysqli($servername, $username, $password, $dbname);
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -18,7 +22,7 @@ echo "Connected successfully";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'];
-    $suica_Number = $_POST['suica_number'];
+    $suicaNumber = $_POST['suica-number'];
 
 
     // 新規登録のSQLクエリを準備

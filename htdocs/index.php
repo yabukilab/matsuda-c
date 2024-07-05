@@ -36,7 +36,7 @@ if (isset($_POST['login'])) {
     } else {
         try {
             // データベースへの接続
-            $dsn = 'mysql:dbname=pm_train;host=127.0.0.1';
+            $dsn = 'mysql:dbname=train;host=127.0.0.1';
             $dbh = new PDO($dsn, 'db_admin', 'admin');
 
             // 入力されたIDのsuica番号取得

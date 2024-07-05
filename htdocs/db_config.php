@@ -2,7 +2,7 @@
 $servername = "127.0.0.1";
 $username = "testuser";
 $password = "pass";
-$dbname = "pm_train";
+$dbname = "train";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
