@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['name'];
+    $user_id = $_POST['user_id'];
     $suicaNumber = $_POST['suica-number'];
 
     // 新規登録のSQLクエリを準備
@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // パラメータをバインド
-    $stmt->bind_param("ss", $suicaNumber, $name);
+    $stmt->bind_param("ss", $suica_Number, $user_id);
 
     // クエリの実行
     if ($stmt->execute()) {
