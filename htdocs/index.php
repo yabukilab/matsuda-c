@@ -4,68 +4,74 @@ session_start();
 if (!isset($_SESSION['index_err_msg'])) {
     $_SESSION['index_err_msg'] = "";
 }
-?>
-
+?
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <style>
-        .error-message {
-            color: red;
-        }
-    </style>
+    <title>ログイン</title>
 </head>
 <body>
-    <form action="login.php" method="post">
-        <label for="username">ユーザー名:</label>
-        <input type="text" id="username" name="username"><br>
-
-        <label for="password">パスワード:</label>
-        <input type="password" id="password" name="password"><br>
-
-        <button type="submit">ログイン</button><br>
-
-        <!-- CSSを使用した修正部分 -->
-        <p class="error-message">エラーメッセージ</p>
+    <h2>ログイン</h2>
+    <form method="POST" action="index.php">
+        ユーザID:<br>
+        <input type="text" name="user" required><br><br>
+        suica番号:<br>
+        <input type="password" name="suica_number" required><br><br>
+        <button type="submit" name="login">ログイン</button>
+        <p><font color="red"><?php echo $_SESSION['index_err_msg']; ?></font></p><br>
+        <button type="submit" name="register">ユーザ登録はこちら</button>
     </form>
 </body>
 </html>
 
-
 <?php
 // ログインボタンが押された時の処理
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
-    try {
-        // データベース接続設定ファイルを読み込む
-        require 'db_config.php';
+if (isset($_POST['login'])) {
+    // 入力枠に空が無いことをチェック
+    if (empty($_POST['user']) || empty($_POST['suica_number'])) {
+        $_SESSION['index_err_msg'] = "ID・suica番号を入力してからログインボタンを押して下さい";
+        header("Location: ".$_SERVER['HTTP_REFERER']);  
+        exit;
+    } else {
+        try {
+            // データベースへの接続
+            $dsn = 'mysql:dbname=pm_train;host=127.0.0.1';
+            $dbh = new PDO($dsn, 'db_admin', 'admin');
 
-        // 入力値を取得し、エスケープする
-        $user_id = htmlspecialchars($_POST['user_id'], ENT_QUOTES, 'UTF-8');
-        $suica_number = htmlspecialchars($_POST['suica_number'], ENT_QUOTES, 'UTF-8');
+            // 入力されたIDのsuica番号取得
+            $sql = 'SELECT suica_number FROM users WHERE user = :user'; // 正しいカラム名に修正
+            $sth = $dbh->prepare($sql); // SQL文を実行変数へ投入
+            $sth->bindParam(':user', $_POST['user']); // ユーザIDを実行変数に挿入
+            $sth->execute(); // SQLの実行
+            $suica_number = $sth->fetch(PDO::FETCH_ASSOC); // 処理結果の取得
 
-        // SQL準備
-        $sql = 'SELECT user_id FROM users WHERE user_id = ? AND suica_number = ?';
-        if ($rec === false) {
-            $_SESSION['index_err_msg'] = "idまたはsuica番号が違います。";
-        } else {
-            $_SESSION['user_id'] = $user_id;
-            $_SESSION['index_err_msg'] = "";
-            header('Location: okyaku.php');
-            exit();
+            // ログイン認証処理
+            if ($suica_number && password_verify($_POST['suica_number'], $suica_number['suica_number'])) { // 正しいカラム名に修正
+                // ログイン成功時の処理
+                $_SESSION['user'] = $_POST['user']; // ログインIDを格納したセッション変数を定義
+                $_SESSION['index_err_msg'] = ""; // エラーメッセージの削除
+                header("Location: okyaku.php");
+                exit;
+            } else {
+                // ログイン失敗時にエラーメッセージを表示する処理
+                $_SESSION['index_err_msg'] = "ユーザIDまたはsuica番号に不備があります";
+                header("Location: ".$_SERVER['HTTP_REFERER']);
+                exit;
+            }
+
+        // データベースへの接続に失敗した場合
+        } catch (PDOException $e) {
+            print('データベースへの接続に失敗しました:' . $e->getMessage());
+            die();
         }
-    } catch (PDOException $e) {
-        echo 'データベースエラー: ' . $e->getMessage();
-        exit();
     }
 }
 
 // ユーザ登録はこちらボタンが押された時の処理
 if (isset($_POST['register'])) {
-    $_SESSION['index_err_msg'] = "";
-    header("Location: index2.php");
-    exit();
+    $_SESSION['index_err_msg'] = ""; // エラーメッセージの削除
+    header("Location: index2.php"); // ユーザ登録画面への遷移
+    exit;
 }
 ?>
