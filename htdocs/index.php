@@ -29,19 +29,22 @@ if (isset($_POST['login'])) {
             $stmt->execute(); // SQL 文の実行
             $suica_number_hash = $stmt->fetchColumn(); // 結果の取得（1つのカラムの値を取得）
 
-            // ログイン認証処理
-            if ($suica_number_hash && password_verify($_POST['suica_number'], $suica_number_hash)) {
-                // ログイン成功時の処理
-                $_SESSION['user_id'] = $_POST['user_id']; // ユーザーIDをセッションに保存
-                $_SESSION['index_err_msg'] = ""; // エラーメッセージの初期化
-                header("Location: okyaku.php");
-                exit;
-            } else {
-                // ログイン失敗時の処理
-                $_SESSION['index_err_msg'] = "ユーザーIDまたはSuica番号に不備があります";
-                header("Location: ".$_SERVER['HTTP_REFERER']);
-                exit;
-            }
+        // ログイン認証処理
+        
+            // ログイン成功時の処理
+            $_SESSION['user_id'] = $_POST['user_id'];
+            $_SESSION['index_err_msg'] = "";
+            header("Location: okyaku.php");
+            exit;
+        
+        }else{
+        
+    // ログイン失敗時の処理
+    $_SESSION['index_err_msg'] = "ユーザーIDまたはSuica番号に不備があります";
+    header("Location: ".$_SERVER['HTTP_REFERER']);
+    exit;
+        }
+
 
         } catch (PDOException $e) {
             // データベースへの接続に失敗した場合の処理
@@ -69,7 +72,7 @@ if (isset($_POST['register'])) {
     <h2>ログイン</h2>
     <form method="POST" action="index.php">
         ユーザID:<br>
-        <input type="text" name="user_id" required><br><br>
+        <input type="text" name="user" required><br><br>
         Suica番号:<br>
         <input type="password" name="suica_number" required><br><br>
         <button type="submit" name="login">ログイン</button>

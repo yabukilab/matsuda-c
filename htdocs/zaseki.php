@@ -43,11 +43,14 @@ $conn = new mysqli($servername, $username, $password, $dbname);
     <label>座席:</label><br>
     <div id="seat-selection">
         <?php
-        // データベース接続
-        $servername = "127.0.0.1";
-        $username = "root";
-        $password = "";
-        $dbname = "pm_train";
+        // データベース接続情報
+        // データベース接続情報
+$servername = "127.0.0.1";
+$username = "testuser";
+$password = "pass";
+$dbname = "soubu";
+
+
         $conn = new mysqli($servername, $username, $password, $dbname);
 
         if ($conn->connect_error) {
