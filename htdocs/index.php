@@ -19,8 +19,8 @@ if (!isset($_SESSION['index_err_msg'])) {
         <input type="text" name="user_id" required><br><br>
         suica番号:<br>
         <input type="password" name="suica_number" required><br><br>
-        <button type="submit" name="login">ログイン</button>
-        <button type="submit" name="register">ユーザ登録はこちら</button>
+        <input type="submit" name="login">ログイン</button><br>
+        <a href="index2.php">新規登録はこちら</a><br>
         <p><font color="red"><?php echo htmlspecialchars($_SESSION['index_err_msg']); ?></font></p><br>
     </form>
 </body>
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
         $suica_number = htmlspecialchars($_POST['suica_number'], ENT_QUOTES, 'UTF-8');
 
         // SQL準備
-        $sql = 'SELECT name FROM users WHERE user_id = ? AND suica_number = ?';
+        $sql = 'SELECT user_id FROM users WHERE user_id = ? AND suica_number = ?';
         if ($rec === false) {
             $_SESSION['index_err_msg'] = "idまたはsuica番号が違います。";
         } else {
