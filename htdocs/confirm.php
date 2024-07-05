@@ -3,7 +3,7 @@ session_start();
 $servername = "127.0.0.1";
 $username = "testuser";
 $password = "pass";
-$dbname = "train";
+$dbname = "soubu";
 
 // データベース接続の作成
 $conn = new mysqli($servername, $username, $password, $dbname);

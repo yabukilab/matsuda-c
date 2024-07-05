@@ -3,8 +3,8 @@
 session_start();
 $servername = "127.0.0.1";
 $username = "root";
-$password = "";
-$dbname = "train";
+$password = "pass";
+$dbname = "soubu";
 // データベースに接続
 $conn = new mysqli($servername, $username, $password, $dbname);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

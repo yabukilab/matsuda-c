@@ -36,20 +36,20 @@ if (isset($_POST['login'])) {
     } else {
         try {
             // データベースへの接続
-            $dsn = 'mysql:dbname=train;host=127.0.0.1';
+            $dsn = 'mysql:dbname=soubu;host=127.0.0.1';
             $dbh = new PDO($dsn, 'db_admin', 'admin');
 
             // 入力されたIDのsuica番号取得
-            $sql = 'SELECT suica_number FROM users WHERE user = :user'; // 正しいカラム名に修正
+            $sql = 'SELECT suica_number FROM users WHERE user_id = :user_id'; // 正しいカラム名に修正
             $sth = $dbh->prepare($sql); // SQL文を実行変数へ投入
-            $sth->bindParam(':user', $_POST['user']); // ユーザIDを実行変数に挿入
+            $sth->bindParam(':user_id', $_POST['user_id']); // ユーザIDを実行変数に挿入
             $sth->execute(); // SQLの実行
             $suica_number = $sth->fetch(PDO::FETCH_ASSOC); // 処理結果の取得
 
             // ログイン認証処理
             if ($suica_number && password_verify($_POST['suica_number'], $suica_number['suica_number'])) { // 正しいカラム名に修正
                 // ログイン成功時の処理
-                $_SESSION['user'] = $_POST['user']; // ログインIDを格納したセッション変数を定義
+                $_SESSION['user_id'] = $_POST['user_id']; // ログインIDを格納したセッション変数を定義
                 $_SESSION['index_err_msg'] = ""; // エラーメッセージの削除
                 header("Location: okyaku.php");
                 exit;
