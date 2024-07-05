@@ -4,7 +4,7 @@ session_start();
 if (!isset($_SESSION['index_err_msg'])) {
     $_SESSION['index_err_msg'] = "";
 }
-?
+?>
 <!DOCTYPE html>
 <html>
 <head>
