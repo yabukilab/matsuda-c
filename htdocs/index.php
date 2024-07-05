@@ -7,24 +7,33 @@ if (!isset($_SESSION['index_err_msg'])) {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ログイン</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        .error-message {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <h2>ログイン</h2>
-    <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-        ユーザID:<br>
-        <input type="text" name="user_id" required><br><br>
-        suica番号:<br>
-        <input type="password" name="suica_number" required><br><br>
-        <input type="submit" name="login">ログイン</button><br>
-        <a href="index2.php">新規登録はこちら</a><br>
-        <p><font color="red"><?php echo htmlspecialchars($_SESSION['index_err_msg']); ?></font></p><br>
+    <form action="login.php" method="post">
+        <label for="username">ユーザー名:</label>
+        <input type="text" id="username" name="username"><br>
+
+        <label for="password">パスワード:</label>
+        <input type="password" id="password" name="password"><br>
+
+        <button type="submit">ログイン</button><br>
+
+        <!-- CSSを使用した修正部分 -->
+        <p class="error-message">エラーメッセージ</p>
     </form>
 </body>
 </html>
+
 
 <?php
 // ログインボタンが押された時の処理
