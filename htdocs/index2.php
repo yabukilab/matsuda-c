@@ -3,30 +3,39 @@ session_start();
 
 // データベース接続情報
 require 'db.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'];
+    $suicaNumber = $_POST['suica-number'];
+
     // 新規登録のSQLクエリを準備
-    $sql = "INSERT INTO users (user_name, suica_number) VALUES (?, ?)";
+    $sql = "INSERT INTO users (user_name, suica_number) VALUES (:name, :suicaNumber)";
     $stmt = $db->prepare($sql);
 
     if ($stmt === false) {
-        die("準備に失敗しました: " . $db->error);
+        die("準備に失敗しました: " . $db->errorInfo()[2]);
     }
 
     // パラメータをバインド
-    $stmt->bind_param("ss", $name, $suicaNumber); // パラメータを正しい順序でバインドする
+    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
 
     // クエリの実行
-    if ($stmt->execute()) {
+    try {
+        $stmt->execute();
         echo "新規登録が成功しました";
-    } else {
-        echo "新規登録に失敗しました: " . $stmt->error;
+    } catch(PDOException $e) {
+        echo "新規登録に失敗しました: " . $e->getMessage();
     }
 
     // ステートメントを閉じる
-    $stmt->close();
+    $stmt = null;
+}
 
 // データベース接続を閉じる
-$db->close();
+$db = null;
 ?>
+
 
 <!DOCTYPE html>
 <html lang="ja">
