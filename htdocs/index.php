@@ -15,7 +15,7 @@ if (isset($_POST['login'])) {
             require 'db.php';
 
             $sql = 'SELECT user_id FROM users WHERE user_name = :user_name AND suica_number = :suica_number';
-            $stmt = $dbh->prepare($sql);
+            $stmt = $db->prepare($sql);
             $stmt->bindParam(':user_name', $_POST['user']);
             $stmt->bindParam(':suica_number', $_POST['suica_number']);
             $stmt->execute();
