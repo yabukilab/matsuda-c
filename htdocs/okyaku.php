@@ -133,7 +133,7 @@ $result_schedules = $db->query($sql_schedules);
             <label for="arrival_station">→</label>
             <select name="arrival_station" id="arrival_station" required>
                 <?php
-                $result_stations = $conn->query($sql_stations);
+                $result_stations = $db->query($sql_stations);
                 while ($row = $result_stations->fetch_assoc()) {
                     echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
                 }
