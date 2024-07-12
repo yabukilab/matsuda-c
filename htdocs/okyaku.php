@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_name'])) {
     exit;
 }
 
-$servername = "127.0.0.1";
+$servername = "localhost";
 $username = "testuser";
 $password = "pass";
 $dbname = "pm_train";
