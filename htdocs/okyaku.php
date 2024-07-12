@@ -120,19 +120,24 @@ $result_schedules = $db->query($sql_schedules);
         <label for="departure_station">乗車区間:</label>
         <select name="departure_station" id="departure_station" required>
             <?php
-            $sql_stations = "SELECT station_id, station_name FROM stations";
-            $result_stations = $db->query($sql_stations);
-            while ($row = $result_stations->fetch_assoc()) {
-                echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
+            if ($result_stations->num_rows > 0) {
+                while ($row = $result_stations->fetch_assoc()) {
+                    echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
+                }
+            } else {
+                echo "<option value=''>駅情報なし</option>";
             }
             ?>
         </select>
         <label for="arrival_station">→</label>
         <select name="arrival_station" id="arrival_station" required>
             <?php
-            $result_stations = $db->query($sql_stations);
-            while ($row = $result_stations->fetch_assoc()) {
-                echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
+            if ($result_stations->num_rows > 0) {
+                while ($row = $result_stations->fetch_assoc()) {
+                    echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
+                }
+            } else {
+                echo "<option value=''>駅情報なし</option>";
             }
             ?>
         </select>
