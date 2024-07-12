@@ -12,7 +12,7 @@ if (isset($_POST['login'])) {
         exit;
     } else {
         try {
-            $dsn = 'mysql:dbname=pm_train;host=127.0.0.1';
+            $dsn = 'mysql:host=127.0.0.1;dbname=pm_train;charset=utf8mb4';
             $username = 'testuser';
             $password = 'pass';
             $dbh = new PDO($dsn, $username, $password);
