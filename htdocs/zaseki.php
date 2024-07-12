@@ -1,13 +1,14 @@
 <?php
 session_start();
-$servername = "127.0.0.1";
-$username = "testuser";
-$password = "pass";
-$dbname = "train_pm";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -30,99 +31,72 @@ $conn = new mysqli($servername, $username, $password, $dbname);
     </style>
 </head>
 <body>
-<h2>座席予約フォーム</h2>
-<form 
+    <h2>座席予約フォーム</h2>
 
-    <label for="car_number">車両番号:</label>
-    <select id="car_number" name="car_number" required>
-        <option value="">車両を選択してください</option>
-        <option value="4">車両4</option>
-        <option value="5">車両5</option>
-    </select><br>
+    <!-- 車両番号の選択フォーム -->
+    <form method="GET" action="">
+        <label for="car_number">車両番号:</label>
+        <select id="car_number" name="car_number" required onchange="this.form.submit()">
+            <option value="">車両を選択してください</option>
+            <option value="4" <?php if (isset($_GET['car_number']) && $_GET['car_number'] == '4') echo 'selected'; ?>>車両4</option>
+            <option value="5" <?php if (isset($_GET['car_number']) && $_GET['car_number'] == '5') echo 'selected'; ?>>車両5</option>
+        </select><br>
+    </form>
 
-    <label>座席:</label><br>
-    <div id="seat-selection">
-        <?php
-        // データベース接続情報
-        // データベース接続情報
-$servername = "127.0.0.1";
-$username = "testuser";
-$password = "pass";
-$dbname = "soubu";
+    <!-- 座席の選択フォーム -->
+    <form method="POST" action="yoyaku.php">
+        <label>座席:</label><br>
+        <div id="seat-selection">
+            <?php
+                // データベース接続情報
+                $servername = "127.0.0.1";
+                $username = "testuser";
+                $password = "pass";
+                $dbname = "pm_train";
 
+                // データベース接続
+                $conn = new mysqli($servername, $username, $password, $dbname);
+                if ($conn->connect_error) {
+                    die("データベースに接続できませんでした: " . $conn->connect_error);
+                }
 
-        $conn = new mysqli($servername, $username, $password, $dbname);
+                // 車両番号を取得
+                $car_number = isset($_GET['car_number']) ? $_GET['car_number'] : null;
 
-        if ($conn->connect_error) {
-            die("接続に失敗しました: " . $conn->connect_error);
-        }
+                if ($car_number) {
+                    // 座席の取得
+                    $sql = "SELECT seat_id, seat_number FROM seat WHERE car_number = ? AND is_reserved = 0";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("i", $car_number);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
 
-        $sql = "SELECT seat_number, car_number FROM seat WHERE car_number = 4 AND is_reserved = 0"; // ここでは車両4のみを表示しています
-        $result = $conn->query($sql);
+                    // 座席ボタンを表示
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<button type='button' class='seat-btn' data-seat-id='{$row['seat_id']}'>{$row['seat_number']}</button>";
+                    }
 
-        while ($row = $result->fetch_assoc()) {
-            echo "<button type='button' class='seat-btn' data-seat-id='{$row['seat_number']}'>{$row['seat_number']}</button>";
-        }
+                    $stmt->close();
+                }
 
-        $conn->close();
-        ?>
-    </div><br>
+                $conn->close();
+            ?>
+        </div><br>
 
-    <input type="hidden" id="selected_seat_id" name="selected_seat_id" required>
+        <input type="hidden" id="selected_seat_id" name="selected_seat_id" required>
+        <input type="hidden" name="car_number" value="<?php echo htmlspecialchars($car_number); ?>">
 
-    <input type="submit" value="予約">
-</form>
+        <input type="submit" name="submit" value="予約">
+    </form>
 
-<script>
-    document.querySelectorAll('.seat-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            document.querySelectorAll('.seat-btn').forEach(btn => btn.classList.remove('selected'));
-            this.classList.add('selected');
-            document.getElementById('selected_seat_id').value = this.getAttribute('data-seat-id');
+    <script>
+        document.querySelectorAll('.seat-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.seat-btn').forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('selected_seat_id').value = this.getAttribute('data-seat-id');
+            });
         });
-    });
-</script>
-
+    </script>
 </body>
 </html>
-<?php
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['user_id'], $_POST['daparture_station'], $_POST['arrival_station'], $_POST['departure_time'], $_POST['car_number'], $_POST['seat_unmber'])) {
-        $user = $_POST['user_id'];
-        $daparture_station = $_POST['daparture_station'];
-        $arrival_station = $_POST['arrival_station'];
-        $departure_time = $_POST['departure_time'];
-        $car = $_POST['car_number'];
-        $seat = $_SESSION['seat_unmber'];
-
-       
-        // 座席を予約する
-        $sql = "INSERT INTO reservations (user_id, daparture_station, arrival_station, departure_time, car_number, seat_number) VALUES (?, ?, ?, ?, ?, NOW())";
-                $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $seat_id, $car_number, $schedule_id, $customer_name);
-
-        if ($stmt->execute()) {
-            // 座席の状態を予約済みに更新
-            $sql_update = "UPDATE seat SET is_reserved = 1 WHERE seat_number = ? AND car_number = ?";
-            $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("ss", $seat_id, $car_number);
-            if ($stmt_update->execute()) {
-                echo "予約が完了しました。";
-            } else {
-                echo "座席の更新に失敗しました: " . $stmt_update->error;
-            }
-        } else {
-            echo "予約に失敗しました: " . $stmt->error;
-        }
-    } else {
-        echo "利用号車または座が指定されていません。";
-    }
-} else {
-    echo "無効なリクエストです。";
-}
-?>

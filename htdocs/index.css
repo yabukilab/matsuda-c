@@ -1,0 +1,57 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff; /* 背景色を白に設定 */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100vh;
+}
+
+.container {
+    padding: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 5px;
+}
+
+input {
+    padding: 10px;
+    margin: 5px 0;
+    width: 200px;
+    background-color: #e0f7fa;
+}
+
+button.btn {
+    background-color: #8bc34a;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    width: 50%;
+    margin: bottom 2px; /* ボタン間の間隔を調整 */
+}
+
+button.btn:hover {
+    background-color: #7cb342;
+}
+
+.logo {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 20px;
+}
+
+.logo img {
+    max-height: 100px; /* 画像の高さを制限 */
+}

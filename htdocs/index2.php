@@ -5,9 +5,8 @@ session_start();
 $servername = "127.0.0.1";
 $username = "testuser";
 $password = "pass";
-$dbname = "train_pm";
+$dbname = "pm_train";
 
-// MySQLiのインスタンスを作成
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // 接続をチェック
@@ -20,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $suicaNumber = $_POST['suica-number']; // フォームのsuica-numberから受け取る
 
     // 新規登録のSQLクエリを準備
-    $sql = "INSERT INTO users (suica_number, user_id) VALUES (?, ?)";
+    $sql = "INSERT INTO users (user_name, suica_number) VALUES (?, ?)";
     $stmt = $conn->prepare($sql);
 
     if ($stmt === false) {
@@ -28,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // パラメータをバインド
-    $stmt->bind_param("ss", $suicaNumber, $name); // パラメータを正しい順序でバインドする
+    $stmt->bind_param("ss", $name, $suicaNumber); // パラメータを正しい順序でバインドする
 
     // クエリの実行
     if ($stmt->execute()) {
@@ -39,14 +38,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // ステートメントを閉じる
     $stmt->close();
-
-    // ログイン画面に戻るボタンが押された時の処理
-    if (isset($_POST['login'])) {
-        $_SESSION['register_msg'] = ""; // 登録成功のメッセージの削除
-        $_SESSION['register_err_msg'] = ""; // エラーメッセージの削除
-        header("Location: matsuda-c/index.php"); // ログイン画面へ遷移
-        exit(); // スクリプトを終了してリダイレクト
-    }
 }
 
 // データベース接続を閉じる
@@ -59,9 +50,13 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規登録画面</title>
+    <link rel="stylesheet" type="text/css" href="st.css">
 </head>
 <body>
     <div class="container">
+        <div class="logo">
+            <img src="grncar.jpg" alt="緑の車両">
+        </div>
         <h1>新規登録</h1>
         <form id="register-form" method="POST" action="">
             <div class="form-control">
