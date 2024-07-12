@@ -129,6 +129,7 @@ $result_schedules = $db->query($sql_schedules);
                     echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
                 }
                 ?>
+            a
             </select>
             <label for="arrival_station">→</label>
             <select name="arrival_station" id="arrival_station" required>
