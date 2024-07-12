@@ -2,22 +2,7 @@
 session_start();
 
 // データベース接続情報
-$servername = "127.0.0.1";
-$username = "testuser";
-$password = "pass";
-$dbname = "pm_train";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// 接続をチェック
-if ($conn->connect_error) {
-    die("接続に失敗しました: " . $conn->connect_error);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['name'];
-    $suicaNumber = $_POST['suica-number']; // フォームのsuica-numberから受け取る
-
+require 'db.php';
     // 新規登録のSQLクエリを準備
     $sql = "INSERT INTO users (user_name, suica_number) VALUES (?, ?)";
     $stmt = $conn->prepare($sql);
