@@ -16,8 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
     $arrival_station = $_POST['arrival_station'];
     $user_name = $_SESSION['user_name'];
 
-
-
     // 同じ駅の選択を防ぐ
     if ($departure_station == $arrival_station) {
         echo "乗車駅と降車駅は同じにできません";
@@ -78,6 +76,10 @@ $result_seats = $db->query($sql_seats);
 
 $sql_schedules = "SELECT DISTINCT departure_time FROM schedules";
 $result_schedules = $db->query($sql_schedules);
+
+// 駅情報を取得
+$sql_stations = "SELECT station_id, station_name FROM stations";
+$result_stations = $db->query($sql_stations);
 ?>
 
 <!DOCTYPE html>
@@ -180,5 +182,5 @@ $result_schedules = $db->query($sql_schedules);
 </html>
 
 <?php
-$conn->close();
+$db->close();
 ?>
