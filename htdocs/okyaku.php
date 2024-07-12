@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_name'])) {
 require 'db.php';
 
 if ($db->connect_error) {
-    die("接続に失敗しました: " . $db->connect_error);
+    print"接続に失敗しました:$db->connect_error "; 
 }
 
 // 予約処理のためのコードを追加
