@@ -5,12 +5,11 @@ if (!isset($_SESSION['user_name'])) {
     exit;
 }
 
-$servername = "localhost";
 $username = "testuser";
 $password = "pass";
 $dbname = "pm_train";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($username, $password, $dbname);
 
 if ($conn->connect_error) {
     die("接続に失敗しました: " . $conn->connect_error);
