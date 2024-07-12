@@ -5,10 +5,10 @@ session_start();
 require 'db.php';
     // 新規登録のSQLクエリを準備
     $sql = "INSERT INTO users (user_name, suica_number) VALUES (?, ?)";
-    $stmt = $conn->prepare($sql);
+    $stmt = $db->prepare($sql);
 
     if ($stmt === false) {
-        die("準備に失敗しました: " . $conn->error);
+        die("準備に失敗しました: " . $db->error);
     }
 
     // パラメータをバインド
@@ -25,7 +25,7 @@ require 'db.php';
     $stmt->close();
 
 // データベース接続を閉じる
-$conn->close();
+$db->close();
 ?>
 
 <!DOCTYPE html>
