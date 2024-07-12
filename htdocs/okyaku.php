@@ -118,7 +118,7 @@ $result_schedules = $db->query($sql_schedules);
                 }
                 ?>
             </select>
-
+a
             <h3>乗車区間選択</h3>
             <label for="departure_station">乗車区間:</label>
             <select name="departure_station" id="departure_station" required>
@@ -129,7 +129,7 @@ $result_schedules = $db->query($sql_schedules);
                     echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
                 }
                 ?>
-            a
+ a
             </select>
             <label for="arrival_station">→</label>
             <select name="arrival_station" id="arrival_station" required>
