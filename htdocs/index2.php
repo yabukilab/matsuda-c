@@ -23,7 +23,6 @@ require 'db.php';
 
     // ステートメントを閉じる
     $stmt->close();
-}
 
 // データベース接続を閉じる
 $conn->close();
