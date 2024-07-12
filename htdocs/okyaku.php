@@ -5,14 +5,10 @@ if (!isset($_SESSION['user_name'])) {
     exit;
 }
 
-$username = "testuser";
-$password = "pass";
-$dbname = "pm_train";
+require 'db.php';
 
-$conn = new mysqli($username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("接続に失敗しました: " . $conn->connect_error);
+if ($db->connect_error) {
+    die("接続に失敗しました: " . $db->connect_error);
 }
 
 // 予約処理のためのコードを追加
@@ -30,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
     } else {
         // departure_timeからschedule_idを取得
         $sql_schedule = "SELECT schedule_id FROM schedules WHERE departure_time = ?";
-        $stmt_schedule = $conn->prepare($sql_schedule);
+        $stmt_schedule = $db->prepare($sql_schedule);
         $stmt_schedule->bind_param("s", $departure_time);
         $stmt_schedule->execute();
         $result_schedule = $stmt_schedule->get_result();
@@ -39,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
             $schedule_id = $result_schedule->fetch_assoc()['schedule_id'];
 
             $sql_user = "SELECT user_id FROM users WHERE user_name = ?";
-            $stmt_user = $conn->prepare($sql_user);
+            $stmt_user = $db->prepare($sql_user);
             $stmt_user->bind_param("s", $user_name);
             $stmt_user->execute();
             $result_user = $stmt_user->get_result();
@@ -47,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
 
             // 既存の予約をチェック
             $sql_check = "SELECT * FROM reservations WHERE user_id = ? AND seat_id = ? AND schedule_id = ?";
-            $stmt_check = $conn->prepare($sql_check);
+            $stmt_check = $db->prepare($sql_check);
             $stmt_check->bind_param("iii", $user_id, $seat_id, $schedule_id);
             $stmt_check->execute();
             $result_check = $stmt_check->get_result();
@@ -56,12 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
                 $reservation_time = date('Y-m-d H:i:s');
 
                 $sql_reserve = "INSERT INTO reservations (user_id, seat_id, car_number, schedule_id, reservation_time) VALUES (?, ?, ?, ?, ?)";
-                $stmt_reserve = $conn->prepare($sql_reserve);
+                $stmt_reserve = $db->prepare($sql_reserve);
                 $stmt_reserve->bind_param("iiiss", $user_id, $seat_id, $car_number, $schedule_id, $reservation_time);
 
                 if ($stmt_reserve->execute()) {
                     $sql_update_seat = "UPDATE seat SET is_reserved = 1 WHERE seat_id = ?";
-                    $stmt_update_seat = $conn->prepare($sql_update_seat);
+                    $stmt_update_seat = $db->prepare($sql_update_seat);
                     $stmt_update_seat->bind_param("i", $seat_id);
                     $stmt_update_seat->execute();
 
@@ -80,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
 
 // 予約可能な座席とスケジュールを表示
 $sql_seats = "SELECT * FROM seat WHERE is_reserved = 0";
-$result_seats = $conn->query($sql_seats);
+$result_seats = $db->query($sql_seats);
 
 $sql_schedules = "SELECT DISTINCT departure_time FROM schedules";
-$result_schedules = $conn->query($sql_schedules);
+$result_schedules = $db->query($sql_schedules);
 ?>
 
 <!DOCTYPE html>
@@ -127,7 +123,7 @@ $result_schedules = $conn->query($sql_schedules);
         <select name="departure_station" id="departure_station" required>
             <?php
             $sql_stations = "SELECT station_id, station_name FROM stations";
-            $result_stations = $conn->query($sql_stations);
+            $result_stations = $db->query($sql_stations);
             while ($row = $result_stations->fetch_assoc()) {
                 echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
             }
@@ -136,7 +132,7 @@ $result_schedules = $conn->query($sql_schedules);
         <label for="arrival_station">→</label>
         <select name="arrival_station" id="arrival_station" required>
             <?php
-            $result_stations = $conn->query($sql_stations);
+            $result_stations = $db->query($sql_stations);
             while ($row = $result_stations->fetch_assoc()) {
                 echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
             }
