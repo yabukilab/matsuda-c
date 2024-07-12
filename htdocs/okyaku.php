@@ -74,7 +74,7 @@ $sql_seats = "SELECT * FROM seat WHERE is_reserved = 0";
 $result_seats = $db->query($sql_seats);
 
 $sql_schedules = "SELECT DISTINCT departure_time FROM schedules";
-$result_schedules = $conn->query($sql_schedules);
+$result_schedules = $db->query($sql_schedules);
 ?>
 
 <!DOCTYPE html>
