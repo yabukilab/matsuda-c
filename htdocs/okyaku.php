@@ -5,7 +5,17 @@ if (!isset($_SESSION['user_name'])) {
     exit;
 }
 
-require 'db.php';
+$servername = "127.0.0.1";
+$username = "testuser";
+$password = "pass";
+$dbname = "pm_train";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("接続に失敗しました: " . $conn->connect_error);
+}
+
 // 予約処理のためのコードを追加
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
     $seat_id = $_POST['seat_id'];
@@ -71,10 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
 
 // 予約可能な座席とスケジュールを表示
 $sql_seats = "SELECT * FROM seat WHERE is_reserved = 0";
-$result_seats = $db->query($sql_seats);
+$result_seats = $conn->query($sql_seats);
 
 $sql_schedules = "SELECT DISTINCT departure_time FROM schedules";
-$result_schedules = $db->query($sql_schedules);
+$result_schedules = $conn->query($sql_schedules);
 ?>
 
 <!DOCTYPE html>
@@ -118,23 +128,22 @@ $result_schedules = $db->query($sql_schedules);
                 }
                 ?>
             </select>
-a
+
             <h3>乗車区間選択</h3>
             <label for="departure_station">乗車区間:</label>
             <select name="departure_station" id="departure_station" required>
                 <?php
                 $sql_stations = "SELECT station_id, station_name FROM stations";
-                $result_stations = $db->prepare($sql_stations);
+                $result_stations = $conn->query($sql_stations);
                 while ($row = $result_stations->fetch_assoc()) {
                     echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
                 }
                 ?>
- a
             </select>
             <label for="arrival_station">→</label>
             <select name="arrival_station" id="arrival_station" required>
                 <?php
-                $result_stations = $db->query($sql_stations);
+                $result_stations = $conn->query($sql_stations);
                 while ($row = $result_stations->fetch_assoc()) {
                     echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
                 }
@@ -179,5 +188,5 @@ a
     </html>
 
     <?php
-    $db->close();
+    $conn->close();
     ?>
