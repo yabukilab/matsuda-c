@@ -16,6 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
     $arrival_station = $_POST['arrival_station'];
     $user_name = $_SESSION['user_name'];
 
+
+
     // 同じ駅の選択を防ぐ
     if ($departure_station == $arrival_station) {
         echo "乗車駅と降車駅は同じにできません";
