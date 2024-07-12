@@ -124,7 +124,6 @@ a
             <select name="departure_station" id="departure_station" required>
                 <?php
                 $sql_stations = "SELECT station_id, station_name FROM stations";
-a
                 $result_stations = $db->query($sql_stations);
                 while ($row = $result_stations->fetch_assoc()) {
                     echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
