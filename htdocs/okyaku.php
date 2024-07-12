@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
 
 // 予約可能な座席とスケジュールを表示
 $sql_seats = "SELECT * FROM seat WHERE is_reserved = 0";
-$result_seats = $conn->query($sql_seats);
+$result_seats = $db->query($sql_seats);
 
 $sql_schedules = "SELECT DISTINCT departure_time FROM schedules";
 $result_schedules = $conn->query($sql_schedules);
