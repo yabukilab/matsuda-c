@@ -7,69 +7,6 @@ if (!isset($_SESSION['user_name'])) {
 
 require 'db.php';
 
-// 予約処理のためのコードを追加
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
-    $seat_id = $_POST['seat_id'];
-    $car_number = $_POST['car_number'];
-    $departure_time = $_POST['departure_time'];
-    $departure_station = $_POST['departure_station'];
-    $arrival_station = $_POST['arrival_station'];
-    $user_name = $_SESSION['user_name'];
-
-    // 同じ駅の選択を防ぐ
-    if ($departure_station == $arrival_station) {
-        echo "乗車駅と降車駅は同じにできません";
-    } else {
-        // departure_timeからschedule_idを取得
-        $sql_schedule = "SELECT schedule_id FROM schedules WHERE departure_time = ?";
-        $stmt_schedule = $db->prepare($sql_schedule);
-        $stmt_schedule->bind_param("s", $departure_time);
-        $stmt_schedule->execute();
-        $result_schedule = $stmt_schedule->get_result();
-
-        if ($result_schedule->num_rows > 0) {
-            $schedule_id = $result_schedule->fetch_assoc()['schedule_id'];
-
-            $sql_user = "SELECT user_id FROM users WHERE user_name = ?";
-            $stmt_user = $db->prepare($sql_user);
-            $stmt_user->bind_param("s", $user_name);
-            $stmt_user->execute();
-            $result_user = $stmt_user->get_result();
-            $user_id = $result_user->fetch_assoc()['user_id'];
-
-            // 既存の予約をチェック
-            $sql_check = "SELECT * FROM reservations WHERE user_id = ? AND seat_id = ? AND schedule_id = ?";
-            $stmt_check = $db->prepare($sql_check);
-            $stmt_check->bind_param("iii", $user_id, $seat_id, $schedule_id);
-            $stmt_check->execute();
-            $result_check = $stmt_check->get_result();
-
-            if ($result_check->num_rows == 0) {
-                $reservation_time = date('Y-m-d H:i:s');
-
-                $sql_reserve = "INSERT INTO reservations (user_id, seat_id, car_number, schedule_id, reservation_time) VALUES (?, ?, ?, ?, ?)";
-                $stmt_reserve = $db->prepare($sql_reserve);
-                $stmt_reserve->bind_param("iiiss", $user_id, $seat_id, $car_number, $schedule_id, $reservation_time);
-
-                if ($stmt_reserve->execute()) {
-                    $sql_update_seat = "UPDATE seat SET is_reserved = 1 WHERE seat_id = ?";
-                    $stmt_update_seat = $db->prepare($sql_update_seat);
-                    $stmt_update_seat->bind_param("i", $seat_id);
-                    $stmt_update_seat->execute();
-
-                    echo "予約が成功しました";
-                } else {
-                    echo "予約に失敗しました: " . $stmt_reserve->error;
-                }
-            } else {
-                echo "既に同じ区間の予約があります";
-            }
-        } else {
-            echo "指定された時間に対応するスケジュールが見つかりません";
-        }
-    }
-}
-
 // 予約可能な座席とスケジュールを表示
 $sql_seats = "SELECT * FROM seat WHERE is_reserved = 0";
 $result_seats = $db->query($sql_seats);
@@ -181,6 +118,3 @@ $result_stations = $db->query($sql_stations);
 </body>
 </html>
 
-<?php
-$db->close();
-?>
