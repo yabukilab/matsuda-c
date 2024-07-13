@@ -2,7 +2,7 @@
 session_start();
 
 // ユーザーがログインしているか確認
-if (!isset($_SESSION['user_name'])) {
+if (!isset($_SESSION['user_id'])) {
     $_SESSION['index_err_msg'] = "まずログインしてください";
     header("Location: index.php");
     exit;
@@ -16,14 +16,19 @@ $message = "";
 // 予約キャンセルの処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservation_id'])) {
     try {
-        $sql = 'DELETE FROM reservations WHERE reservation_id = :reservation_id AND user_name = :user_name';
+        // 削除処理のSQL文と実行
+        $sql = 'DELETE FROM reservations WHERE reservation_id = :reservation_id AND user_id = :user_id';
         $stmt = $db->prepare($sql);
         $stmt->bindParam(':reservation_id', $_POST['reservation_id'], PDO::PARAM_INT);
-        $stmt->bindParam(':user_name', $_SESSION['user_name'], PDO::PARAM_STR);
+        $stmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
         $stmt->execute();
 
+        // 削除が成功した場合の処理
         if ($stmt->rowCount() > 0) {
             $message = "予約がキャンセルされました。";
+            // 成功時にsakujyo.phpにリダイレクト
+            header("Location: sakujyo.php");
+            exit;
         } else {
             $message = "予約のキャンセルに失敗しました。";
         }
@@ -33,17 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservation_id'])) {
     }
 }
 
-// 予約情報を取得
-try {
-    $sql = 'SELECT reservation_id, seat_id, car_number, schedule_id, reservation_time FROM reservations WHERE user_name = :user_name';
-    $stmt = $db->prepare($sql);
-    $stmt->bindParam(':user_name', $_SESSION['user_name'], PDO::PARAM_STR);
-    $stmt->execute();
-    $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log('予約情報取得時にエラーが発生しました: ' . $e->getMessage());
-    $reservations = [];
-}
+
 // データベース接続を閉じる
 $db = null;
 ?>
@@ -53,10 +48,13 @@ $db = null;
 <head>
     <meta charset="UTF-8">
     <title>予約された座席のキャンセル</title>
-   
 </head>
 <body>
     <h2>予約された座席のキャンセル</h2>
+    <form method="POST" action="sakujyo.php">
+    <!-- テーブルとボタンの記述 -->
+</form>
+
     <?php if (!empty($message)): ?>
         <p><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
     <?php endif; ?>
