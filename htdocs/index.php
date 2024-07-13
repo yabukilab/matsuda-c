@@ -4,13 +4,6 @@ session_start();
 // データベース接続情報
 require 'db.php';
 
-try {
-    // 接続確認
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("データベース接続失敗: " . $e->getMessage());
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['login'])) {
         $user = $_POST['user'];
@@ -21,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $db->prepare($sql);
 
         if ($stmt === false) {
-            die("準備に失敗しました: " . $db->errorInfo()[2]);
+            die("準備に失敗しました: " . implode(", ", $db->errorInfo()));
         }
 
         // パラメータをバインド
