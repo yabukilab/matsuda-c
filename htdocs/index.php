@@ -48,13 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // ステートメントを閉じる
         $stmt = null;
     } elseif (isset($_POST['register'])) {
-        header("Location: register.php");
+        header("Location: index2.php");
         exit;
     } elseif (isset($_POST['delete_reservation'])) {
         header("Location: sakujyo.php");
         exit;
     } elseif (isset($_POST['check_reservation'])) {
-        header("Location: check_reservation.php");
+        header("Location: kakunin.php");
         exit;
     }
 }
