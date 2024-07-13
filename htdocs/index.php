@@ -30,31 +30,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
 
         // クエリの実行
-        try {
-            $stmt->execute();
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user) {
-                $_SESSION['user_name'] = $user['user_name'];
-                header("Location: okyaku.php");
-                exit;
-            } else {
-                $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
-            }
-        } catch (PDOException $e) {
-            die("クエリ実行に失敗しました: " . $e->getMessage());
+        if ($user) {
+            $_SESSION['user_name'] = $user['user_name'];
+            header("Location: okyaku.php");
+            exit;
+        } else {
+            $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
         }
 
         // ステートメントを閉じる
         $stmt = null;
     } elseif (isset($_POST['register'])) {
-        header("Location: index2.php");
+        header("Location: register.php");
         exit;
     } elseif (isset($_POST['delete_reservation'])) {
         header("Location: sakujyo.php");
         exit;
     } elseif (isset($_POST['check_reservation'])) {
-        header("Location: kakunin.php");
+        header("Location: check_reservation.php");
         exit;
     }
 }
