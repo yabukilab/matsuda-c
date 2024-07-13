@@ -4,36 +4,55 @@ session_start();
 // データベース接続情報
 require 'db.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
-    $user = $_POST['user'];
-    $suicaNumber = $_POST['suica_number'];
+try {
+    // 接続確認
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "データベース接続成功<br>";
+} catch (PDOException $e) {
+    die("データベース接続失敗: " . $e->getMessage());
+}
 
-    // SQLクエリを準備
-    $sql = "SELECT * FROM users WHERE user_name = :user AND suica_number = :suicaNumber";
-    $stmt = $db->prepare($sql);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['login'])) {
+        $user = $_POST['user'];
+        $suicaNumber = $_POST['suica_number'];
 
-    if ($stmt === false) {
-        die("準備に失敗しました: " . $db->errorInfo()[2]);
-    }
+        // SQLクエリを準備
+        $sql = "SELECT * FROM users WHERE user_name = :user AND suica_number = :suicaNumber";
+        $stmt = $db->prepare($sql);
 
-    // パラメータをバインド
-    $stmt->bindParam(':user', $user, PDO::PARAM_STR);
-    $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
+        if ($stmt === false) {
+            die("準備に失敗しました: " . $db->errorInfo()[2]);
+        }
 
-    // クエリの実行
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        // パラメータをバインド
+        $stmt->bindParam(':user', $user, PDO::PARAM_STR);
+        $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
 
-    if ($user) {
-        $_SESSION['user_name'] = $user['user_name'];
-        header("Location: okyaku.php");
+        // クエリの実行
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            $_SESSION['user_name'] = $user['user_name'];
+            header("Location: okyaku.php");
+            exit;
+        } else {
+            $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
+        }
+
+        // ステートメントを閉じる
+        $stmt = null;
+    } elseif (isset($_POST['register'])) {
+        header("Location: register.php");
         exit;
-    } else {
-        $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
+    } elseif (isset($_POST['delete_reservation'])) {
+        header("Location: sakujyo.php");
+        exit;
+    } elseif (isset($_POST['check_reservation'])) {
+        header("Location: check_reservation.php");
+        exit;
     }
-
-    // ステートメントを閉じる
-    $stmt = null;
 }
 
 // データベース接続を閉じる
@@ -69,13 +88,13 @@ $db = null;
             }
             ?>
             <div class="form-group">
-                <a href="index2.php">ユーザ登録はこちら</a>
+                <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
             </div>
             <div class="form-group">
-                <a href="sakujyo.php">予約削除</a>
+                <button type="submit" name="delete_reservation" class="btn">予約削除</button>
             </div>
             <div class="form-group">
-                <a href="kakunin.php">予約確認</a>
+                <button type="submit" name="check_reservation" class="btn">予約確認</button>
             </div>
         </form>
     </div>
