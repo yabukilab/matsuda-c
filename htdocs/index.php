@@ -1,62 +1,45 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['index_err_msg'])) {
-    $_SESSION['index_err_msg'] = "";
-}
+// データベース接続情報
+require 'db.php';
 
-if (isset($_POST['login'])) {
-    if (empty($_POST['user']) || empty($_POST['suica_number'])) {
-        $_SESSION['index_err_msg'] = "ID・Suica番号を入力してからログインボタンを押してください";
-        header("Location: " . $_SERVER['HTTP_REFERER']);
-        exit;
-    } else {
-        try {
-            require 'db.php';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'];
+    $suicaNumber = $_POST['suica-number'];
 
-            $sql = 'SELECT user_id FROM users WHERE user_name = :user_name AND suica_number = :suica_number';
-            $stmt = $db->prepare($sql);
-            $stmt->bindParam(':user_name', $_POST['user']);
-            $stmt->bindParam(':suica_number', $_POST['suica_number']);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    // suica_hash のデフォルト値を空文字列として追加する
+    $suicaHash = '';
 
-            if ($result) {
-                $_SESSION['user_name'] = $_POST['user'];
-                $_SESSION['user_id'] = $result['user_id'];
-                $_SESSION['index_err_msg'] = "";
-                header("Location: okyaku.php");
-                exit;
-            } else {
-                $_SESSION['index_err_msg'] = "ユーザーIDまたはSuica番号に不備があります";
-                header("Location: " . $_SERVER['HTTP_REFERER']);
-                exit;
-            }
-        } catch (PDOException $e) {
-            error_log('データベースへの接続に失敗しました:' . $e->getMessage());
-            die('データベースへの接続に失敗しました: ' . $e->getMessage());
-        }
+    // 新規登録のSQLクエリを準備
+    $sql = "INSERT INTO users (user_name, suica_number, suica_hash) VALUES (:name, :suicaNumber, :suicaHash)";
+    $stmt = $db->prepare($sql);
+
+    if ($stmt === false) {
+        die("準備に失敗しました: " . $db->errorInfo()[2]);
     }
+
+    // パラメータをバインド
+    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
+    $stmt->bindParam(':suicaHash', $suicaHash, PDO::PARAM_STR); // suica_hash をバインド
+
+    // クエリの実行
+    try {
+        $stmt->execute();
+        echo "新規登録が成功しました";
+    } catch(PDOException $e) {
+        echo "新規登録に失敗しました: " . $e->getMessage();
+    }
+
+    // ステートメントを閉じる
+    $stmt = null;
 }
 
-if (isset($_POST['register'])) {
-    $_SESSION['index_err_msg'] = "";
-    header("Location: index2.php");
-    exit;
-}
-
-if (isset($_POST['delete_reservation'])) {
-    $_SESSION['index_err_msg'] = "";
-    header("Location: sakujyo.php");
-    exit;
-}
-
-if (isset($_POST['check_reservation'])) {
-    $_SESSION['index_err_msg'] = "";
-    header("Location: kakunin.php");
-    exit;
-}
+// データベース接続を閉じる
+$db = null;
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
