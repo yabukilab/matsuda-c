@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // ステートメントを閉じる
         $stmt = null;
     } elseif (isset($_POST['register'])) {
-        header("Location: register.php");
+        header("Location: index2.php");
         exit;
     } elseif (isset($_POST['delete_reservation'])) {
         header("Location: sakujyo.php");
@@ -84,8 +84,10 @@ $db = null;
             }
             ?>
             <div class="form-group">
-                <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
-            </div>
+    <form method="POST" action="index2.php">
+        <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
+    </form>
+        </div>
             <div class="form-group">
                 <button type="submit" name="delete_reservation" class="btn">予約削除</button>
             </div>
