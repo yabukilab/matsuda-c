@@ -7,7 +7,6 @@ require 'db.php';
 try {
     // 接続確認
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "データベース接続成功<br>";
 } catch (PDOException $e) {
     die("データベース接続失敗: " . $e->getMessage());
 }
@@ -16,10 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['login'])) {
         $user = $_POST['user'];
         $suicaNumber = $_POST['suica_number'];
-
-        // 入力データを確認
-        echo "入力されたユーザID: " . htmlspecialchars($user) . "<br>";
-        echo "入力されたSuica番号: " . htmlspecialchars($suicaNumber) . "<br>";
 
         // SQLクエリを準備
         $sql = "SELECT * FROM users WHERE user_name = :user AND suica_number = :suicaNumber";
@@ -39,13 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user) {
-                echo "ユーザが見つかりました: " . htmlspecialchars($user['user_name']) . "<br>";
                 $_SESSION['user_name'] = $user['user_name'];
-                echo "セッションにユーザ名が設定されました: " . $_SESSION['user_name'] . "<br>";
                 header("Location: okyaku.php");
                 exit;
             } else {
-                echo "ユーザが見つかりませんでした<br>";
                 $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
             }
         } catch (PDOException $e) {
