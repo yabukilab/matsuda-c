@@ -80,30 +80,35 @@ $result_schedules = $db->query($sql_schedules);
         </select>
 
         <h3>乗車区間選択</h3>
-        <label for="departure_station">乗車駅:</label>
-        <select name="departure_station" id="departure_station" required>
-            <?php
-            if ($result_stations->rowCount() > 0) {
-                foreach ($result_stations as $row) {
-                    echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
-                }
-            } else {
-                echo "<option value=''>駅情報なし</option>";
-            }
-            ?>
-        </select>
-        <label for="arrival_station">→</label>
-        <select name="arrival_station" id="arrival_station" required>
-            <?php
-            if ($result_stations->rowCount() > 0) {
-                foreach ($result_stations as $row) {
-                    echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
-                }
-            } else {
-                echo "<option value=''>駅情報なし</option>";
-            }
-            ?>
-        </select>
+<label for="departure_station">乗車駅:</label>
+<select name="departure_station" id="departure_station" required>
+    <?php
+    if ($result_stations->rowCount() > 0) {
+        foreach ($result_stations as $row) {
+            echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
+        }
+    } else {
+        echo "<option value=''>駅情報なし</option>";
+    }
+    ?>
+</select>
+<label for="arrival_station">→</label>
+<select name="arrival_station" id="arrival_station" required>
+    <?php
+    // arrival_stationの選択肢は別のクエリから取得する
+    $sql_arrival_stations = "SELECT station_id, station_name FROM stations";
+    $result_arrival_stations = $db->query($sql_arrival_stations);
+
+    if ($result_arrival_stations->rowCount() > 0) {
+        foreach ($result_arrival_stations as $row) {
+            echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
+        }
+    } else {
+        echo "<option value=''>駅情報なし</option>";
+    }
+    ?>
+</select>
+
 
         <h3>座席選択</h3>
         <select name="seat_id" required>
