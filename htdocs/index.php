@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($user) {
                 echo "ユーザが見つかりました: " . htmlspecialchars($user['user_name']) . "<br>";
                 $_SESSION['user_name'] = $user['user_name'];
+                echo "セッションにユーザ名が設定されました: " . $_SESSION['user_name'] . "<br>";
                 header("Location: okyaku.php");
                 exit;
             } else {
