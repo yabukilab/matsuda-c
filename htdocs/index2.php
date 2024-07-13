@@ -4,12 +4,15 @@ session_start();
 // データベース接続情報
 require 'db.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     $name = $_POST['name'];
     $suicaNumber = $_POST['suica-number'];
 
+    // suica_hash のデフォルト値を空文字列として追加する
+    $suicaHash = '';
+
     // 新規登録のSQLクエリを準備
-    $sql = "INSERT INTO users (user_name, suica_number) VALUES (:name, :suicaNumber)";
+    $sql = "INSERT INTO users (user_name, suica_number, suica_hash) VALUES (:name, :suicaNumber, :suicaHash)";
     $stmt = $db->prepare($sql);
 
     if ($stmt === false) {
@@ -19,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // パラメータをバインド
     $stmt->bindParam(':name', $name, PDO::PARAM_STR);
     $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
+    $stmt->bindParam(':suicaHash', $suicaHash, PDO::PARAM_STR); // suica_hash をバインド
 
     // クエリの実行
     try {
@@ -35,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // データベース接続を閉じる
 $db = null;
 ?>
-
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -61,7 +64,7 @@ $db = null;
                 <input type="text" id="suica-number" name="suica-number" required>
             </div>
             <div class="form-control">
-                <button type="submit">登録</button>
+                <button type="submit" name="register">登録</button>
             </div>
         </form>
         <div class="form-control">

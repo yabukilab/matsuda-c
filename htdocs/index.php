@@ -4,15 +4,12 @@ session_start();
 // データベース接続情報
 require 'db.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $suicaNumber = $_POST['suica-number'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
+    $user = $_POST['user'];
+    $suicaNumber = $_POST['suica_number'];
 
-    // suica_hash のデフォルト値を空文字列として追加する
-    $suicaHash = '';
-
-    // 新規登録のSQLクエリを準備
-    $sql = "INSERT INTO users (user_name, suica_number, suica_hash) VALUES (:name, :suicaNumber, :suicaHash)";
+    // SQLクエリを準備
+    $sql = "SELECT * FROM users WHERE user_name = :user AND suica_number = :suicaNumber";
     $stmt = $db->prepare($sql);
 
     if ($stmt === false) {
@@ -20,16 +17,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // パラメータをバインド
-    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmt->bindParam(':user', $user, PDO::PARAM_STR);
     $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
-    $stmt->bindParam(':suicaHash', $suicaHash, PDO::PARAM_STR); // suica_hash をバインド
 
     // クエリの実行
-    try {
-        $stmt->execute();
-        echo "新規登録が成功しました";
-    } catch(PDOException $e) {
-        echo "新規登録に失敗しました: " . $e->getMessage();
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        $_SESSION['user_name'] = $user['user_name'];
+        header("Location: okyaku.php");
+        exit;
+    } else {
+        $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
     }
 
     // ステートメントを閉じる
@@ -50,7 +50,7 @@ $db = null;
 <body>
     <div class="container">
         <h2>ログイン</h2>
-        <form method="POST" action="index.php">
+        <form method="POST" action="">
             <div class="form-group">
                 <label for="user">ユーザID</label>
                 <input type="text" name="user" id="user" required>
@@ -62,15 +62,20 @@ $db = null;
             <div class="form-group">
                 <button type="submit" name="login" class="btn">ログイン</button>
             </div>
-            <p><font color="red"><?php echo $_SESSION['index_err_msg']; ?></font></p><br>
+            <?php
+            if (isset($_SESSION['index_err_msg'])) {
+                echo '<p><font color="red">' . $_SESSION['index_err_msg'] . '</font></p><br>';
+                unset($_SESSION['index_err_msg']);
+            }
+            ?>
             <div class="form-group">
-                <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
+                <a href="index2.php">ユーザ登録はこちら</a>
             </div>
             <div class="form-group">
-                <button type="submit" name="delete_reservation" class="btn">予約削除</button>
+                <a href="sakujyo.php">予約削除</a>
             </div>
             <div class="form-group">
-                <button type="submit" name="check_reservation" class="btn">予約確認</button>
+                <a href="kakunin.php">予約確認</a>
             </div>
         </form>
     </div>
