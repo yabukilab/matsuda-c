@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $user = $_POST['user'];
         $suicaNumber = $_POST['suica_number'];
 
+        // ログインの処理
         // SQLクエリを準備
         $sql = "SELECT * FROM users WHERE user_name = :user AND suica_number = :suicaNumber";
         $stmt = $db->prepare($sql);
@@ -83,11 +84,11 @@ $db = null;
                 unset($_SESSION['index_err_msg']);
             }
             ?>
+        </form>
+        <form method="POST" action="">
             <div class="form-group">
-    <form method="POST" action="index2.php">
-        <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
-    </form>
-        </div>
+                <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
+            </div>
             <div class="form-group">
                 <button type="submit" name="delete_reservation" class="btn">予約削除</button>
             </div>
