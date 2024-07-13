@@ -30,15 +30,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
 
         // クエリの実行
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user) {
-            $_SESSION['user_name'] = $user['user_name'];
-            header("Location: okyaku.php");
-            exit;
-        } else {
-            $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
+            if ($user) {
+                $_SESSION['user_name'] = $user['user_name'];
+                header("Location: okyaku.php");
+                exit;
+            } else {
+                $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
+            }
+        } catch (PDOException $e) {
+            die("クエリ実行に失敗しました: " . $e->getMessage());
         }
 
         // ステートメントを閉じる
