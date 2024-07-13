@@ -156,11 +156,3 @@ $result_schedules = $conn->query($sql_schedules);
             var selectedOption = this.options[this.selectedIndex];
             var carNumber = selectedOption.getAttribute("data-car-number");
             document.getElementById("car_number").value = carNumber;
-        });
-    </script>
-</body>
-</html>
-
-<?php
-$conn->close();
-?>
