@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: sakujyo.php");
         exit;
     } elseif (isset($_POST['check_reservation'])) {
-        header("Location: check_reservation.php");
+        header("Location: kakunin.php");
         exit;
     }
 }
