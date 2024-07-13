@@ -44,10 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: index2.php");
         exit;
     } elseif (isset($_POST['delete_reservation'])) {
+        // ここで削除画面に遷移するように修正
         header("Location: sakujyo.php");
         exit;
     } elseif (isset($_POST['check_reservation'])) {
-        header("Location: kakunin.php");
+        header("Location: check_reservation.php");
         exit;
     }
 }
@@ -85,13 +86,18 @@ $db = null;
             }
             ?>
         </form>
+        <!-- ボタンのフォームを別にする -->
         <form method="POST" action="">
             <div class="form-group">
                 <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
             </div>
+        </form>
+        <form method="POST" action="">
             <div class="form-group">
                 <button type="submit" name="delete_reservation" class="btn">予約削除</button>
             </div>
+        </form>
+        <form method="POST" action="">
             <div class="form-group">
                 <button type="submit" name="check_reservation" class="btn">予約確認</button>
             </div>

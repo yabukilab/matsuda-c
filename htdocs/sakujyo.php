@@ -2,25 +2,24 @@
 session_start();
 
 // ユーザーがログインしているか確認
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_name'])) {
     $_SESSION['index_err_msg'] = "まずログインしてください";
     header("Location: index.php");
     exit;
 }
 
-try {
-    $dsn = 'mysql:dbname=pm_train;host=127.0.0.1';
-    $username = 'testuser';
-    $password = 'pass';
-    $dbh = new PDO($dsn, $username, $password);
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // エラーモードを設定
+// データベース接続情報
+require 'db.php';
 
-    $message = "";
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservation_id'])) {
-        $sql = 'DELETE FROM reservations WHERE reservation_id = :reservation_id AND user_id = :user_id';
-        $stmt = $dbh->prepare($sql);
+$message = "";
+
+// 予約キャンセルの処理
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservation_id'])) {
+    try {
+        $sql = 'DELETE FROM reservations WHERE reservation_id = :reservation_id AND user_name = :user_name';
+        $stmt = $db->prepare($sql);
         $stmt->bindParam(':reservation_id', $_POST['reservation_id'], PDO::PARAM_INT);
-        $stmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':user_name', $_SESSION['user_name'], PDO::PARAM_STR);
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
@@ -28,39 +27,33 @@ try {
         } else {
             $message = "予約のキャンセルに失敗しました。";
         }
+    } catch (PDOException $e) {
+        error_log('予約キャンセル時にエラーが発生しました: ' . $e->getMessage());
+        $message = "予約のキャンセルに失敗しました。";
     }
+}
 
-    $sql = 'SELECT reservation_id, seat_id, car_number, schedule_id, reservation_time FROM reservations WHERE user_id = :user_id';
-    $stmt = $dbh->prepare($sql);
-    $stmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+// 予約情報を取得
+try {
+    $sql = 'SELECT reservation_id, seat_id, car_number, schedule_id, reservation_time FROM reservations WHERE user_name = :user_name';
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':user_name', $_SESSION['user_name'], PDO::PARAM_STR);
     $stmt->execute();
     $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    error_log('データベースへの接続に失敗しました:' . $e->getMessage());
-    die('データベースへの接続に失敗しました: ' . $e->getMessage());
+    error_log('予約情報取得時にエラーが発生しました: ' . $e->getMessage());
+    $reservations = [];
 }
+// データベース接続を閉じる
+$db = null;
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>予約された座席のキャンセル</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 0 auto;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+   
 </head>
 <body>
     <h2>予約された座席のキャンセル</h2>
