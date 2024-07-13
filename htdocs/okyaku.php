@@ -44,6 +44,7 @@ $result_stations = $db->query($sql_stations);
         <h3>利用時間選択</h3>
         <label for="departure_time">時間:</label>
         <select name="schedule_id" required>
+        <div id="seat-selection">
             <?php
             if ($result_schedules->num_rows > 0) {
                 while ($row = $result_schedules->fetch_assoc()) {
@@ -58,30 +59,21 @@ $result_stations = $db->query($sql_stations);
         <h3>乗車区間選択</h3>
         <label for="departure_station">乗車駅:</label>
         <select name="departure_station" id="departure_station" required>
-            <?php
-            if ($result_stations->num_rows > 0) {
-                // 結果をリセットして最初からループする
-                $result_stations->data_seek(0);
-                while ($row = $result_stations->fetch_assoc()) {
-                    echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
-                }
-            } else {
-                echo "<option value=''>駅情報なし</option>";
+        <?php
+            $sql_stations = "SELECT station_id, station_name FROM stations";
+            $result_stations = $conn->query($sql_stations);
+            while ($row = $result_stations->fetch_assoc()) {
+                echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
             }
             ?>
         </select>
         <label for="arrival_station">→</label>
         <select name="arrival_station" id="arrival_station" required>
             <?php
-            if ($result_stations->num_rows > 0) {
-                // 結果をリセットして最初からループする
                 $result_stations->data_seek(0);
                 while ($row = $result_stations->fetch_assoc()) {
                     echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
                 }
-            } else {
-                echo "<option value=''>駅情報なし</option>";
-            }
             ?>
         </select>
 
