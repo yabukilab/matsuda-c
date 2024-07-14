@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($user) {
                 $_SESSION['user_name'] = $user['user_name'];
-                // ユーザーがログインしたらkakunin.phpにリダイレクト
-                redirect("kakunin.php");
+                // ユーザーがログインしたらokyaku.phpにリダイレクト
+                redirect("okyaku.php");
             } else {
                 $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
             }
