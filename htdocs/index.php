@@ -4,6 +4,17 @@ session_start();
 // データベース接続情報
 require 'db.php';
 
+// ログインしているかどうかを確認する関数
+function isLoggedIn() {
+    return isset($_SESSION['user_name']);
+}
+
+// リダイレクト関数
+function redirect($url) {
+    header("Location: $url");
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['login'])) {
         $user = $_POST['user'];
@@ -29,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($user) {
                 $_SESSION['user_name'] = $user['user_name'];
-                header("Location: okyaku.php");
-                exit;
+                // ユーザーがログインしたらkakunin.phpにリダイレクト
+                redirect("kakunin.php");
             } else {
                 $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
             }
@@ -41,15 +52,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // ステートメントを閉じる
         $stmt = null;
     } elseif (isset($_POST['register'])) {
-        header("Location: index2.php");
-        exit;
+        redirect("index2.php");
     } elseif (isset($_POST['delete_reservation'])) {
-        // ここで削除画面に遷移するように修正
-        header("Location: sakujyo.php");
-        exit;
+        if (isLoggedIn()) {
+            redirect("sakujyo.php");
+        } else {
+            $_SESSION['index_err_msg'] = "まずはログインしてください";
+        }
     } elseif (isset($_POST['check_reservation'])) {
-        header("Location: check_reservation.php");
-        exit;
+        if (isLoggedIn()) {
+            redirect("kakunin.php");
+        } else {
+            $_SESSION['index_err_msg'] = "まずはログインしてください";
+        }
     }
 }
 

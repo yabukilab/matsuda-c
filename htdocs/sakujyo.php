@@ -1,92 +1,134 @@
 <?php
 session_start();
 
-// ユーザーがログインしているか確認
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['index_err_msg'] = "まずログインしてください";
-    header("Location: index.php");
-    exit;
-}
+// デバッグメッセージの追加
+error_log("セッション開始");
 
 // データベース接続情報
 require 'db.php';
 
-$message = "";
-
-// 予約キャンセルの処理
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reservation_id'])) {
-    try {
-        // 削除処理のSQL文と実行
-        $sql = 'DELETE FROM reservations WHERE reservation_id = :reservation_id AND user_id = :user_id';
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':reservation_id', $_POST['reservation_id'], PDO::PARAM_INT);
-        $stmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
-        $stmt->execute();
-
-        // 削除が成功した場合の処理
-        if ($stmt->rowCount() > 0) {
-            $message = "予約がキャンセルされました。";
-            // 成功時にsakujyo.phpにリダイレクト
-            header("Location: sakujyo.php");
-            exit;
-        } else {
-            $message = "予約のキャンセルに失敗しました。";
-        }
-    } catch (PDOException $e) {
-        error_log('予約キャンセル時にエラーが発生しました: ' . $e->getMessage());
-        $message = "予約のキャンセルに失敗しました。";
-    }
+// ログインしているかどうかを確認する関数
+function isLoggedIn() {
+    return isset($_SESSION['user_name']);
 }
 
+// リダイレクト関数
+function redirect($url) {
+    header("Location: $url");
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['login'])) {
+        $user = $_POST['user'];
+        $suicaNumber = $_POST['suica_number'];
+
+        // ログインの処理
+        // SQLクエリを準備
+        $sql = "SELECT * FROM users WHERE user_name = :user AND suica_number = :suicaNumber";
+        $stmt = $db->prepare($sql);
+
+        if ($stmt === false) {
+            die("準備に失敗しました: " . implode(", ", $db->errorInfo()));
+        }
+
+        // パラメータをバインド
+        $stmt->bindParam(':user', $user, PDO::PARAM_STR);
+        $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
+
+        // クエリの実行
+        try {
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user) {
+                $_SESSION['user_name'] = $user['user_name'];
+                error_log("ログイン成功: " . $_SESSION['user_name']);
+                redirect("okyaku.php");
+            } else {
+                $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
+                error_log("ログイン失敗: ユーザ名またはSuica番号が正しくありません");
+            }
+        } catch (PDOException $e) {
+            die("クエリ実行に失敗しました: " . $e->getMessage());
+        }
+
+        // ステートメントを閉じる
+        $stmt = null;
+    } elseif (isset($_POST['register'])) {
+        redirect("index2.php");
+    } elseif (isset($_POST['delete_reservation'])) {
+        if (isLoggedIn()) {
+            error_log("予約削除: ログイン済み");
+            redirect("sakujyo.php");
+        } else {
+            $_SESSION['index_err_msg'] = "まずはログインしてください";
+            error_log("予約削除: ログインしていません");
+        }
+    } elseif (isset($_POST['check_reservation'])) {
+        if (isLoggedIn()) {
+            error_log("予約確認: ログイン済み");
+            redirect("check_reservation.php");
+        } else {
+            $_SESSION['index_err_msg'] = "まずはログインしてください";
+            error_log("予約確認: ログインしていません");
+        }
+    }
+}
 
 // データベース接続を閉じる
 $db = null;
 ?>
 
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>予約された座席のキャンセル</title>
+    <title>ログイン</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 <body>
-    <h2>予約された座席のキャンセル</h2>
-    <form method="POST" action="sakujyo.php">
-    <!-- テーブルとボタンの記述 -->
-</form>
-
-    <?php if (!empty($message)): ?>
-        <p><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
-    <?php endif; ?>
-    <?php if (empty($reservations)): ?>
-        <p>予約された座席はありません。</p>
-    <?php else: ?>
+    <div class="container">
+        <h2>ログイン</h2>
         <form method="POST" action="">
-            <table>
-                <tr>
-                    <th>選択</th>
-                    <th>予約ID</th>
-                    <th>座席ID</th>
-                    <th>車両番号</th>
-                    <th>スケジュールID</th>
-                    <th>予約時間</th>
-                </tr>
-                <?php foreach ($reservations as $reservation): ?>
-                    <tr>
-                        <td><input type="radio" name="reservation_id" value="<?php echo htmlspecialchars($reservation['reservation_id'], ENT_QUOTES, 'UTF-8'); ?>" required></td>
-                        <td><?php echo htmlspecialchars($reservation['reservation_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                        <td><?php echo htmlspecialchars($reservation['seat_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                        <td><?php echo htmlspecialchars($reservation['car_number'], ENT_QUOTES, 'UTF-8'); ?></td>
-                        <td><?php echo htmlspecialchars($reservation['schedule_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                        <td><?php echo htmlspecialchars($reservation['reservation_time'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </table>
-            <br>
-            <button type="submit">予約をキャンセルする</button>
+            <div class="form-group">
+                <label for="user">ユーザID</label>
+                <input type="text" name="user" id="user" required>
+            </div>
+            <div class="form-group">
+                <label for="suica_number">Suica番号</label>
+                <input type="password" name="suica_number" id="suica_number" required>
+            </div>
+            <div class="form-group">
+                <button type="submit" name="login" class="btn">ログイン</button>
+            </div>
+            <?php
+            if (isset($_SESSION['index_err_msg'])) {
+                echo '<p><font color="red">' . $_SESSION['index_err_msg'] . '</font></p><br>';
+                unset($_SESSION['index_err_msg']);
+            }
+            ?>
         </form>
-    <?php endif; ?>
-    <br>
-    <a href="index.php">戻る</a>
+        <!-- ボタンのフォームを別にする -->
+        <form method="POST" action="">
+            <div class="form-group">
+                <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
+            </div>
+        </form>
+        <form method="POST" action="">
+            <div class="form-group">
+                <button type="submit" name="delete_reservation" class="btn">予約削除</button>
+            </div>
+        </form>
+        <form method="POST" action="">
+            <div class="form-group">
+                <button type="submit" name="check_reservation" class="btn">予約確認</button>
+            </div>
+        </form>
+    </div>
+    <div class="logo">
+        <img src="11020306.png" alt="JR Logo">
+        <img src="grncar.jpg" alt="Green Car Logo">
+    </div>
 </body>
 </html>

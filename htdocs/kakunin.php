@@ -1,30 +1,59 @@
 <?php
 session_start();
 
+// データベース接続情報
+require 'db.php';
+
 // ユーザーがログインしているか確認
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['index_err_msg'] = "まずログインしてください";
+if (!isset($_SESSION['user_name'])) {
     header("Location: index.php");
     exit;
 }
 
-try {
-    $dsn = 'mysql:dbname=pm_train;host=127.0.0.1';
-    $username = 'testuser';
-    $password = 'pass';
-    $dbh = new PDO($dsn, $username, $password);
+// ユーザーの予約情報を取得
+$userName = $_SESSION['user_name'];
 
-    $sql = 'SELECT seat_id, car_number, schedule_id, reservation_time FROM reservations WHERE user_id = :user_id';
-    $stmt = $dbh->prepare($sql);
-    $stmt->bindParam(':user_id', $_SESSION['user_id']);
-    $stmt->execute();
-    $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+try {
+    // ユーザーIDを取得するためにまずユーザー情報を取得
+    $sqlUser = "SELECT user_id FROM users WHERE user_name = :userName";
+    $stmtUser = $db->prepare($sqlUser);
+
+    if ($stmtUser === false) {
+        die("準備に失敗しました: " . implode(", ", $db->errorInfo()));
+    }
+
+    // パラメータをバインド
+    $stmtUser->bindParam(':userName', $userName, PDO::PARAM_STR);
+
+    // クエリの実行
+    $stmtUser->execute();
+    $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        die("ユーザーが見つかりません");
+    }
+
+    $userId = $user['user_id'];
+
+    // ユーザーの予約情報を取得するクエリを準備
+    $sqlReservations = "SELECT * FROM reservations WHERE user_id = :userId";
+    $stmtReservations = $db->prepare($sqlReservations);
+
+    if ($stmtReservations === false) {
+        die("準備に失敗しました: " . implode(", ", $db->errorInfo()));
+    }
+
+    // パラメータをバインド
+    $stmtReservations->bindParam(':userId', $userId, PDO::PARAM_INT);
+
+    // クエリの実行
+    $stmtReservations->execute();
+    $reservations = $stmtReservations->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    error_log('データベースへの接続に失敗しました:' . $e->getMessage());
-    die('データベースへの接続に失敗しました: ' . $e->getMessage());
+    die("クエリ実行に失敗しました: " . $e->getMessage());
 }
 
-// 座席IDを座席番号に変換する配列
+// 座席IDを座席番号に変換するための配列
 $seat_map = [
     1 => '1A', 2 => '1B', 3 => '1C', 4 => '1D', 5 => '2A', 6 => '2B', 7 => '2C', 8 => '2D', 
     9 => '3A', 10 => '3B', 11 => '3C', 12 => '3D', 13 => '4A', 14 => '4B', 15 => '4C', 16 => '4D',
@@ -50,37 +79,48 @@ $seat_map = [
     169 => '20A', 170 => '20B', 171 => '20C', 172 => '20D', 173 => '21A', 174 => '21B', 175 => '21C', 176 => '21D',
     177 => '22A', 178 => '22B', 179 => '22C', 180 => '22D', 181 => '23A', 182 => '23B', 183 => '23C', 184 => '23D'
 ];
+
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>予約された座席の確認</title>
+    <title>予約確認</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <h2>予約された座席の確認</h2>
-    <?php if (empty($reservations)): ?>
-        <p>予約された座席はありません。</p>
-    <?php else: ?>
-        <table border="1">
-            <tr>
-                <th>座席番号</th>
-                <th>車両番号</th>
-                <th>スケジュールID</th>
-                <th>予約時間</th>
-            </tr>
-            <?php foreach ($reservations as $reservation): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($seat_map[$reservation['seat_id']] ?? '不明な座席', ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($reservation['car_number'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($reservation['schedule_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($reservation['reservation_time'], ENT_QUOTES, 'UTF-8'); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-    <?php endif; ?>
-    <br>
+    <div class="container">
+        <h2>予約確認</h2>
+        <?php if (count($reservations) > 0): ?>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>予約ID</th>
+                        <th>ユーザID</th>
+                        <th>席ID</th>
+                        <th>車両番号</th>
+                        <th>スケジュールID</th>
+                        <th>予約時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($reservations as $reservation): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($reservation['reservation_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['user_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($seat_map[$reservation['seat_id']], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['car_number'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['schedule_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['reservation_time'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>予約がありません。</p>
+        <?php endif; ?>
+    </div>
     <a href="index.php">戻る</a>
 
     <h3>スケジュール一覧</h3>
