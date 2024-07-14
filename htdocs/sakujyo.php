@@ -5,11 +5,11 @@ if (!isset($_SESSION['user_name'])) {
     exit;
 }
 
-require 'db2.php'; // データベース接続の設定を読み込む
+require 'db.php'; // データベース接続の設定を読み込む
 
 try {
     // reservationsテーブルからデータを取得
-    $stmt = $pdo->prepare("SELECT reservation_id, user_id, seat_id, car_number, schedule_id, reservation_time FROM reservations");
+    $stmt = $db->prepare("SELECT reservation_id, user_id, seat_id, car_number, schedule_id, reservation_time FROM reservations");
     $stmt->execute();
     $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -20,7 +20,7 @@ try {
             $reservation_id = $_POST['reservation_id'];
             
             // reservationsテーブルから該当の予約IDのデータを削除
-            $stmt = $pdo->prepare("DELETE FROM reservations WHERE reservation_id = :reservation_id");
+            $stmt = $db->prepare("DELETE FROM reservations WHERE reservation_id = :reservation_id");
             $stmt->bindParam(':reservation_id', $reservation_id, PDO::PARAM_INT);
             $stmt->execute();
             
@@ -32,7 +32,7 @@ try {
     }
 } catch(PDOException $e) {
     // エラーが発生した場合はエラーメッセージを表示
-    echo "エラー: " . $e->getMessage();
+    echo "エラー: " . h($e->getMessage());
 }
 ?>
 
@@ -48,8 +48,8 @@ try {
         <label for="reservation_id">キャンセルしたい予約を選択してください:</label>
         <select name="reservation_id" id="reservation_id">
             <?php foreach ($reservations as $reservation): ?>
-                <option value="<?php echo $reservation['reservation_id']; ?>">
-                    <?php echo "予約ID: {$reservation['reservation_id']} - ユーザID: {$reservation['user_id']} - 座席ID: {$reservation['seat_id']}"; ?>
+                <option value="<?php echo h($reservation['reservation_id']); ?>">
+                    <?php echo "予約ID: " . h($reservation['reservation_id']) . " - ユーザID: " . h($reservation['user_id']) . " - 座席ID: " . h($reservation['seat_id']); ?>
                 </option>
             <?php endforeach; ?>
         </select>
