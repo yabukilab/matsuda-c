@@ -12,8 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
     $seat_id = $_POST['seat_id'];
     $car_number = $_POST['car_number'];
     $schedule_id = $_POST['schedule_id']; // スケジュール ID を取得する
-    $departure_station = $_POST['departure_station']; // 出発駅を取得する
-    $arrival_station = $_POST['arrival_station']; // 到着駅を取得する
     $user_name = $_SESSION['user_name'];
 
     // ユーザー ID を取得する
@@ -24,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
     $reservation_time = date('Y-m-d H:i:s');
 
     // 予約を挿入する
-    $stmt_reserve = $db->prepare("INSERT INTO reservations (user_id, seat_id, car_number, schedule_id, departure_station, arrival_station, reservation_time) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt_reserve->execute([$user_id, $seat_id, $car_number, $schedule_id, $departure_station, $arrival_station, $reservation_time]);
+    $stmt_reserve = $db->prepare("INSERT INTO reservations (user_id, seat_id, car_number, schedule_id, reservation_time) VALUES (?, ?, ?, ?, ?)");
+    $stmt_reserve->execute([$user_id, $seat_id, $car_number, $schedule_id, $reservation_time]);
 
     // 座席の予約状況を更新する
     $stmt_update_seat = $db->prepare("UPDATE seat SET is_reserved = 1 WHERE seat_id = ?");
@@ -45,7 +43,6 @@ $result_stations = $db->query($sql_stations);
 $sql_schedules = "SELECT DISTINCT schedule_id, departure_time FROM schedules";
 $result_schedules = $db->query($sql_schedules);
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,34 +80,35 @@ $result_schedules = $db->query($sql_schedules);
         </select>
 
         <h3>乗車区間選択</h3>
-        <label for="departure_station">乗車駅:</label>
-        <select name="departure_station" id="departure_station" required>
-            <?php
-            if ($result_stations->rowCount() > 0) {
-                foreach ($result_stations as $row) {
-                    echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
-                }
-            } else {
-                echo "<option value=''>駅情報なし</option>";
-            }
-            ?>
-        </select>
-        <label for="arrival_station">→</label>
-        <select name="arrival_station" id="arrival_station" required>
-            <?php
-            // arrival_stationの選択肢は別のクエリから取得する
-            $sql_arrival_stations = "SELECT station_id, station_name FROM stations";
-            $result_arrival_stations = $db->query($sql_arrival_stations);
+<label for="departure_station">乗車駅:</label>
+<select name="departure_station" id="departure_station" required>
+    <?php
+    if ($result_stations->rowCount() > 0) {
+        foreach ($result_stations as $row) {
+            echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
+        }
+    } else {
+        echo "<option value=''>駅情報なし</option>";
+    }
+    ?>
+</select>
+<label for="arrival_station">→</label>
+<select name="arrival_station" id="arrival_station" required>
+    <?php
+    // arrival_stationの選択肢は別のクエリから取得する
+    $sql_arrival_stations = "SELECT station_id, station_name FROM stations";
+    $result_arrival_stations = $db->query($sql_arrival_stations);
 
-            if ($result_arrival_stations->rowCount() > 0) {
-                foreach ($result_arrival_stations as $row) {
-                    echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
-                }
-            } else {
-                echo "<option value=''>駅情報なし</option>";
-            }
-            ?>
-        </select>
+    if ($result_arrival_stations->rowCount() > 0) {
+        foreach ($result_arrival_stations as $row) {
+            echo "<option value='{$row['station_id']}'>{$row['station_name']}</option>";
+        }
+    } else {
+        echo "<option value=''>駅情報なし</option>";
+    }
+    ?>
+</select>
+
 
         <h3>座席選択</h3>
         <select name="seat_id" required>
@@ -122,6 +120,7 @@ $result_schedules = $db->query($sql_schedules);
             } else {
                 echo "<option value=''>空席なし</option>";
             }
+        
             ?>
         </select>
 
@@ -153,14 +152,19 @@ $result_schedules = $db->query($sql_schedules);
             return true;
         }
     </script>
+        </form>
+        <form method="POST" action="">
+            <div class="form-group">
+                <button type="submit" name="delete_reservation" class="btn">予約削除</button>
+            </div>
+        </form>
+        <form method="POST" action="">
+            <div class="form-group">
+                <button type="submit" name="check_reservation" class="btn">予約確認</button>
+            </div>
+        </form>
+    </div>
 
-    <form method="POST" action="kakunin.php">
-        <button type="submit" name="check_reservation" class="btn">予約確認</button>
-    </form>
-
-    <form method="POST" action="sakujyo.php">
-        <button type="submit" name="delete_reservation" class="btn">予約削除</button>
-    </form>
     <div class="logo">
         <img src="画像2.png" alt="zaseki">
     </div>
