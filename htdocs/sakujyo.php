@@ -70,6 +70,6 @@ try {
     </form>
     <br>
     <button class="back-button" onclick="window.location.href='index.php'">戻る</button>
-    <img src="grncar.jpg" alt="Green Car Logo">
+    <img src="grncar.jpg" alt="Green Car Logo" class="right-top">
 </body>
 </html>

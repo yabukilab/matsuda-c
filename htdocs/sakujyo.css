@@ -1,7 +1,11 @@
 .right-top {
     position: absolute;
-    top: 10px; /* ページの上からの距離 */
-    right: 10px; /* ページの右からの距離 */
+    top: 10px; /* ページの上からの距離を設定 */
+    right: 10px; /* ページの右からの距離を設定 */
     width: 150px; /* 画像の幅を設定 */
     height: auto; /* アスペクト比を維持して高さを自動調整 */
+}
+
+.back-button {
+    margin-top: 20px;
 }
