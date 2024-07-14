@@ -1,5 +1,7 @@
 <?php
 session_start();
+
+// セッションにユーザー名が保存されていない場合は、ログインページにリダイレクトする
 if (!isset($_SESSION['user_name'])) {
     header("Location: index.php");
     exit;
@@ -7,43 +9,52 @@ if (!isset($_SESSION['user_name'])) {
 
 require 'db.php'; // データベース接続の設定を読み込む
 
-// 予約処理のためのコードを追加
+// POSTメソッドでリクエストが送信され、かつ「予約する」ボタンが押された場合の処理
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reserve'])) {
+    // POSTデータから各種情報を取得する
     $seat_id = $_POST['seat_id'];
     $car_number = $_POST['car_number'];
-    $schedule_id = $_POST['schedule_id']; // スケジュール ID を取得する
-    $departure_station = $_POST['departure_station']; // 出発駅を取得する
-    $arrival_station = $_POST['arrival_station']; // 到着駅を取得する
+    $schedule_id = $_POST['schedule_id'];
+    $departure_station = $_POST['departure_station'];
+    $arrival_station = $_POST['arrival_station'];
     $user_name = $_SESSION['user_name'];
 
-    // ユーザー ID を取得する
-    $stmt_user = $db->prepare("SELECT user_id FROM users WHERE user_name = ?");
-    $stmt_user->execute([$user_name]);
-    $user_id = $stmt_user->fetchColumn();
+    try {
+        // ユーザー名からユーザーIDを取得するクエリを実行
+        $stmt_user = $pdo->prepare("SELECT user_id FROM users WHERE user_name = ?");
+        $stmt_user->execute([$user_name]);
+        $user_id = $stmt_user->fetchColumn();
 
-    $reservation_time = date('Y-m-d H:i:s');
+        // 現在の日時を取得
+        $reservation_time = date('Y-m-d H:i:s');
 
-    // 予約を挿入する
-    $stmt_reserve = $db->prepare("INSERT INTO reservations (user_id, seat_id, car_number, schedule_id, departure_station, arrival_station, reservation_time) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt_reserve->execute([$user_id, $seat_id, $car_number, $schedule_id, $departure_station, $arrival_station, $reservation_time]);
+        // reservationsテーブルに予約情報を挿入するクエリを準備・実行
+        $stmt_reserve = $pdo->prepare("INSERT INTO reservations (user_id, seat_id, car_number, schedule_id, reservation_time, ) 
+                                       VALUES (?, ?, ?, ?, ?, )");
+        $stmt_reserve->execute([$user_id, $seat_id, $car_number, $schedule_id, $reservation_time, ]);
 
-    // 座席の予約状況を更新する
-    $stmt_update_seat = $db->prepare("UPDATE seat SET is_reserved = 1 WHERE seat_id = ?");
-    $stmt_update_seat->execute([$seat_id]);
+        // 座席の予約状況を更新するクエリを実行
+        $stmt_update_seat = $pdo->prepare("UPDATE seat SET is_reserved = 1 WHERE seat_id = ?");
+        $stmt_update_seat->execute([$seat_id]);
 
-    echo "予約が成功しました";
+        // 成功メッセージを表示
+        echo "予約が成功しました";
+
+    } catch(PDOException $e) {
+        // エラーが発生した場合はエラーメッセージを表示
+        echo "予約の処理中にエラーが発生しました。エラー: " . $e->getMessage();
+    }
 }
 
-// 予約可能な座席とスケジュールを表示
+// 予約可能な座席とスケジュールを表示するクエリを準備・実行
 $sql_seats = "SELECT * FROM seat WHERE is_reserved = 0";
-$result_seats = $db->query($sql_seats);
+$result_seats = $pdo->query($sql_seats);
 
-// 乗車区間の取得
 $sql_stations = "SELECT * FROM stations";
-$result_stations = $db->query($sql_stations);
+$result_stations = $pdo->query($sql_stations);
 
 $sql_schedules = "SELECT DISTINCT schedule_id, departure_time FROM schedules";
-$result_schedules = $db->query($sql_schedules);
+$result_schedules = $pdo->query($sql_schedules);
 ?>
 
 <!DOCTYPE html>
@@ -98,9 +109,8 @@ $result_schedules = $db->query($sql_schedules);
         <label for="arrival_station">→</label>
         <select name="arrival_station" id="arrival_station" required>
             <?php
-            // arrival_stationの選択肢は別のクエリから取得する
             $sql_arrival_stations = "SELECT station_id, station_name FROM stations";
-            $result_arrival_stations = $db->query($sql_arrival_stations);
+            $result_arrival_stations = $pdo->query($sql_arrival_stations);
 
             if ($result_arrival_stations->rowCount() > 0) {
                 foreach ($result_arrival_stations as $row) {

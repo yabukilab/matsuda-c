@@ -1,16 +1,13 @@
 <?php
-// データベースの接続情報
-$host = "127.0.0.1";
-$username = "testuser";
-$password = "pass";
-$dbname = "pm_train";
+session_start();
+if (!isset($_SESSION['user_name'])) {
+    header("Location: index.php");
+    exit;
+}
+
+require 'db2.php'; // データベース接続の設定を読み込む
 
 try {
-    // データベースへの接続
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    // エラーモードを例外モードに設定
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
     // reservationsテーブルからデータを取得
     $stmt = $pdo->prepare("SELECT reservation_id, user_id, seat_id, car_number, schedule_id, reservation_time FROM reservations");
     $stmt->execute();
@@ -61,6 +58,5 @@ try {
     <br>
     <button class="back-button" onclick="window.location.href='index.php'">戻る</button>
     <img src="grncar.jpg" alt="Green Car Logo">
-            </br>
 </body>
 </html>
