@@ -1,83 +1,66 @@
 <?php
-require 'db.php'; // データベース接続の設定を読み込む
+// データベースの接続情報
+$host = "127.0.0.1";
+$username = "testuser";
+$password = "pass";
+$dbname = "pm_train";
 
-// 削除処理
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_id'])) {
-    $delete_id = intval($_POST['delete_id']);
-    $sql = "DELETE FROM reservations WHERE reservation_id = ?";
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("i", $delete_id);
-        $stmt->execute();
-        $stmt->close();
-    } else {
-        echo "Error preparing statement: " . $conn->error;
+try {
+    // データベースへの接続
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    // エラーモードを例外モードに設定
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // reservationsテーブルからデータを取得
+    $stmt = $pdo->prepare("SELECT reservation_id, user_id, seat_id, car_number, schedule_id, reservation_time FROM reservations");
+    $stmt->execute();
+    $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // フォームが送信された場合
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // 選択された予約IDを取得
+        if (isset($_POST['reservation_id'])) {
+            $reservation_id = $_POST['reservation_id'];
+            
+            // reservationsテーブルから該当の予約IDのデータを削除
+            $stmt = $pdo->prepare("DELETE FROM reservations WHERE reservation_id = :reservation_id");
+            $stmt->bindParam(':reservation_id', $reservation_id, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            // 削除が成功したらメッセージを表示
+            echo "予約ID {$reservation_id} の予約をキャンセルしました。";
+        } else {
+            echo "予約IDが選択されていません。";
+        }
     }
-}
-
-// 予約データの取得
-$sql = "SELECT reservation_id, seat_id, car_number, departure_station, arrival_station
-        FROM reservations";
-$result = $conn->query($sql);
-
-// 取得した予約データを配列として取り出す
-$reservations = [];
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $reservations[] = $row;
-    }
+} catch(PDOException $e) {
+    // エラーが発生した場合はエラーメッセージを表示
+    echo "エラー: " . $e->getMessage();
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <title>Reservation List</title>
+    <meta charset="UTF-8">
+    <title>予約キャンセル</title>
 </head>
 <body>
     <h1>予約キャンセル</h1>
-    <?php if (count($reservations) > 0): ?>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>予約ID</th>
-                    <th>座席</th>
-                    <th>車両番号</th>
-                    <th>出発駅</th>
-                    <th>到着駅</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($reservations as $reservation): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($reservation['reservation_id']); ?></td>
-                        <td><?php echo htmlspecialchars($reservation['seat_id']); ?></td>
-                        <td><?php echo htmlspecialchars($reservation['car_number']); ?></td>
-                        <td><?php echo htmlspecialchars($reservation['departure_station']); ?></td>
-                        <td><?php echo htmlspecialchars($reservation['arrival_station']); ?></td>
-                        <td>
-                            <form method="POST" action="sakujyo.php" style="display: inline;">
-                                <input type="hidden" name="delete_id" value="<?php echo htmlspecialchars($reservation['reservation_id']); ?>">
-                                <input type="submit" value="キャンセル">
-                            </form>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p>予約がありません。</p>
-    <?php endif; ?>
+    <form method="post">
+        <label for="reservation_id">キャンセルしたい予約を選択してください:</label>
+        <select name="reservation_id" id="reservation_id">
+            <?php foreach ($reservations as $reservation): ?>
+                <option value="<?php echo $reservation['reservation_id']; ?>">
+                    <?php echo "予約ID: {$reservation['reservation_id']} - ユーザID: {$reservation['user_id']} - 座席ID: {$reservation['seat_id']}"; ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <button type="submit">予約キャンセル</button>
+    </form>
     <br>
-    <a href="index.php">戻る</a>
-    
-    <?php
-    // リソース解放
-    if ($result) {
-        $result->free();
-    }
-    // データベース接続を閉じる
-    $conn->close();
-    ?>
+    <button class="back-button" onclick="window.location.href='index.php'">戻る</button>
+    <img src="grncar.jpg" alt="Green Car Logo">
+            </br>
 </body>
 </html>
