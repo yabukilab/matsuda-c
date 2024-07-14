@@ -54,18 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = null;
     } elseif (isset($_POST['register'])) {
         redirect("index2.php");
-    } elseif (isset($_POST['delete_reservation'])) {
-        if (isLoggedIn()) {
-            redirect("sakujyo.php");
-        } else {
-            $_SESSION['index_err_msg'] = "まずはログインしてください";
-        }
-    } elseif (isset($_POST['check_reservation'])) {
-        if (isLoggedIn()) {
-            redirect("kakunin.php");
-        } else {
-            $_SESSION['index_err_msg'] = "まずはログインしてください";
-        }
     }
 }
 
@@ -108,16 +96,7 @@ $db = null;
                 <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
             </div>
         </form>
-        <form method="POST" action="">
-            <div class="form-group">
-                <button type="submit" name="delete_reservation" class="btn">予約削除</button>
-            </div>
-        </form>
-        <form method="POST" action="">
-            <div class="form-group">
-                <button type="submit" name="check_reservation" class="btn">予約確認</button>
-            </div>
-        </form>
+       
     </div>
     <div class="logo">
         <img src="11020306.png" alt="JR Logo">

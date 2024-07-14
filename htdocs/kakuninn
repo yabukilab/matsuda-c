@@ -76,9 +76,7 @@ $seat_map = [
                         <th>車両番号</th>
                         <th>出発駅</th>
                         <th>到着駅</th>
-                        <th>出発時刻</th>
-                        <th>到着時刻</th>
-                        <th>予約時刻</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -87,11 +85,7 @@ $seat_map = [
                             <td><?php echo htmlspecialchars($reservation['reservation_id']); ?></td>
                             <td><?php echo htmlspecialchars($seat_map[$reservation['seat_id']]); ?></td>
                             <td><?php echo htmlspecialchars($reservation['car_number']); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['departure_station']); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['arrival_station']); ?></td>
                             <td><?php echo htmlspecialchars($reservation['departure_time']); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['arrival_time']); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['reservation_time']); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
