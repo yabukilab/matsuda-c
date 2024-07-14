@@ -1,134 +1,119 @@
 <?php
 session_start();
 
-// デバッグメッセージの追加
-error_log("セッション開始");
-
 // データベース接続情報
 require 'db.php';
 
-// ログインしているかどうかを確認する関数
-function isLoggedIn() {
-    return isset($_SESSION['user_name']);
-}
-
-// リダイレクト関数
-function redirect($url) {
-    header("Location: $url");
+// ユーザーがログインしているか確認
+if (!isset($_SESSION['user_id'])) {
+    header("Location: index.php");
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['login'])) {
-        $user = $_POST['user'];
-        $suicaNumber = $_POST['suica_number'];
+$user_id = $_SESSION['user_id'];
 
-        // ログインの処理
-        // SQLクエリを準備
-        $sql = "SELECT * FROM users WHERE user_name = :user AND suica_number = :suicaNumber";
-        $stmt = $db->prepare($sql);
+// POSTされた場合の処理
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // フォームからの入力値を取得
+    $seat_id = $_POST['seat_id'];
+    $car_number = $_POST['car_number'];
+    $schedule_id = $_POST['schedule_id'];
 
-        if ($stmt === false) {
+    try {
+        // 予約を追加するクエリを準備
+        $sqlInsert = "INSERT INTO reservations (user_id, seat_id, car_number, schedule_id, reservation_time)
+                      VALUES (:user_id, :seat_id, :car_number, :schedule_id, NOW())";
+        $stmtInsert = $db->prepare($sqlInsert);
+
+        if ($stmtInsert === false) {
             die("準備に失敗しました: " . implode(", ", $db->errorInfo()));
         }
 
         // パラメータをバインド
-        $stmt->bindParam(':user', $user, PDO::PARAM_STR);
-        $stmt->bindParam(':suicaNumber', $suicaNumber, PDO::PARAM_STR);
+        $stmtInsert->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmtInsert->bindParam(':seat_id', $seat_id, PDO::PARAM_INT);
+        $stmtInsert->bindParam(':car_number', $car_number, PDO::PARAM_STR);
+        $stmtInsert->bindParam(':schedule_id', $schedule_id, PDO::PARAM_INT);
 
         // クエリの実行
-        try {
-            $stmt->execute();
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmtInsert->execute();
 
-            if ($user) {
-                $_SESSION['user_name'] = $user['user_name'];
-                error_log("ログイン成功: " . $_SESSION['user_name']);
-                redirect("okyaku.php");
-            } else {
-                $_SESSION['index_err_msg'] = "ユーザ名またはSuica番号が正しくありません";
-                error_log("ログイン失敗: ユーザ名またはSuica番号が正しくありません");
-            }
-        } catch (PDOException $e) {
-            die("クエリ実行に失敗しました: " . $e->getMessage());
-        }
-
-        // ステートメントを閉じる
-        $stmt = null;
-    } elseif (isset($_POST['register'])) {
-        redirect("index2.php");
-    } elseif (isset($_POST['delete_reservation'])) {
-        if (isLoggedIn()) {
-            error_log("予約削除: ログイン済み");
-            redirect("sakujyo.php");
-        } else {
-            $_SESSION['index_err_msg'] = "まずはログインしてください";
-            error_log("予約削除: ログインしていません");
-        }
-    } elseif (isset($_POST['check_reservation'])) {
-        if (isLoggedIn()) {
-            error_log("予約確認: ログイン済み");
-            redirect("check_reservation.php");
-        } else {
-            $_SESSION['index_err_msg'] = "まずはログインしてください";
-            error_log("予約確認: ログインしていません");
-        }
+        // 予約成功のメッセージを表示
+        $message = "予約が完了しました。";
+    } catch (PDOException $e) {
+        die("クエリ実行に失敗しました: " . $e->getMessage());
     }
 }
 
-// データベース接続を閉じる
-$db = null;
+// 座席IDを座席番号に変換するための配列
+$seat_map = [
+    1 => '1A', 2 => '1B', 3 => '1C', 4 => '1D', 5 => '2A', 6 => '2B', 7 => '2C', 8 => '2D', 
+    9 => '3A', 10 => '3B', 11 => '3C', 12 => '3D', 13 => '4A', 14 => '4B', 15 => '4C', 16 => '4D',
+    17 => '5A', 18 => '5B', 19 => '5C', 20 => '5D', 21 => '6A', 22 => '6B', 23 => '6C', 24 => '6D',
+    25 => '7A', 26 => '7B', 27 => '7C', 28 => '7D', 29 => '8A', 30 => '8B', 31 => '8C', 32 => '8D',
+    33 => '9A', 34 => '9B', 35 => '9C', 36 => '9D', 37 => '10A', 38 => '10B', 39 => '10C', 40 => '10D',
+    41 => '11A', 42 => '11B', 43 => '11C', 44 => '11D', 45 => '12A', 46 => '12B', 47 => '12C', 48 => '12D',
+    49 => '13A', 50 => '13B', 51 => '13C', 52 => '13D', 53 => '14A', 54 => '14B', 55 => '14C', 56 => '14D',
+    57 => '15A', 58 => '15B', 59 => '15C', 60 => '15D', 61 => '16A', 62 => '16B', 63 => '16C', 64 => '16D',
+    65 => '17A', 66 => '17B', 67 => '17C', 68 => '17D', 69 => '18A', 70 => '18B', 71 => '18C', 72 => '18D',
+    73 => '19A', 74 => '19B', 75 => '19C', 76 => '19D', 77 => '20A', 78 => '20B', 79 => '20C', 80 => '20D',
+    81 => '21A', 82 => '21B', 83 => '21C', 84 => '21D', 85 => '22A', 86 => '22B', 87 => '22C', 88 => '22D',
+    89 => '23A', 90 => '23B', 91 => '23C', 92 => '23D', 93 => '1A', 94 => '1B', 95 => '1C', 96 => '1D',
+    97 => '2A', 98 => '2B', 99 => '2C', 100 => '2D', 101 => '3A', 102 => '3B', 103 => '3C', 104 => '3D',
+    105 => '4A', 106 => '4B', 107 => '4C', 108 => '4D', 109 => '5A', 110 => '5B', 111 => '5C', 112 => '5D',
+    113 => '6A', 114 => '6B', 115 => '6C', 116 => '6D', 117 => '7A', 118 => '7B', 119 => '7C', 120 => '7D',
+    121 => '8A', 122 => '8B', 123 => '8C', 124 => '8D', 125 => '9A', 126 => '9B', 127 => '9C', 128 => '9D',
+    129 => '10A', 130 => '10B', 131 => '10C', 132 => '10D', 133 => '11A', 134 => '11B', 135 => '11C', 136 => '11D',
+    137 => '12A', 138 => '12B', 139 => '12C', 140 => '12D', 141 => '13A', 142 => '13B', 143 => '13C', 144 => '13D',
+    145 => '14A', 146 => '14B', 147 => '14C', 148 => '14D', 149 => '15A', 150 => '15B', 151 => '15C', 152 => '15D',
+    153 => '16A', 154 => '16B', 155 => '16C', 156 => '16D', 157 => '17A', 158 => '17B', 159 => '17C', 160 => '17D',
+    161 => '18A', 162 => '18B', 163 => '18C', 164 => '18D', 165 => '19A', 166 => '19B', 167 => '19C', 168 => '19D',
+    169 => '20A', 170 => '20B', 171 => '20C', 172 => '20D', 173 => '21A', 174 => '21B', 175 => '21C', 176 => '21D',
+    177 => '22A', 178 => '22B', 179 => '22C', 180 => '22D', 181 => '23A', 182 => '23B', 183 => '23C', 184 => '23D'
+];
+    // 他の座席のマッピングも同様に記述
+
+// スケジュール一覧
+$schedule_list = [
+    38 => "08:00:00", 39 => "09:00:00", 40 => "08:05:00", 41 => "09:05:00", 
+    42 => "08:10:00", 43 => "09:10:00",44 => "08:15:00", 45 => "09:15:00", 
+    46 => "08:20:00", 47 => "09:20:00", 48 => "08:25:00", 49 => "09:25:00", 
+    50 => "08:30:00", 51 => "09:30:00", 52 => "08:35:00", 53 => "09:35:00"
+    // 他のスケジュールの設定も同様に記述
+];
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>ログイン</title>
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <title>予約フォーム</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h2>ログイン</h2>
-        <form method="POST" action="">
-            <div class="form-group">
-                <label for="user">ユーザID</label>
-                <input type="text" name="user" id="user" required>
-            </div>
-            <div class="form-group">
-                <label for="suica_number">Suica番号</label>
-                <input type="password" name="suica_number" id="suica_number" required>
-            </div>
-            <div class="form-group">
-                <button type="submit" name="login" class="btn">ログイン</button>
-            </div>
-            <?php
-            if (isset($_SESSION['index_err_msg'])) {
-                echo '<p><font color="red">' . $_SESSION['index_err_msg'] . '</font></p><br>';
-                unset($_SESSION['index_err_msg']);
-            }
-            ?>
-        </form>
-        <!-- ボタンのフォームを別にする -->
-        <form method="POST" action="">
-            <div class="form-group">
-                <button type="submit" name="register" class="btn">ユーザ登録はこちら</button>
-            </div>
-        </form>
-        <form method="POST" action="">
-            <div class="form-group">
-                <button type="submit" name="delete_reservation" class="btn">予約削除</button>
-            </div>
-        </form>
-        <form method="POST" action="">
-            <div class="form-group">
-                <button type="submit" name="check_reservation" class="btn">予約確認</button>
-            </div>
+        <h2>予約フォーム</h2>
+        <?php if (isset($message)): ?>
+            <p><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
+        <?php endif; ?>
+        <form action="yoyaku.php" method="POST">
+            <label for="seat_id">席番号：</label>
+            <select name="seat_id" id="seat_id">
+                <?php foreach ($seat_map as $id => $seat): ?>
+                    <option value="<?php echo $id; ?>"><?php echo htmlspecialchars($seat, ENT_QUOTES, 'UTF-8'); ?></option>
+                <?php endforeach; ?>
+            </select><br><br>
+            <label for="car_number">車両番号：</label>
+            <input type="text" id="car_number" name="car_number" required><br><br>
+            <label for="schedule_id">スケジュール：</label>
+            <select name="schedule_id" id="schedule_id">
+                <?php foreach ($schedule_list as $id => $time): ?>
+                    <option value="<?php echo $id; ?>"><?php echo htmlspecialchars($time, ENT_QUOTES, 'UTF-8'); ?></option>
+                <?php endforeach; ?>
+            </select><br><br>
+            <input type="submit" value="予約する">
         </form>
     </div>
-    <div class="logo">
-        <img src="11020306.png" alt="JR Logo">
-        <img src="grncar.jpg" alt="Green Car Logo">
-    </div>
+    <a href="index2.php">戻る</a>
 </body>
 </html>
