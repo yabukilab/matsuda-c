@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($user) {
                 $_SESSION['user_name'] = $user['user_name'];
+                $_SESSION['user_id'] = $user['user_id']; // ここでuser_idをセッションに保存
                 // ユーザーがログインしたらokyaku.phpにリダイレクト
                 redirect("okyaku.php");
             } else {

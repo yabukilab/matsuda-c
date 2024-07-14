@@ -4,49 +4,40 @@ session_start();
 // データベース接続情報
 require 'db.php';
 
-// POSTデータを取得
-$user_id = $_POST['user_id'] ?? '';
-$suica_number = $_POST['suica_number'] ?? '';
-
-if (empty($user_id) || empty($suica_number)) {
-    die("ユーザーIDとSuica番号を入力してください。");
+// ログインしていない場合はログインページにリダイレクト
+if (!isset($_SESSION['user_name']) || !isset($_SESSION['user_id'])) {
+    $_SESSION['index_err_msg'] = "ログインしてください";
+    header("Location: index.php");
+    exit;
 }
 
+$userId = $_SESSION['user_id'];
+
 try {
-    // ユーザーの認証
-    $sqlUser = "SELECT * FROM users WHERE user_id = :user_id AND suica_number = :suica_number";
-    $stmtUser = $db->prepare($sqlUser);
-
-    if ($stmtUser === false) {
-        die("準備に失敗しました: " . implode(", ", $db->errorInfo()));
-    }
-
-    // パラメータをバインド
-    $stmtUser->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-    $stmtUser->bindParam(':suica_number', $suica_number, PDO::PARAM_STR);
-
-    // クエリの実行
-    $stmtUser->execute();
-    $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
-
-    if (!$user) {
-        die("認証に失敗しました。ユーザーIDとSuica番号を確認してください。");
-    }
-
     // ユーザーの予約情報を取得するクエリを準備
-    $sqlReservations = "SELECT * FROM reservations WHERE user_id = :user_id";
+    $sqlReservations = "SELECT * FROM reservations WHERE user_id = :userId";
     $stmtReservations = $db->prepare($sqlReservations);
 
     if ($stmtReservations === false) {
         die("準備に失敗しました: " . implode(", ", $db->errorInfo()));
     }
 
-    // パラメータをバインド
-    $stmtReservations->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-
-    // クエリの実行
+    $stmtReservations->bindParam(':userId', $userId, PDO::PARAM_INT);
     $stmtReservations->execute();
     $reservations = $stmtReservations->fetchAll(PDO::FETCH_ASSOC);
+
+    // スケジュール情報を取得して $reservations に追加する
+    foreach ($reservations as &$reservation) {
+        $sqlSchedule = "SELECT * FROM schedules WHERE schedule_id = :scheduleId";
+        $stmtSchedule = $db->prepare($sqlSchedule);
+        $stmtSchedule->bindParam(':scheduleId', $reservation['schedule_id'], PDO::PARAM_INT);
+        $stmtSchedule->execute();
+        $schedule = $stmtSchedule->fetch(PDO::FETCH_ASSOC);
+
+        // $schedule から必要な情報を $reservation に追加する
+        $reservation['departure_time'] = $schedule['departure_time'];
+        $reservation['arrival_time'] = $schedule['arrival_time'];
+    }
 } catch (PDOException $e) {
     die("クエリ実行に失敗しました: " . $e->getMessage());
 }
@@ -77,15 +68,14 @@ $seat_map = [
     169 => '20A', 170 => '20B', 171 => '20C', 172 => '20D', 173 => '21A', 174 => '21B', 175 => '21C', 176 => '21D',
     177 => '22A', 178 => '22B', 179 => '22C', 180 => '22D', 181 => '23A', 182 => '23B', 183 => '23C', 184 => '23D'
 ];
-
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>予約確認</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -95,22 +85,18 @@ $seat_map = [
                 <thead>
                     <tr>
                         <th>予約ID</th>
-                        <th>ユーザID</th>
-                        <th>席ID</th>
+                        <th>座席</th>
                         <th>車両番号</th>
-                        <th>スケジュールID</th>
-                        <th>予約時間</th>
+                        <th>出発時刻</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($reservations as $reservation): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($reservation['reservation_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['user_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($seat_map[$reservation['seat_id']], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['car_number'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['schedule_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($reservation['reservation_time'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['reservation_id']); ?></td>
+                            <td><?php echo htmlspecialchars($seat_map[$reservation['seat_id']]); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['car_number']); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['departure_time']); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -118,30 +104,12 @@ $seat_map = [
         <?php else: ?>
             <p>予約がありません。</p>
         <?php endif; ?>
+        <br>
+        <a href="index.php">戻る</a>
     </div>
-    <a href="index.php">戻る</a>
-
-    <h3>スケジュール一覧</h3>
-    <table border="1">
-        <tr>
-            <th>スケジュールID</th>
-            <th>時間</th>
-        </tr>
-        <?php
-        $schedule = [
-            38 => "08:00:00", 39 => "09:00:00", 40 => "08:05:00", 41 => "09:05:00", 
-            42 => "08:10:00", 43 => "09:10:00",44 => "08:15:00", 45 => "09:15:00", 
-            46 => "08:20:00", 47 => "09:20:00", 48 => "08:25:00", 49 => "09:25:00", 
-            50 => "08:30:00", 51 => "09:30:00", 52 => "08:35:00", 53 => "09:35:00"
-        ];
-
-        foreach ($schedule as $id => $time) {
-            echo "<tr>";
-            echo "<td>{$id}</td>";
-            echo "<td>{$time}</td>";
-            echo "</tr>";
-        }
-        ?>
-    </table>
 </body>
 </html>
+
+<?php
+$db = null;
+?>

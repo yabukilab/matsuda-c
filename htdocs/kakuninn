@@ -4,45 +4,29 @@ session_start();
 // データベース接続情報
 require 'db.php';
 
-// ユーザーがログインしているか確認
-if (!isset($_SESSION['user_id'])) {
+// ログインしていない場合はログインページにリダイレクト
+if (!isset($_SESSION['user_name']) || !isset($_SESSION['user_id'])) {
+    $_SESSION['index_err_msg'] = "ログインしてください";
     header("Location: index.php");
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$userId = $_SESSION['user_id'];
 
-// POSTされた場合の処理
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // フォームからの入力値を取得
-    $seat_id = $_POST['seat_id'];
-    $car_number = $_POST['car_number'];
-    $schedule_id = $_POST['schedule_id'];
+try {
+    // ユーザーの予約情報を取得するクエリを準備
+    $sqlReservations = "SELECT * FROM reservations WHERE user_id = :userId";
+    $stmtReservations = $db->prepare($sqlReservations);
 
-    try {
-        // 予約を追加するクエリを準備
-        $sqlInsert = "INSERT INTO reservations (user_id, seat_id, car_number, schedule_id, reservation_time)
-                      VALUES (:user_id, :seat_id, :car_number, :schedule_id, NOW())";
-        $stmtInsert = $db->prepare($sqlInsert);
-
-        if ($stmtInsert === false) {
-            die("準備に失敗しました: " . implode(", ", $db->errorInfo()));
-        }
-
-        // パラメータをバインド
-        $stmtInsert->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmtInsert->bindParam(':seat_id', $seat_id, PDO::PARAM_INT);
-        $stmtInsert->bindParam(':car_number', $car_number, PDO::PARAM_STR);
-        $stmtInsert->bindParam(':schedule_id', $schedule_id, PDO::PARAM_INT);
-
-        // クエリの実行
-        $stmtInsert->execute();
-
-        // 予約成功のメッセージを表示
-        $message = "予約が完了しました。";
-    } catch (PDOException $e) {
-        die("クエリ実行に失敗しました: " . $e->getMessage());
+    if ($stmtReservations === false) {
+        die("準備に失敗しました: " . implode(", ", $db->errorInfo()));
     }
+
+    $stmtReservations->bindParam(':userId', $userId, PDO::PARAM_INT);
+    $stmtReservations->execute();
+    $reservations = $stmtReservations->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("クエリ実行に失敗しました: " . $e->getMessage());
 }
 
 // 座席IDを座席番号に変換するための配列
@@ -71,49 +55,56 @@ $seat_map = [
     169 => '20A', 170 => '20B', 171 => '20C', 172 => '20D', 173 => '21A', 174 => '21B', 175 => '21C', 176 => '21D',
     177 => '22A', 178 => '22B', 179 => '22C', 180 => '22D', 181 => '23A', 182 => '23B', 183 => '23C', 184 => '23D'
 ];
-    // 他の座席のマッピングも同様に記述
-
-// スケジュール一覧
-$schedule_list = [
-    38 => "08:00:00", 39 => "09:00:00", 40 => "08:05:00", 41 => "09:05:00", 
-    42 => "08:10:00", 43 => "09:10:00",44 => "08:15:00", 45 => "09:15:00", 
-    46 => "08:20:00", 47 => "09:20:00", 48 => "08:25:00", 49 => "09:25:00", 
-    50 => "08:30:00", 51 => "09:30:00", 52 => "08:35:00", 53 => "09:35:00"
-    // 他のスケジュールの設定も同様に記述
-];
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>予約フォーム</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>予約確認</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h2>予約フォーム</h2>
-        <?php if (isset($message)): ?>
-            <p><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
+        <h2>予約確認</h2>
+        <?php if (count($reservations) > 0): ?>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>予約ID</th>
+                        <th>座席</th>
+                        <th>車両番号</th>
+                        <th>出発駅</th>
+                        <th>到着駅</th>
+                        <th>出発時刻</th>
+                        <th>到着時刻</th>
+                        <th>予約時刻</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($reservations as $reservation): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($reservation['reservation_id']); ?></td>
+                            <td><?php echo htmlspecialchars($seat_map[$reservation['seat_id']]); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['car_number']); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['departure_station']); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['arrival_station']); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['departure_time']); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['arrival_time']); ?></td>
+                            <td><?php echo htmlspecialchars($reservation['reservation_time']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>予約がありません。</p>
         <?php endif; ?>
-        <form action="okyaku.php" method="POST">
-            <label for="seat_id">席番号：</label>
-            <select name="seat_id" id="seat_id">
-                <?php foreach ($seat_map as $id => $seat): ?>
-                    <option value="<?php echo $id; ?>"><?php echo htmlspecialchars($seat, ENT_QUOTES, 'UTF-8'); ?></option>
-                <?php endforeach; ?>
-            </select><br><br>
-            <label for="car_number">車両番号：</label>
-            <input type="text" id="car_number" name="car_number" required><br><br>
-            <label for="schedule_id">スケジュール：</label>
-            <select name="schedule_id" id="schedule_id">
-                <?php foreach ($schedule_list as $id => $time): ?>
-                    <option value="<?php echo $id; ?>"><?php echo htmlspecialchars($time, ENT_QUOTES, 'UTF-8'); ?></option>
-                <?php endforeach; ?>
-            </select><br><br>
-            <input type="submit" value="予約する">
-        </form>
+        <br>
+        <a href="index.php">戻る</a>
     </div>
-    <a href="index2.php">戻る</a>
 </body>
 </html>
+
+<?php
+$db = null;
+?>
