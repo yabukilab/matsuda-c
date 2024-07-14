@@ -53,6 +53,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <title>予約キャンセル</title>
+    <link rel="stylesheet" type="text/css" href="sakujyo.css">
 </head>
 <body>
     <h1>予約キャンセル</h1>
