@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset='utf-8' />
+  <title>（実験・演習用）</title>
+</head>
+
+<body>
+</body>
+
+</html>
