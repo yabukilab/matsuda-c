@@ -1,0 +1,110 @@
+@charset "utf-8";
+.maru {
+    height:130px;
+    width:130px;
+    border-radius:50%;
+    line-height:130px;
+    text-align:center;
+    background:goldenrod;
+    font-size:75px;
+    margin: left 30px;
+  }
+
+  .maru2 {
+    height:130px;
+    width:130px;
+    border-radius:50%;
+    line-height:130px;
+    text-align:center;
+    background:silver;
+    font-size:75px;
+    margin-left:30px;
+  }
+  .maru3 {
+    height:130px;
+    width:130px;
+    border-radius:50%;
+    line-height:130px;
+    text-align:center;
+    background:#CC6600;
+    font-size:75px;
+    margin-left:30px;
+  }
+  .top1 img {
+    border-radius:50%;
+    width: 750px;
+    height: 450px;
+    }
+    h2 {
+        position: relative;
+        padding-left: 5em;
+      }
+      
+      h2 span {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding:  1.5rem;
+        color: #fff;
+        border-radius: 10px;
+        background: #be1879;
+      }
+      
+      h2 span i {
+        margin-right: 1rem;
+      }
+      
+      h2 span:after {
+        position: absolute;
+        top: calc(50% - 8px);
+        right: -11px;
+        width: 0;
+        height: 0;
+        content: '';
+        border-width: 10px 0 12px 12px;
+        border-style: solid;
+        border-color: transparent transparent transparent #ad0c65;
+      }
+      h2 {
+        position: relative;
+        padding: 1rem .5rem;
+      }
+      
+      h2:after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        content: '';
+        background-image: -webkit-gradient(linear, left top, right top, from(#ffd000), to(#d4b500));
+
+      }
+      .px{
+        font-size: 1.5em;
+      }
+      h1 {
+        position: relative;
+        padding: 1rem .5rem;
+      }
+      
+      h1:before,
+      h1:after {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        content: '';
+        background-image: -webkit-gradient(linear, right top, left top, from(#ff00d4), to(#d80da5));
+    
+      }
+      
+      h1:before {
+        top: 0;
+      }
+      
+      h1:after {
+        bottom: 0;
+      }
+      .rem{
+        font-size: 1.0em;}
