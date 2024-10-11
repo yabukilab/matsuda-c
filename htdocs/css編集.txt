@@ -1,0 +1,413 @@
+css編集
+@charset "utf-8";
+
+h1 {
+  position: relative;
+  padding: 1rem 2rem;
+  text-align: center;
+  color: #ffffff;
+  border-radius: 0 10px 10px 10px;
+  background: #1c9c0b; /* 見出しの色 */
+}
+
+h　1:before {
+  font-family: 'Font Awesome 5 Free';
+  font-size: 15px;
+  font-size: 1.5rem;
+  position: absolute;
+  top: -14px;
+  left: 0;
+  height: 30px;
+  padding: 0 1em;
+  content: ' 分野';
+  color: #fff;
+  border-radius: 10px 10px 0 0;
+  background: #a36217;
+}
+p.marushashin img {
+  border-radius: 35px; /* 写真を丸く */
+}
+.marushashin img {
+  width: 1450px;;
+  height: 600px;
+  }
+  
+.maru {
+    height:130px;
+    width:130px;
+    border-radius:50%;
+    line-height:130px;
+    text-align:center;
+    background:goldenrod;
+    font-size:75px;
+    margin-left: 15px;/* 一位 */
+
+  }
+
+  .maru2 {
+    height:130px;
+    width:130px;
+    border-radius:50%;
+    line-height:130px;
+    text-align:center;
+    background:silver;
+    font-size:75px;
+    margin-left:15px;/* 二位 */
+
+  }
+  .maru3 {
+    height:130px;
+    width:130px;
+    border-radius:50%;
+    line-height:130px;
+    text-align:center;
+    background:#CC6600;
+    font-size:75px;
+    margin-left:15px;/* 三位 */
+
+  }
+  .top1 img {
+    border-radius:100%;
+    width: 750px;
+    height: 450px;
+    }
+    .moji1 {
+      font-size: 2.8em;/* 一位のフォントの大きさ */
+
+    }
+    .moji2 {
+      font-size: 1.6em;/* 二位のフォントの大きさ */
+
+    }
+    .moji3 {
+      font-size: 1.3em;/* 営業時間の文字の大きさ */
+
+    }
+    .moji4 {
+      font-size: 1.4em;/* 一位の本文のフォントの大きさ */
+
+    }
+    .moji5 {
+      font-size: 1.0em;/* 詳細ホームページへの文字の大きさ */
+
+    }
+    .moji6 {
+      font-size: 1.2em;/* 一位以外の本文の大きさ */
+
+    }
+   
+
+
+    h15 {
+      display: inline-block;
+      text-align: center;
+      position: relative;
+      height: 45px; 
+    }
+    h15::before {
+      content: "";
+      position: absolute;
+      bottom: -29px;
+      left: -35px;
+      z-index: -2;
+      border: 20px solid #fd7424;
+      border-left-color: transparent;
+      width: 10px;
+    }
+    h15::after {
+      content: "";
+      position: absolute;
+      bottom: -29px;
+      right: -35px;
+      z-index: -2;
+      border: 20px solid #fd7424;
+      border-right-color: transparent;
+      width: 10px;
+    }
+    h15 span {
+      display: inline-block;
+      position: relative;
+      margin: 0;
+      padding: 0 80px;
+      line-height: 65px;
+      background-color: #fd7424;
+      color: #FFF;
+      font-size: 45px;
+      font-weight: bold;
+    }
+    h15 span::before {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 0;
+      border: none;
+      border-bottom: 10px solid transparent;
+      border-right: 15px solid  #fd7424;
+    }
+    h15 span::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      right: 0;
+      border: none;
+      border-bottom: 10px solid transparent;
+      border-left: 15px solid  #fd7424;/* 何を紹介するかのリボンの色すべて同じ色に変えて */
+
+    }
+
+    h2 {
+        position: relative;
+        padding-left: 5em;
+      }
+      
+      h3 span {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding:  2.5rem;
+        color: #fff;
+        border-radius: 10px;
+        background: #be1879;/* 見出しの色 */
+
+      }
+      
+      h3 span i {
+        margin-right: 3rem;
+      }
+      
+      h3 span:after {
+        position: absolute;
+        top: calc(50% - 8px);
+        right: -11px;
+        width: 0;
+        height: 0;
+        content: '';
+        border-width: 10px 0 12px 12px;
+        border-style: solid;
+        border-color: transparent transparent transparent #ad0c65;/* 見出しの色上と同じに */
+
+      }
+      h2{
+        position: relative;
+        padding: 1rem .5rem;
+      }
+      
+      h2:after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        content: '';
+        background-image: -webkit-gradient(linear, left top, right top, from(#ffd000), to(#d4b500));/* 一位の下線 */
+
+
+      }
+      h3{
+        position: relative;
+        padding: 1rem .5rem;
+      }
+      
+      h3:after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        content: '';
+        background-image: -webkit-gradient(linear, left top, right top, from(#c2c2c2), to(#c2c2c2));/* 二位の下線 */
+
+
+      }
+
+      h4{
+        position: relative;
+        padding: 1rem .5rem;
+      }
+      
+      h4:after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        content: '';
+        background-image: -webkit-gradient(linear, left top, right top, from(#e69346), to(#e69346));/* 三位の下線 */
+
+
+      }
+      h5{
+        position: relative;
+        padding: 1rem .5rem;
+      }
+      
+      h5:after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        content: '';
+        background-image: -webkit-gradient(linear, left top, right top, from(#1aec25), to(#1aec25));/* 行き方jr下線 */
+
+
+      }
+      h6{
+        position: relative;
+        padding: 1rem .5rem;
+      }
+      h6:after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        content: '';
+        background-image: -webkit-gradient(linear, left top, right top, from(#ffaae3), to(#ffaae3));/* 行き方新津田沼下線 */
+
+      }
+
+      h1.heading {
+        font-size: 3.5em; /* トップ文字サイズ */
+          font-weight: bold; /* 太字 */
+        }
+        h2.heading {
+          font-size: 3.5em; /* 一位文字サイズ */
+            font-weight: bold; /* 太字 */
+          }
+          h3.heading {
+            font-size: 3.0em; /* 二位文字サイズ */
+              font-weight: bold; /* 太字 */
+            }
+            h4.heading {
+              font-size: 3.0em; /* 三位文字サイズ */
+                font-weight: bold; /* 太字 */
+              }
+              h5.heading {
+                font-size: 1.9em; /* JR文字サイズ */
+                  font-weight: bold; /* 太字 */
+                }
+                h7.heading {
+                  font-size: 3.5em; /* アクセス方法文字サイズ */
+                    font-weight: bold; /* 太字 */
+                  }
+                  h6.heading {
+                    font-size: 1.9em; /* 新津田沼文字サイズ */
+                      font-weight: bold; /* 太字 */
+                    }
+                    h8.heading {
+                      font-size: 1.4em; /* JR所要時間文字サイズ */
+                        font-weight: bold; /* 太字 */
+                      }
+                      h9.heading {
+                        font-size: 1.5em; /* 新津田沼所要時間文字サイズ */
+                          font-weight: bold; /* 太字 */
+                        }
+              .t1 img {
+                width: 750px;
+                height: 450px;
+                }
+                .t2 img {
+                  border-radius:50%;
+                  width: 750px;
+                  height: 450px;
+                  }
+                  .t-image {
+                    display: flex;/* 一位の写真 */
+
+                    justify-content: space-between; /* 画像の間にスペースを均等に配置 */
+                  }
+                  
+                  .t-image img {
+                    max-width: 48%; /* 画像がコンテナを超えないようにサイズを調整 */
+                    height: auto; /* 画像の比率を保つ */
+                    flex: 1; /* 各画像の幅を等しくする */
+                    margin: 0 10px; /* 画像間に余白を追加する場合 */
+                  }
+                  
+                    
+                  p.b-image {
+                    display: flex;/* 二位・三位の写真 */
+
+                    text-align: center;
+                    justify-content: space-between;
+
+                  }
+                  .b-image img {
+                    max-width: 30%; /* 画像がコンテナを超えないようにサイズを調整 */
+                    height: auto; /* 画像の比率を保つ */
+                    flex: 10; /* 各画像の幅を等しくする */
+                    margin: 0 10px; /* 画像間に余白を追加する場合 */
+                  }
+                 
+                 #cards {
+                  display: flex;/* アクセス方法の写真三枚 */
+
+                  justify-content: center;
+                }
+                
+                .card {
+                  width: 300px;
+                  height: 300px;
+                  border: 1px solid lightgray;
+                }
+                
+                .card:nth-child(2) {
+                  margin-right: 10px;
+                  margin-left: 10px;
+                  margin-bottom: 5px;
+              
+                }
+                
+                .picture img {
+                  width: 100%;
+                  height: 200px;
+                }
+                
+                .description {
+                  width: 100%;
+                  height: 145px;
+                  padding-right: 12px;
+                  padding-left: 12px;
+                  box-sizing: border-box;
+                }
+                
+                .description p {
+                  font-size: 15px;
+                  color: rgb(25, 145, 55);/* アクセス方法文字色 */
+
+                }
+
+                .wrapper{
+                  min-height: 30vh;
+                  position: relative;/*←相対位置*/
+                  padding-bottom: 10px;/*←footerの高さ*/
+                  box-sizing: border-box;/*←全て含めてmin-height:100vhに*/
+              }
+              
+              footer{
+                  width: 100%;
+                  background-color: #89c7de;
+                  color: #fff;
+                  text-align: center;
+                  padding: 30px 0;/* 下のコピーライト */
+
+              
+               position: absolute;/*←絶対位置*/
+                  bottom: 0; /*下に固定*/
+              }
+              .btn {
+                display: inline-block;/* トップページに戻るボタン */
+                padding: 0.8em 3em;
+                background-color: #f10c7f; /* 背景色 */
+                box-shadow: 0 5px 0 #ca1c73; /* 影の太さ・色 */
+                border-radius: 60px;
+                color: #fff;
+                cursor: pointer;
+                text-decoration: none; /* 文字の下線を消す */
+              }
+              .btn:active {
+                box-shadow: none;
+                transform: translateY(5px);
+              }
+             

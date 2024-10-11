@@ -1,0 +1,67 @@
+/* 全体のスタイル設定 */
+body {
+    font-family: Arial, sans-serif; /* フォントの設定 */
+    line-height: 1.6; /* 行間を少し広げる */
+    margin: 0;
+    padding: 20px; /* ページの内側の余白 */
+    background-color: #f0f0f0; /* 背景色 */
+  }
+  
+  /* タイトルのスタイル */
+  h1 {
+    text-align: center; /* 中央揃え */
+    color: #FFD700; /* タイトルの色を黄色に設定 */
+  }
+  
+  /* 色の設定 */
+  .gold { color: #FFD700; }  /* 明るい金色 */
+  .silver { color: #C0C0C0; } /* 明るい銀色 */
+  .bronze { color: #8C4A3A; } /* より深い銅色 */
+  
+  /* 各店舗のスタイル */
+  div {
+    background-color: #fff; /* 各店舗の背景色 */
+    border: 1px solid #ccc; /* ボーダー */
+    border-radius: 8px; /* 角を丸める */
+    padding: 15px; /* 内側の余白 */
+    margin-bottom: 20px; /* 各店舗間のマージン */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 影を追加 */
+  }
+  
+  /* 画像を横並びにする設定 */
+  .image-row {
+    display: flex;
+    gap: 15px; /* ギャップを少し広げる */
+    justify-content: center; /* 画像を中央に揃える */
+  }
+  
+  img {
+    width: 280px; /* 画像サイズを少し小さくする */
+    border-radius: 10px; /* 角を丸める */
+  }
+  
+  /* アンカーリンクのスタイル */
+  nav {
+    background-color: #f8f9fa; /* 背景色を追加 */
+    padding: 10px; /* パディングを追加 */
+    border-radius: 5px; /* 角を丸める */
+  }
+  
+  nav a {
+    margin-right: 25px; /* マージンを調整 */
+    text-decoration: none;
+    color: #007BFF; /* 基本色はそのまま */
+    transition: color 0.3s; /* ホバー時のトランジションを追加 */
+  }
+  
+  nav a:hover {
+    text-decoration: underline;
+    color: #0056b3; /* ホバー時の色を変更 */
+  }
+  
+  /* 本文のフォントサイズ設定 */
+  p {
+    font-size: 24px;
+    margin: 10px 0; /* 段落間のマージンを追加 */
+  }
+  
