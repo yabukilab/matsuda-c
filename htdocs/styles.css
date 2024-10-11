@@ -1,0 +1,31 @@
+/* 色の設定 */
+.gold { color: gold; }
+.silver { color: silver; }
+.bronze { color: #cd7f32; }
+
+/* 背景色をネイビーブルーに設定 */
+body {
+    background-color: #001F3F; /* 深いネイビーブルー */
+    color: white; /* 全体の文字色を白に設定 */
+}
+
+/* 画像を横並びにする設定 */
+.image-row {
+    display: flex;
+    gap: 10px;
+}
+
+img {
+    width: 300px;
+}
+
+/* アンカーリンクのスタイル */
+nav a {
+    margin-right: 20px;
+    text-decoration: none;
+    color: #007BFF; /* アンカーリンクの色はそのまま */
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
