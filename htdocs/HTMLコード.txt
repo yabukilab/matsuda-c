@@ -1,0 +1,197 @@
+HTMLコード
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset='utf-8' />
+  <title>(実験・演習用)</title>
+  <link rel="stylesheet" href="style2.css">
+</head>
+
+  <center>
+   <h1 class="heading">見出し</h1>
+   
+   <p class="marushashin">
+      <img src="写真" alt=””></p>
+  <p class="moji1"><h15><span>詳細;</span></h15></p>
+    <p class="moji2">簡単な紹介<br>
+    行き方は下に<br>
+    <a href="#test1">アクセス方法はこちらのリンク</a></p>
+
+
+  </p></center>
+
+  <div class="maru">
+    <span>１</span>
+  </div>
+ 
+  <h2 class="heading">一位の店;</h2> 
+  <p class="moji3">営業時間: 場所:</p>
+  
+  <div class="t-image">
+    <img src="写真" alt=””>
+    <img src="写真" alt=””></p></div>
+    <p class="moji4">本文<br>
+     <br></p><p class="moji5">※注意書き<a href="ページリンク">ホームページ</a></p>
+  </p>
+  
+
+    <div class="maru2">
+      <span>２</span>
+      </div>
+  <h3 class="heading">二位紹介;</h2>
+  <p class="moji3">営業時間: 場所:</p>
+  
+  <div style="text-align: center;">
+  <div class="b-image">
+    <img src="写真" alt=””>
+    <img src="写真" alt=””>
+    <img src="写真" alt=””>
+  </div>
+  </div>
+  <p class="moji6">本文<br></p><p class="moji5">※注意書き<a href="リンク">二位の店</a></p>
+  </p>
+
+    <div class="maru3">
+      <span>３</span>
+    </div>
+  <h4 class="heading">三位紹介;</h4>
+  <p class="moji3">営業時間: 場所:</p>
+  <div style="text-align: center;">
+  <div class="b-image">
+      <img src="写真" alt=””>
+      <img src="写真" alt=””>
+      <img src="写真" alt=””>
+    </div>
+  </div>
+  <p class="moji6">本文<br>
+    </p>
+    <p class="moji5">※注意書き<a href="リンク">三位の店</a><br><br>
+<center><h7 class="heading">アクセス方法</h7></center>
+<p id="test1">
+<h5 class="heading">&#128649;JR津田沼駅→どこか</h5></p>
+  <h8 class="heading">所要時間:分秒</h8>
+  <div id="cards">
+    <div class="card">
+      <div class="picture"><img src="写真="" /></div>
+      <div class="description">
+        <p>
+        1.
+      行き方説明
+        </p>
+      </div>
+    </div>
+    <div class="card" id="card-center">
+      <div class="picture"><img src="写真" alt="" /></div>
+      <div class="description">
+        <p>
+        2. 行き方説明
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="picture"><img src="写真" alt="" /></div>
+      <div class="description">
+        <p>
+        3. 行き方説明
+        </p>
+      </div>
+    </div>
+    </div>
+  </div>
+  <div id="cards">
+    <div class="card">
+      <div class="picture"><img src="写真" alt="" /></div>
+      <div class="description">
+        <p>
+          4. 行き方説明
+        </p>
+      </div>
+    </div>
+    <div class="card" id="card-center">
+      <div class="picture"><img src="写真" alt="" /></div>
+      <div class="description">
+        <p>
+         5. 行き方説明
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="picture"><img src="IMG_2616.jpeg" alt="モリシア" /></div>
+      <div class="description">
+        <p>
+          6.階段を降りるとモリシアに到着です。
+        </p>
+      </div>
+    </div>
+  </div>
+
+ 
+  <h6 class="heading">&#128650;新津田沼駅→Morisia</h6></p>
+  <h9 class="heading">所要時間:6分7秒</h9><br>
+  <br>
+ <div id="cards">
+    <div class="card">
+      <div class="picture"><img src="写真="" /></div>
+      <div class="description">
+        <p>
+        1.
+      行き方説明
+        </p>
+      </div>
+    </div>
+    <div class="card" id="card-center">
+      <div class="picture"><img src="写真" alt="" /></div>
+      <div class="description">
+        <p>
+        2. 行き方説明
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="picture"><img src="写真" alt="" /></div>
+      <div class="description">
+        <p>
+        3. 行き方説明
+        </p>
+      </div>
+    </div>
+    </div>
+  </div>
+  <div id="cards">
+    <div class="card">
+      <div class="picture"><img src="写真" alt="" /></div>
+      <div class="description">
+        <p>
+          4. 行き方説明
+        </p>
+      </div>
+    </div>
+    <div class="card" id="card-center">
+      <div class="picture"><img src="写真" alt="" /></div>
+      <div class="description">
+        <p>
+         5. 行き方説明
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="picture"><img src="IMG_2616.jpeg" alt="モリシア" /></div>
+      <div class="description">
+        <p>
+          7.階段を降りるとモリシアに到着です。
+        </p>
+      </div>
+    </div>
+  </div>
+    </p>
+
+ <br><br><br><br><center><a href="トップページのURLを記入" class="btn">トップに戻る</a></center>
+  <div class="wrapper">
+    <footer>
+      <p>©2024 matsuda-team C</p>
+    </footer>
+  </div>
+</body>
+
+</html>
