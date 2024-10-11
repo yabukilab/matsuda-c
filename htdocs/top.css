@@ -1,0 +1,55 @@
+@charset "utf-8";
+
+.maru1{
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  text-align:center;
+  line-height: 80px;
+  border-radius: 50%;
+  border: solid 5px skyblue;
+}
+.maru2{
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  text-align:center;
+  line-height: 80px;
+  border-radius: 50%;
+  border: solid 5px skyblue;
+}
+.maru3{
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  text-align:center;
+  line-height: 80px;
+  border-radius: 50%;
+  border: solid 5px skyblue;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: #d400007c;
+  font-family: 'Noto Sans JP', sans-serif;
+  background: #f6f5f4;
+}
+header {
+  width: 100%;
+  height: 100px;
+  background: #d8f5a3;
+  display: flex; /* flexboxを作る */
+  align-items: center; /* 上下中央に揃える */
+  justify-content: space-between; /* 両端に配置 */
+  padding-left: 30px;
+  padding-right: 30px;
+  position: fixed;
+  top: 0;
+  box-sizing: border-box;
+}
+
+.font1{
+  font-size: 60px;
+  color: rgb(0, 153, 255);
+}
