@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>おすすめスポット診断</title>
+</head>
+
+<body>
+  <h1>おすすめスポット診断</h1>
+
+  <!-- 第1問 -->
+  <div id="question1">
+    <p>都会の賑やかな場所が好きですか？</p>
+    <button onclick="answerYes1()">はい</button>
+    <button onclick="answerNo1()">いいえ</button>
+  </div>
+
+  <!-- 第2問 -->
+  <div id="question2" style="display: none;">
+    <p>自然に囲まれた場所が好きですか？</p>
+    <button onclick="answerYes2()">はい</button>
+    <button onclick="answerNo2()">いいえ</button>
+  </div>
+
+  <!-- 第3問 -->
+  <div id="question3" style="display: none;">
+    <p>歴史や文化に興味がありますか？</p>
+    <button onclick="answerYes3()">はい</button>
+    <button onclick="answerNo3()">いいえ</button>
+  </div>
+
+  <!-- おすすめ結果 -->
+  <div id="resultYesYesYes" style="display: none;">
+    <p>あなたにおすすめのスポットは <strong>京都</strong> です！</p>
+    <p>歴史と自然、都会の魅力が詰まった場所です。</p>
+  </div>
+
+  <div id="resultYesYesNo" style="display: none;">
+    <p>あなたにおすすめのスポットは <strong>富士山</strong> です！</p>
+    <p>都会の近くで、自然を満喫できるスポットです。</p>
+  </div>
+
+  <div id="resultYesNoNo" style="display: none;">
+    <p>あなたにおすすめのスポットは <strong>東京渋谷</strong> です！</p>
+    <p>ショッピングやカフェ、賑やかな街があなたにピッタリです。</p>
+  </div>
+
+  <div id="resultNoYesYes" style="display: none;">
+    <p>あなたにおすすめのスポットは <strong>奈良</strong> です！</p>
+    <p>静かな環境で歴史と自然に触れられる場所です。</p>
+  </div>
+
+  <div id="resultNoYesNo" style="display: none;">
+    <p>あなたにおすすめのスポットは <strong>北海道</strong> です！</p>
+    <p>雄大な自然に囲まれた素晴らしい場所です。</p>
+  </div>
+
+  <div id="resultNoNoNo" style="display: none;">
+    <p>あなたにおすすめのスポットは <strong>沖縄</strong> です！</p>
+    <p>ビーチやリゾートを満喫できる、リラックスに最適な場所です。</p>
+  </div>
+
+  <script>
+    // 第1問の回答
+    function answerYes1() {
+      document.getElementById("question1").style.display = "none";
+      document.getElementById("question2").style.display = "block";
+    }
+
+    function answerNo1() {
+      document.getElementById("question1").style.display = "none";
+      document.getElementById("question2").style.display = "block";
+    }
+
+    // 第2問の回答
+    function answerYes2() {
+      document.getElementById("question2").style.display = "none";
+      document.getElementById("question3").style.display = "block";
+    }
+
+    function answerNo2() {
+      document.getElementById("question2").style.display = "none";
+      document.getElementById("question3").style.display = "block";
+    }
+
+    // 第3問の回答と結果表示
+    function answerYes3() {
+      document.getElementById("question3").style.display = "none";
+      if (document.getElementById("question1").style.display === "none" && document.getElementById("question2").style.display === "block") {
+        document.getElementById("resultYesYesYes").style.display = "block";
+      } else {
+        document.getElementById("resultNoYesYes").style.display = "block";
+      }
+    }
+
+    function answerNo3() {
+      document.getElementById("question3").style.display = "none";
+      if (document.getElementById("question1").style.display === "none" && document.getElementById("question2").style.display === "block") {
+        document.getElementById("resultYesNoNo").style.display = "block";
+      } else {
+        document.getElementById("resultNoNoNo").style.display = "block";
+      }
+    }
+  </script>
+
+</body>
+
+</html>
+
