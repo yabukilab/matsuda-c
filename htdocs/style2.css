@@ -386,5 +386,6 @@ p.marushashin img {
               .btn:active {
                 box-shadow: none;
                 transform: translateY(5px);
+                margin: 0;
               }
              
