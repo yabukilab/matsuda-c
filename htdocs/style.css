@@ -7,6 +7,7 @@ h1 {
   color: #ffffff;
   border-radius: 0 10px 10px 10px;
   background: #e92db0;
+  margin: 0;
 }
 
 h1:before {
@@ -69,9 +70,11 @@ p.marushashin img {
     }
     .moji1 {
       font-size: 2.8em;
+      text-align: center;
     }
     .moji2 {
       font-size: 1.6em;
+      text-align: center;
     }
     .moji3 {
       font-size: 1.3em;
@@ -93,6 +96,7 @@ p.marushashin img {
       text-align: center;
       position: relative;
       height: 45px; 
+      margin: 0;
     }
     h15::before {
       content: "";
@@ -183,10 +187,11 @@ p.marushashin img {
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 100%;
+        width: 150%;
         height: 5px;
         content: '';
         background-image: -webkit-gradient(linear, left top, right top, from(#ffd000), to(#d4b500));
+        ;
 
       }
       h3{
@@ -272,6 +277,7 @@ p.marushashin img {
                 h7.heading {
                   font-size: 3.5em; /* 大きな文字サイズ */
                     font-weight: bold; /* 太字 */
+                    text-align: center;
                   }
                   h6.heading {
                     font-size: 1.9em; /* 大きな文字サイズ */
@@ -323,6 +329,7 @@ p.marushashin img {
                  #cards {
                   display: flex;
                   justify-content: center;
+                  margin: 0;
                 }
                 
                 .card {
