@@ -2,12 +2,13 @@
 
 h1 {
   position: relative;
-  padding: 1rem 2rem;
+  padding: 1rem 2em;
   text-align: center;
   color: #ffffff;
   border-radius: 0 10px 10px 10px;
   background: #e92db0;
   margin: 0;
+  width: auto;
 }
 
 h1:before {
@@ -97,6 +98,7 @@ p.marushashin img {
       position: relative;
       height: 45px; 
       margin: 0;
+      width: auto;
     }
     h15::before {
       content: "";
@@ -203,7 +205,7 @@ p.marushashin img {
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 100%;
+        width: 150%;
         height: 5px;
         content: '';
         background-image: -webkit-gradient(linear, left top, right top, from(#c2c2c2), to(#c2c2c2));
@@ -219,7 +221,7 @@ p.marushashin img {
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 100%;
+        width: 150%;
         height: 5px;
         content: '';
         background-image: -webkit-gradient(linear, left top, right top, from(#e69346), to(#e69346));
@@ -234,7 +236,7 @@ p.marushashin img {
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 100%;
+        width: 150%;
         height: 5px;
         content: '';
         background-image: -webkit-gradient(linear, left top, right top, from(#1aec25), to(#1aec25));
@@ -368,18 +370,19 @@ p.marushashin img {
                   position: relative;/*←相対位置*/
                   padding-bottom: 10px;/*←footerの高さ*/
                   box-sizing: border-box;/*←全て含めてmin-height:100vhに*/
-              }
-              
-              footer{
-                  width: 100%;
+                }
+                
+                footer{
+                  width: 102%;
                   background-color: #89c7de;
                   color: #fff;
                   text-align: center;
-                  padding: 30px 0;
-              
-               position: absolute;/*←絶対位置*/
+                  padding:30px 0;
+                  position: absolute;/*←絶対位置*/
+                  margin: 0;
                   bottom: 0; /*下に固定*/
-              }
+                  margin-left: -43px;
+                }
               .btn {
                 display: inline-block;
                 padding: 0.8em 3em;
@@ -389,6 +392,7 @@ p.marushashin img {
                 color: #fff;
                 cursor: pointer;
                 text-decoration: none; /* 文字の下線を消す */
+                margin: 0;
               }
               .btn:active {
                 box-shadow: none;
