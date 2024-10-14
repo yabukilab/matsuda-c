@@ -8,7 +8,7 @@ h1 {
   border-radius: 0 10px 10px 10px;
   background: #e92db0;
   margin: 0;
-  width: 110%;
+  width: 130%;
 }
 
 h1:before {
@@ -99,7 +99,7 @@ p.marushashin img {
       position: relative;
       height: 45px; 
       margin: 0;
-      width: 110%;
+      width: 100%;
     }
     h15::before {
       content: "";
@@ -375,7 +375,7 @@ p.marushashin img {
                 }
                 
                 footer{
-                  width: auto;
+                  width: 150%;
                   background-color: #89c7de;
                   color: #fff;
                   text-align: center;
@@ -401,4 +401,6 @@ p.marushashin img {
                 box-shadow: none;
                 transform: translateY(5px);
               }
-             
+             .chu{
+              text-align: center;
+             }
