@@ -87,64 +87,6 @@ p.marushashin img {
       font-size: 1.2em;
     }
    
-
-
-    h15 {
-      display: inline-block;
-      text-align: center;
-      position: relative;
-      height: 45px; 
-    }
-    h15::before {
-      content: "";
-      position: absolute;
-      bottom: -29px;
-      left: -35px;
-      z-index: -2;
-      border: 20px solid #fd7424;
-      border-left-color: transparent;
-      width: 10px;
-    }
-    h15::after {
-      content: "";
-      position: absolute;
-      bottom: -29px;
-      right: -35px;
-      z-index: -2;
-      border: 20px solid #fd7424;
-      border-right-color: transparent;
-      width: 10px;
-    }
-    h15 span {
-      display: inline-block;
-      position: relative;
-      margin: 0;
-      padding: 0 80px;
-      line-height: 65px;
-      background-color: #fd7424;
-      color: #FFF;
-      font-size: 45px;
-      font-weight: bold;
-    }
-    h15 span::before {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 0;
-      border: none;
-      border-bottom: 10px solid transparent;
-      border-right: 15px solid  #fd7424;
-    }
-    h15 span::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      right: 0;
-      border: none;
-      border-bottom: 10px solid transparent;
-      border-left: 15px solid  #fd7424;
-    }
-
     h2 {
         position: relative;
         padding-left: 5em;
