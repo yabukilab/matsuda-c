@@ -27,13 +27,14 @@ h1:before {
 p.marushashin img {
   border-radius: 35px; /* ちょっとだけ角丸 */
 }
+
 .marushashin img {
-  width: auto;
-  height: 600px;
+  width: 90%;
+  height: 500px;
   text-align: center;
-  }
-  .div{text-align: center;
-  }
+  margin-left: 50px;  
+}
+  
   
 .maru {
     height:130px;
@@ -322,22 +323,23 @@ p.marushashin img {
                   bottom: 0; /*下に固定*/
                   margin-left: -43px;
                 }
-              .btn {
-                display: inline-block;
-                padding: 0.8em 3em;
-                background-color: #f10c7f; /* 背景色 */
-                box-shadow: 0 5px 0 #ca1c73; /* 影の太さ・色 */
-                border-radius: 60px;
-                color: #fff;
-                cursor: pointer;
-                text-decoration: none; /* 文字の下線を消す */
-                margin: auto;
-              }
-              .btn:active {
-                box-shadow: none;
-                transform: translateY(5px);
-                margin: 0;
-                text-align: center;
-              }
             
-             
+              a.btn_06 {
+                display: block;
+                text-align: center;
+                vertical-align: middle;
+                text-decoration: none;
+                width: 120px;
+                margin: auto;
+                padding: 1rem 4rem;
+                font-weight: bold;
+                border-radius: 100vh;
+                border-bottom: 7px solid #0686b2;
+                background: #27acd9;
+                color: #fff;
+              }
+              a.btn_06:hover {
+                margin-top: 6px;
+                border-bottom: 1px solid #0686b2;
+                color: #fff;
+              }
