@@ -19,7 +19,7 @@ p {
 }
 
 .marushashin img{ border-radius: 35px;
-  width: 1450px;;
+  width: auto;
   height: 600px;
 }
 .t-image img,
