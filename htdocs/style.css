@@ -18,7 +18,10 @@ p {
   padding: 0 20px;
 }
 
-.marushashin img,
+.marushashin img{ border-radius: 35px;
+  width: 1450px;;
+  height: 600px;
+}
 .t-image img,
 .b-image img {
   display: block;
@@ -35,7 +38,7 @@ p {
   line-height: 130px;
   text-align: center;
   font-size: 75px;
-  margin: 20px auto;
+  margin: 10px;
   display: block;
 }
 
