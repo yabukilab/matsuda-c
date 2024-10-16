@@ -27,8 +27,8 @@ p.marushashin img {
   border-radius: 35px; /* ちょっとだけ角丸 */
 }
 .marushashin img {
-  width: 1450px;;
-  height: 600px;
+  width: 90%;
+  height: 500px;
   }
   
 .maru {
@@ -86,63 +86,6 @@ p.marushashin img {
       font-size: 1.2em;
     }
    
-
-
-    h15 {
-      display: inline-block;
-      text-align: center;
-      position: relative;
-      height: 45px; 
-    }
-    h15::before {
-      content: "";
-      position: absolute;
-      bottom: -29px;
-      left: -35px;
-      z-index: -2;
-      border: 20px solid  #0ba4e0;
-      border-left-color: transparent;
-      width: 10px;
-    }
-    h15::after {
-      content: "";
-      position: absolute;
-      bottom: -29px;
-      right: -35px;
-      z-index: -2;
-      border: 20px solid  #0ba4e0;
-      border-right-color: transparent;
-      width: 10px;
-    }
-    h15 span {
-      display: inline-block;
-      position: relative;
-      margin: 0;
-      padding: 0 80px;
-      line-height: 65px;
-      background-color: #0ba4e0;
-      color: #FFF;
-      font-size: 45px;
-      font-weight: bold;
-    }
-    h15 span::before {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 0;
-      border: none;
-      border-bottom: 10px solid transparent;
-      border-right: 15px solid  #0ba4e0;
-    }
-    h15 span::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      right: 0;
-      border: none;
-      border-bottom: 10px solid transparent;
-      border-left: 15px solid   #0ba4e0;
-    }
 
     h2 {
         position: relative;
@@ -373,22 +316,26 @@ p.marushashin img {
                position: absolute;/*←絶対位置*/
                   bottom: 0; /*下に固定*/
               }
-              .btn {
-                display: inline-block;
-                padding: 0.8em 3em;
-                background-color: #f10c7f; /* 背景色 */
-                box-shadow: 0 5px 0 #ca1c73; /* 影の太さ・色 */
-                border-radius: 60px;
-                color: #fff;
-                cursor: pointer;
-                text-decoration: none; /* 文字の下線を消す */
-              }
-              .btn:active {
-                box-shadow: none;
-                transform: translateY(5px);
-              }
              
               .font_1 {
                 font-size: 33px;    /* 文字サイズ指定 */
                 color: #ff0000;     /* 文字色指定 */
+            }
+            a.btn_06 {
+              display: block;
+              text-align: center;
+              text-decoration: none;
+              width: 120px;
+              margin: auto;
+              padding: 1rem 4rem;
+              font-weight: bold;
+              border-radius: 100vh;
+              border-bottom: 7px solid #0686b2;
+              background: #27acd9;
+              color: #fff;
+            }
+            a.btn_06:hover {
+              margin-top: 6px;
+              border-bottom: 1px solid #0686b2;
+              color: #fff;
             }
