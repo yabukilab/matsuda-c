@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>おすすめスポット診断</title>
+  <link rel="stylesheet" href="style8.css">
 </head>
 
 <body>
@@ -12,75 +13,87 @@
 
   <!-- 第1問 -->
   <div id="question1">
-    <p>都会の賑やかな場所が好きですか？</p>
+    <p>一人で行く場所を探している</p>
     <button onclick="answerYes1()">はい</button>
     <button onclick="answerNo1()">いいえ</button>
   </div>
 
   <!-- 第2問 -->
   <div id="question2" style="display: none;">
-    <p>自然に囲まれた場所が好きですか？</p>
+    <p>お腹が減っている</p>
     <button onclick="answerYes2()">はい</button>
     <button onclick="answerNo2()">いいえ</button>
   </div>
 
   <!-- 第3問 -->
   <div id="question3" style="display: none;">
-    <p>歴史や文化に興味がありますか？</p>
+    <p>ゆったりと時間を過ごしたい</p>
     <button onclick="answerYes3()">はい</button>
     <button onclick="answerNo3()">いいえ</button>
   </div>
 
   <!-- おすすめ結果 -->
   <div id="resultYesYesYes" style="display: none;">
-    <p>あなたにおすすめのスポットは <strong>京都</strong> です！</p>
-    <p>歴史と自然、都会の魅力が詰まった場所です。</p>
+    <p>あなたにおすすめのスポットは <strong>螢明舎</strong> です！</p>
+    <p>京成電鉄 谷津駅から徒歩3分</p>
   </div>
 
   <div id="resultYesYesNo" style="display: none;">
-    <p>あなたにおすすめのスポットは <strong>富士山</strong> です！</p>
-    <p>都会の近くで、自然を満喫できるスポットです。</p>
+    <p>あなたにおすすめのスポットは <strong>スターバックス</strong> です！</p>
+    <p>駅から近くにあり、ちょっとした休憩に最適だと思いました。</p>
+    <p>詳細はこちらからお願いします!!!</p>
+    <p><a href="https://matsuda-c.pm-chiba.tech/starbucks.html">JR津田沼駅</a><br>
+      <a href="https://matsuda-c.pm-chiba.tech/starbucks2.html">新津田沼駅</a></p>
   </div>
 
   <div id="resultYesNoNo" style="display: none;">
-    <p>あなたにおすすめのスポットは <strong>東京渋谷</strong> です！</p>
-    <p>ショッピングやカフェ、賑やかな街があなたにピッタリです。</p>
+    <p>あなたにおすすめのスポットは <strong>イオンモール津田沼</strong> です！</p>
+    <p>様々なお店が並び、ショッピングをするのにとても最適です!</p>
+    <p>詳しくは<a href="https://matsuda-c.pm-chiba.tech/eon.html">こちら</a><br></p>
   </div>
 
   <div id="resultNoYesYes" style="display: none;">
-    <p>あなたにおすすめのスポットは <strong>奈良</strong> です！</p>
-    <p>静かな環境で歴史と自然に触れられる場所です。</p>
+    <p>あなたにおすすめのスポットは <strong>アンドユー</strong> です！</p>
+    <p><a href="https://matsuda-c.pm-chiba.tech/andu.html">こちら</a></p>
+    <p>駅周辺であってもゆったり過ごせる場所があります。</p>
   </div>
 
   <div id="resultNoYesNo" style="display: none;">
-    <p>あなたにおすすめのスポットは <strong>北海道</strong> です！</p>
-    <p>雄大な自然に囲まれた素晴らしい場所です。</p>
+    <p>あなたにおすすめのスポットは <strong>アンドユー</strong> です！</p>
+    <p><a href="https://matsuda-c.pm-chiba.tech/andu.html">こちら</a></p>
   </div>
 
   <div id="resultNoNoNo" style="display: none;">
-    <p>あなたにおすすめのスポットは <strong>沖縄</strong> です！</p>
-    <p>ビーチやリゾートを満喫できる、リラックスに最適な場所です。</p>
+    <p>あなたにおすすめのスポットは <strong>カラオケ</strong> です！</p>
+    <p><a href="リンクを入れる">リンクを入れる</a></p><br>
   </div>
 
   <script>
+    let isAlone = false;
+    let isHungry = false;
+
     // 第1問の回答
     function answerYes1() {
+      isAlone = true;
       document.getElementById("question1").style.display = "none";
       document.getElementById("question2").style.display = "block";
     }
 
     function answerNo1() {
+      isAlone = false;
       document.getElementById("question1").style.display = "none";
       document.getElementById("question2").style.display = "block";
     }
 
     // 第2問の回答
     function answerYes2() {
+      isHungry = true;
       document.getElementById("question2").style.display = "none";
       document.getElementById("question3").style.display = "block";
     }
 
     function answerNo2() {
+      isHungry = false;
       document.getElementById("question2").style.display = "none";
       document.getElementById("question3").style.display = "block";
     }
@@ -88,17 +101,23 @@
     // 第3問の回答と結果表示
     function answerYes3() {
       document.getElementById("question3").style.display = "none";
-      if (document.getElementById("question1").style.display === "none" && document.getElementById("question2").style.display === "block") {
+      if (isAlone && isHungry) {
         document.getElementById("resultYesYesYes").style.display = "block";
-      } else {
+      } else if (isAlone && !isHungry) {
+        document.getElementById("resultYesYesNo").style.display = "block";
+      } else if (!isAlone && isHungry) {
         document.getElementById("resultNoYesYes").style.display = "block";
+      } else {
+        document.getElementById("resultNoNoNo").style.display = "block";
       }
     }
 
     function answerNo3() {
       document.getElementById("question3").style.display = "none";
-      if (document.getElementById("question1").style.display === "none" && document.getElementById("question2").style.display === "block") {
+      if (isAlone && isHungry) {
         document.getElementById("resultYesNoNo").style.display = "block";
+      } else if (!isAlone && isHungry) {
+        document.getElementById("resultNoYesNo").style.display = "block";
       } else {
         document.getElementById("resultNoNoNo").style.display = "block";
       }
@@ -108,4 +127,3 @@
 </body>
 
 </html>
-
