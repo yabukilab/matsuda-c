@@ -8,7 +8,8 @@ h1 {
   border-radius: 0 10px 10px 10px;
   background: #1c9c0b;
 }
-
+.p{text-align: center;
+}
 h1:before {
   font-family: 'Font Awesome 5 Free';
   font-size: 15px;
@@ -27,8 +28,8 @@ p.marushashin img {
   border-radius: 35px; /* ちょっとだけ角丸 */
 }
 .marushashin img {
-  width: 1450px;;
-  height: 600px;
+  width: 90%;
+  height: 500px;
   }
   
 .maru {
@@ -86,64 +87,6 @@ p.marushashin img {
       font-size: 1.2em;
     }
    
-
-
-    h15 {
-      display: inline-block;
-      text-align: center;
-      position: relative;
-      height: 45px; 
-    }
-    h15::before {
-      content: "";
-      position: absolute;
-      bottom: -29px;
-      left: -35px;
-      z-index: -2;
-      border: 20px solid #fd7424;
-      border-left-color: transparent;
-      width: 10px;
-    }
-    h15::after {
-      content: "";
-      position: absolute;
-      bottom: -29px;
-      right: -35px;
-      z-index: -2;
-      border: 20px solid #fd7424;
-      border-right-color: transparent;
-      width: 10px;
-    }
-    h15 span {
-      display: inline-block;
-      position: relative;
-      margin: 0;
-      padding: 0 80px;
-      line-height: 65px;
-      background-color: #fd7424;
-      color: #FFF;
-      font-size: 45px;
-      font-weight: bold;
-    }
-    h15 span::before {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 0;
-      border: none;
-      border-bottom: 10px solid transparent;
-      border-right: 15px solid  #fd7424;
-    }
-    h15 span::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      right: 0;
-      border: none;
-      border-bottom: 10px solid transparent;
-      border-left: 15px solid  #fd7424;
-    }
-
     h2 {
         position: relative;
         padding-left: 5em;
@@ -386,5 +329,95 @@ p.marushashin img {
               .btn:active {
                 box-shadow: none;
                 transform: translateY(5px);
+                margin: 0;
               }
-             
+              a.btn_06 {
+                display: block;
+                text-align: center;
+                text-decoration: none;
+                width: 120px;
+                margin: auto;
+                padding: 1rem 4rem;
+                font-weight: bold;
+                border-radius: 100vh;
+                border-bottom: 7px solid #0686b2;
+                background: #27acd9;
+                color: #fff;
+              }
+              a.btn_06:hover {
+                margin-top: 6px;
+                border-bottom: 1px solid #0686b2;
+                color: #fff;
+              }
+
+              #cards2 {
+                display: flex;
+                justify-content: center;
+              }
+              
+              .card2 {
+                width: 300px;
+                height: 300px;
+                border: 1px solid lightgray;
+              }
+              
+              .card:nth-child(2) {
+                margin-right: 10px;
+                margin-left: 10px;
+                margin-bottom: 5px;
+            
+              }
+
+              #cards3 {
+                display: flex;
+                justify-content: center;
+              }
+              
+              .card3 {
+                width: 300px;
+                height: 300px;
+                border: 1px solid lightgray;
+              }
+              
+              .card:nth-child(2) {
+                margin-right: 10px;
+                margin-left: 10px;
+                margin-bottom: 5px;
+            
+              }
+
+              #cards4 {
+                display: flex;
+                justify-content: center;
+              }
+              
+              .card4 {
+                width: 300px;
+                height: 300px;
+                border: 1px solid lightgray;
+              }
+              
+              .card:nth-child(2) {
+                margin-right: 10px;
+                margin-left: 10px;
+                margin-bottom: 5px;
+            
+              }
+
+              #cards5 {
+                display: flex;
+                justify-content: center;
+              }
+              
+              .card5 {
+                width: 300px;
+                height: 300px;
+                border: 1px solid lightgray;
+              }
+              
+              .card:nth-child(2) {
+                margin-right: 10px;
+                margin-left: 10px;
+                margin-bottom: 5px;
+            
+              }

@@ -2,13 +2,14 @@
 
 h1 {
   position: relative;
-  padding: 1rem 2rem;
+  padding: 1rem 2em;
   text-align: center;
   color: #ffffff;
   border-radius: 0 10px 10px 10px;
   background: #e92db0;
 }
-
+.p{text-align: center;
+}
 h1:before {
   font-family: 'Font Awesome 5 Free';
   font-size: 15px;
@@ -26,10 +27,13 @@ h1:before {
 p.marushashin img {
   border-radius: 35px; /* ちょっとだけ角丸 */
 }
+
 .marushashin img {
-  width: 1450px;;
-  height: 600px;
-  }
+  width: 90%;
+  height: 500px;
+  text-align: center;  
+}
+  
   
 .maru {
     height:130px;
@@ -69,9 +73,12 @@ p.marushashin img {
     }
     .moji1 {
       font-size: 2.8em;
+      text-align: center;
     }
     .moji2 {
       font-size: 1.6em;
+      text-align: center;
+      
     }
     .moji3 {
       font-size: 1.3em;
@@ -85,69 +92,6 @@ p.marushashin img {
     .moji6 {
       font-size: 1.2em;
     }
-   
-
-
-    h15 {
-      display: inline-block;
-      text-align: center;
-      position: relative;
-      height: 45px; 
-    }
-    h15::before {
-      content: "";
-      position: absolute;
-      bottom: -29px;
-      left: -35px;
-      z-index: -2;
-      border: 20px solid  #ff5f5f;
-      border-left-color: transparent;
-      width: 10px;
-    }
-    h15::after {
-      content: "";
-      position: absolute;
-      bottom: -29px;
-      right: -35px;
-      z-index: -2;
-      border: 20px solid #ff5f5f;
-      border-right-color: transparent;
-      width: 10px;
-    }
-    h15 span {
-      display: inline-block;
-      position: relative;
-      margin: 0;
-      padding: 0 80px;
-      line-height: 65px;
-      background-color: #ff5f5f;
-      color: #FFF;
-      font-size: 45px;
-      font-weight: bold;
-    }
-    h15 span::before {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 0;
-      border: none;
-      border-bottom: 10px solid transparent;
-      border-right: 15px solid  #ff5f5f;
-    }
-    h15 span::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      right: 0;
-      border: none;
-      border-bottom: 10px solid transparent;
-      border-left: 15px solid  #ff5f5f;
-    }
-
-    h2 {
-        position: relative;
-        padding-left: 5em;
-      }
       
       h3 span {
         position: absolute;
@@ -187,6 +131,7 @@ p.marushashin img {
         height: 5px;
         content: '';
         background-image: -webkit-gradient(linear, left top, right top, from(#ffd000), to(#d4b500));
+        ;
 
       }
       h3{
@@ -269,15 +214,16 @@ p.marushashin img {
                 font-size: 1.9em; /* 大きな文字サイズ */
                   font-weight: bold; /* 太字 */
                 }
-                h7.heading {
+                p.heading {
                   font-size: 3.5em; /* 大きな文字サイズ */
                     font-weight: bold; /* 太字 */
+                    text-align: center;
                   }
                   h6.heading {
                     font-size: 1.9em; /* 大きな文字サイズ */
                       font-weight: bold; /* 太字 */
                     }
-                    h8.heading {
+                    p.head {
                       font-size: 1.4em; /* 大きな文字サイズ */
                         font-weight: bold; /* 太字 */
                       }
@@ -323,6 +269,8 @@ p.marushashin img {
                  #cards {
                   display: flex;
                   justify-content: center;
+                  margin: 0;
+                  text-align: center;
                 }
                 
                 .card {
@@ -361,30 +309,76 @@ p.marushashin img {
                   position: relative;/*←相対位置*/
                   padding-bottom: 10px;/*←footerの高さ*/
                   box-sizing: border-box;/*←全て含めてmin-height:100vhに*/
-              }
-              
-              footer{
+                }
+                
+                footer{
                   width: 100%;
                   background-color: #89c7de;
                   color: #fff;
                   text-align: center;
-                  padding: 30px 0;
-              
-               position: absolute;/*←絶対位置*/
+                  padding:30px 0;
+                  position: absolute;/*←絶対位置*/
+                  margin: 0;
                   bottom: 0; /*下に固定*/
-              }
-              .btn {
-                display: inline-block;
-                padding: 0.8em 3em;
-                background-color: #f10c7f; /* 背景色 */
-                box-shadow: 0 5px 0 #ca1c73; /* 影の太さ・色 */
-                border-radius: 60px;
+                  margin-left: -43px;
+                }
+            
+              a.btn_06 {
+                display: block;
+                text-align: center;
+                text-decoration: none;
+                width: 120px;
+                margin: auto;
+                padding: 1rem 4rem;
+                font-weight: bold;
+                border-radius: 100vh;
+                border-bottom: 7px solid #0686b2;
+                background: #27acd9;
                 color: #fff;
-                cursor: pointer;
-                text-decoration: none; /* 文字の下線を消す */
               }
-              .btn:active {
-                box-shadow: none;
-                transform: translateY(5px);
+              a.btn_06:hover {
+                margin-top: 6px;
+                border-bottom: 1px solid #0686b2;
+                color: #fff;
               }
-             
+
+              
+              #cards2 {
+                display: flex;
+                justify-content: center;
+                margin: 0;
+                text-align: center;
+              }
+              
+              .card2 {
+                width: 300px;
+                height: 300px;
+                border: 1px solid lightgray;
+              }
+              
+              .card:nth-child(2) {
+                margin-right: 10px;
+                margin-left: 10px;
+                margin-bottom: 5px;
+            
+              }
+              
+              #cards3 {
+                display: flex;
+                justify-content: center;
+                margin: 0;
+                text-align: center;
+              }
+              
+              .card3 {
+                width: 300px;
+                height: 300px;
+                border: 1px solid lightgray;
+              }
+              
+              .card:nth-child(2) {
+                margin-right: 10px;
+                margin-left: 10px;
+                margin-bottom: 5px;
+            
+              }
