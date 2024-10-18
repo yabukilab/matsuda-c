@@ -42,8 +42,12 @@ button {
   border: none;
   padding: 15px 30px; /* ボタンを少し小さく */
   font-size: 1.5em; /* ボタンの文字を小さく */
- 
-
+  border-radius: 50px; /* ボタンを丸く */
+  cursor: pointer;
+  margin: 15px;
+  transition: background-color 0.3s;
 }
-  
-  
+
+button:hover {
+  background-color: #0056b3;
+}
