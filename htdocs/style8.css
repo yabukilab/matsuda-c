@@ -15,7 +15,8 @@ h1 {
   text-align: center;
   color: #300;
   font-size:2em ; /* 文字を小さく */
-  margin-bottom: auto;
+  margin: auto;
+
 }
 
 p {
