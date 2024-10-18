@@ -14,8 +14,8 @@ body {
 h1 {
   text-align: center;
   color: #300;
-  font-size: 0.5; /* 文字を小さく */
-  margin-bottom: 40px;
+  font-size:2em ; /* 文字を小さく */
+  margin-bottom: auto;
 }
 
 p {
