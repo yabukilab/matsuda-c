@@ -1,0 +1,236 @@
+@charset "utf-8";
+
+.maru1{
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+  text-align:center;
+  line-height: 150px;
+  border-radius: 50%;
+  border: solid 5px rgb(255, 217, 0);
+}
+.maru2{
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+  text-align:center;
+  line-height: 150px;
+  border-radius: 50%;
+  border: solid 5px  rgb(255, 217, 0);
+}
+.maru3{
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+  text-align:center;
+  line-height: 150px;
+  border-radius: 50%;
+  border: solid 5px  rgb(255, 217, 0);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: #d400007c;
+  font-family: 'Noto Sans JP', sans-serif;
+  background: #f6f5f4;
+}
+header {
+  width: 100%;
+  height: 100px;
+  background: #d8f5a3;
+  display: flex; /* flexboxを作る */
+  align-items: center; /* 上下中央に揃える */
+  justify-content: space-between; /* 両端に配置 */
+  padding-left: 30px;
+  padding-right: 30px;
+  top: 0;
+  box-sizing: border-box;
+}
+
+.font1{
+  font-size: 90px;
+  color: rgb(0, 0, 0);
+  text-align:center;
+}
+
+.container {
+	position: relative;
+	width: 440px;
+	max-width: 100%;
+	height: 100px;;
+  margin: auto;
+}
+
+
+.image {
+    position: absolute;
+    width: 800px;
+    height: 350px;
+    opacity: 0;
+    animation: change-img-anim 30s infinite;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  
+}
+
+h2 {
+  padding: 1rem 2rem;
+  border: 3px dashed #005ce6;
+  text-align: center;
+  color: rgb(20, 83, 73);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+
+
+
+h3 {
+  font-size: 30px;
+  font-size: 3rem;
+  position: relative;;
+  padding: 1.5rem;
+  text-align: center;
+  color: black;
+}
+
+h3 span {
+  font-size: 18px;
+  font-size: 1.8rem;
+  display: block;
+}
+
+h3:before {
+  position: absolute;
+  bottom: -10px;
+  left: calc(50% - 30px);
+  width: 60px;
+  height: 5px;
+  content: '';
+  border-radius: 3px;
+  background: #01c93d;
+}
+
+
+.item-list {
+  display: flex;
+  justify-content: space-between;
+}
+.item-list .item {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.item-list .item .image {
+  margin: 0;
+  padding: 0;
+}
+.item-list .item .image img {
+  width: 100%;
+}
+.item-list .item .title {
+  margin: 10px 0 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: 20px;
+}
+.item-list .item .description {
+  margin: 5px 0 0;
+  padding: 0;
+  font-size: 16px;
+}
+.wrapper{
+  min-height: 30vh;
+  position: relative;/*←相対位置*/
+  padding-bottom: 10px;/*←footerの高さ*/
+  box-sizing: border-box;/*←全て含めてmin-height:100vhに*/
+}
+
+footer{
+  width: 102%;
+  background-color: #89c7de;
+  color: #fff;
+  text-align: center;
+  padding:30px 0;
+  position: absolute;/*←絶対位置*/
+  margin: 0;
+  bottom: 0; /*下に固定*/
+  margin-left: -43px;
+}
+a.btn_07 {
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	width: 90px;
+	margin: auto;
+	padding: 1rem 4rem;
+	font-weight: bold;
+	color: #000000;
+	border-bottom: 2px solid #1379ff;
+	border-radius: 100vh;
+	box-shadow: 0 2px 7px rgb(0, 204, 255);
+	-webkit-box-shadow: 0 2px 7px rgba(0, 0, 0, .3);
+	transition: 0.5s;
+}
+a.btn_07:hover {
+	color: #fff;
+	background: #0073df;
+	border-bottom: 2px solid #fff;
+	transform: translateY(3px);
+}
+
+/* 全体設定 */
+.css-carousel-slider3 {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+.css-carousel-slider3 img {
+  width: 100%;
+  height: 500px;
+  vertical-align: top;
+}
+
+/* スライド設定 */
+.css-carousel-slider3 .slide-wrap {
+  width: 300%;
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  animation: css-carousel-slider3 15s infinite;
+  animation-delay: 2s;
+}
+.css-carousel-slider3 .slide-wrap-main {
+  width: 100%;
+  z-index: 1;
+  animation: css-carousel-slider-main3 15s infinite;
+  animation-delay: 2s;
+}
+.css-carousel-slider3 .slide {
+  width: 100%;
+}
+
+/* スライダーアニメーションの設定 */
+@keyframes css-carousel-slider3 {
+  0% { transform: translateX(0); }
+
+  27.3% { transform: translateX(calc(1 / 3 * -100%)); }
+  33.3% { transform: translateX(calc(1 / 3 * -100%)); }
+
+  60.6% { transform: translateX(calc(2 / 3 * -100%)); }
+  66.6% { transform: translateX(calc(2 / 3 * -100%)); }
+
+  94% { transform: translateX(calc(3 / 3 * -100%)); }
+  100% { transform: translateX(calc(3 / 3 * -100%)); }
+}
+
+@keyframes css-carousel-slider-main3 {
+  0% { transform: translateX(100%); }
+  66.6% { transform: translateX(100%); }
+  94% { transform: translateX(0%);}
+}
