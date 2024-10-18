@@ -7,6 +7,13 @@
 
     <!-- 外部CSSファイルのリンク -->
     <link rel="stylesheet" href="styles.css">
+
+    <script>
+        function scrollToTop(event) {
+          event.preventDefault(); // デフォルトのリンク動作を無効化
+          window.scrollTo({ top: 0, behavior: 'smooth' }); // スムーズにトップへスクロール
+        }
+      </script>
 </head>
 <body>
 
@@ -14,7 +21,7 @@
     <nav>
         <a href="#recommend">津田沼おすすめ飲食店 Top 3</a>
         <a href="#nearby">近場の飲食店 Top 3</a>
-        <a href="index.html">トップページへ戻る</a> <!-- index.htmlへのリンクを追加 -->
+        <a href="index.html" onclick="scrollToTop(event)">トップページへ戻る</a> <!-- index.htmlへのリンクを追加 -->
     </nav>
 
     <!-- トップページへのリンク -->
