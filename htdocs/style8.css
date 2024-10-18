@@ -13,8 +13,8 @@ body {
 
 h1 {
   text-align: center;
-  color: #333;
-  font-size: 2.5em; /* 文字を小さく */
+  color: #300;
+  font-size: 1.0; /* 文字を小さく */
   margin-bottom: 40px;
 }
 
@@ -42,8 +42,12 @@ button {
   border: none;
   padding: 15px 30px; /* ボタンを少し小さく */
   font-size: 1.5em; /* ボタンの文字を小さく */
- 
-
+  border-radius: 50px; /* ボタンを丸く */
+  cursor: pointer;
+  margin: 15px;
+  transition: background-color 0.3s;
 }
-  
-  
+
+button:hover {
+  background-color: #0056b3;
+}
