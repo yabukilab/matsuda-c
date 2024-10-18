@@ -349,3 +349,36 @@ p.b-image {
   height: auto; /* 画像の比率を保つ */
   flex: 10; 
 }
+btn {
+  display: inline-block;
+  padding: 0.8em 3em;
+  background-color: #f10c7f; /* 背景色 */
+  box-shadow: 0 5px 0 #ca1c73; /* 影の太さ・色 */
+  border-radius: 60px;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none; /* 文字の下線を消す */
+}
+.btn:active {
+  box-shadow: none;
+  transform: translateY(5px);
+  margin: 0;
+}
+a.btn_06 {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  width: 120px;
+  margin: auto;
+  padding: 1rem 4rem;
+  font-weight: bold;
+  border-radius: 100vh;
+  border-bottom: 7px solid #0686b2;
+  background: #27acd9;
+  color: #fff;
+}
+a.btn_06:hover {
+  margin-top: 6px;
+  border-bottom: 1px solid #0686b2;
+  color: #fff;
+}
