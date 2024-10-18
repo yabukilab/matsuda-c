@@ -339,3 +339,57 @@ p.marushashin img {
               border-bottom: 1px solid #0686b2;
               color: #fff;
             }
+
+            #cards2 {
+              display: flex;
+              justify-content: center;
+            }
+            
+            .card2 {
+              width: 300px;
+              height: 300px;
+              border: 1px solid lightgray;
+            }
+            
+            .card:nth-child(2) {
+              margin-right: 10px;
+              margin-left: 10px;
+              margin-bottom: 5px;
+          
+            }
+
+            #cards3 {
+              display: flex;
+              justify-content: center;
+            }
+            
+            .card3 {
+              width: 300px;
+              height: 300px;
+              border: 1px solid lightgray;
+            }
+            
+            .card:nth-child(2) {
+              margin-right: 10px;
+              margin-left: 10px;
+              margin-bottom: 5px;
+          
+            }
+
+            #cards4 {
+              display: flex;
+              justify-content: center;
+            }
+            
+            .card4 {
+              width: 300px;
+              height: 300px;
+              border: 1px solid lightgray;
+            }
+            
+            .card:nth-child(2) {
+              margin-right: 10px;
+              margin-left: 10px;
+              margin-bottom: 5px;
+          
+            }

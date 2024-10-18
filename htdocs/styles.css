@@ -29,3 +29,7 @@ nav a {
 nav a:hover {
     text-decoration: underline;
 }
+.large-image {
+    width: 500px; /* 幅を大きめに設定（例：500px） */
+    height: auto; /* アスペクト比を保つため高さを自動に */
+}
