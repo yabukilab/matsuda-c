@@ -158,7 +158,6 @@ footer{
   position: absolute;/*←絶対位置*/
   margin: 0;
   bottom: 0; /*下に固定*/
-  margin-left: -43px;
 }
 a.btn_07 {
 	display: block;
