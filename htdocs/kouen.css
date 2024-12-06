@@ -1,0 +1,23 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Lato', sans-serif;
+    background: linear-gradient(to right, #7f9f9f, #c9a9b6); 
+    color: #333; 
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  
+  img {
+    width: 500px;
+    hight: 800px;
+  }
+  
+  .fade-in {
+    opacity: 0;
+    animation: fadeInAnimation 1.5s ease-out forwards;
+  }
