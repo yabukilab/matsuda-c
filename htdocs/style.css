@@ -1,4 +1,6 @@
-* {
+*
+resizeimage img { width: 100%; }
+ {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -137,6 +139,53 @@ footer {
   padding: 30px;
   font-size: 14px;
   margin-top: 40px;
+}
+
+
+
+@mekia (max-width: 770px)   {
+h2 {
+  font-size: 1.5em;
+}
+
+p {
+  font-size: 45px;
+}
+
+section {
+  margin-bottom: 20px;
+  margin-left: 40px;
+  margin-right: 40px;
+  padding: 10px;
+}
+}
+
+a.btn-radius-solid {
+background: #f1e767;
+background: -webkit-gradient(linear, left top, left bottom, from(#f1e767), to(#feb645));
+background: -webkit-linear-gradient(top, #f1e767 0%, #feb645 100%);
+background: linear-gradient(to bottom, #f1e767 0%, #feb645 100%);
+padding: 20px 40px;
+/* ボタンの内側の余白を大きくする */
+font-size: 1.5rem;
+/* フォントサイズを大きくする */
+border-radius: 50px;
+/* ボタンの角を丸く */
+}
+
+a.btn-radius-solid:hover {
+background: -webkit-gradient(linear, left bottom, left top, from(#f1e767), to(#feb645));
+background: -webkit-linear-gradient(bottom, #f1e767 0%, #feb645 100%);
+background: linear-gradient(to top, #f1e767 0%, #feb645 100%);
+}
+
+.center {
+text-align: center;
+}
+
+.btn-radius-solid {
+display: inline-block;
+/* ボタンを中央に配置するために inline-block を設定 */
 }
 
 
