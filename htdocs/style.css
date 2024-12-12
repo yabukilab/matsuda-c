@@ -4,7 +4,11 @@ html {
   box-sizing: border-box;
 }
 
-resizeimage img { width: 100%; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 
 body {
   font-family: 'Lato', sans-serif;
