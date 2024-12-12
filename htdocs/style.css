@@ -141,23 +141,21 @@ footer {
   margin-top: 40px;
 }
 
-
-
-@media (max-width: 770px)   {
-h2 {
-  font-size: 1.5em;
+/* ウィンドウ幅が768px以下の場合（タブレット＆スマホ向け） */
+@media screen and (max-width: 768px) {
+  body {
+      font-size: 14px; /* フォントサイズを小さく */
+      line-height: 1.6; /* 行間を少し広げる */
+      margin: 10px; /* 余白を減らす */
+  }
 }
 
-p {
-  font-size: 45px;
-}
-
-section {
-  margin-bottom: 20px;
-  margin-left: 40px;
-  margin-right: 40px;
-  padding: 10px;
-}
+/* ウィンドウ幅が480px以下の場合（スマホ向け） */
+@media screen and (max-width: 480px) {
+  body {
+      font-size: 12px;
+      margin: 5px;
+  }
 }
 
 a.btn-radius-solid {

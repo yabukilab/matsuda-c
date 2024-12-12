@@ -13,10 +13,28 @@
   }
   
   img {
-    width: 500px;
+    width: 1000px;
   }
   
   .fade-in {
     opacity: 0;
     animation: fadeInAnimation 1.5s ease-out forwards;
   }
+
+  
+/* ウィンドウ幅が768px以下の場合（タブレット＆スマホ向け） */
+@media screen and (max-width: 768px) {
+  body {
+      font-size: 14px; /* フォントサイズを小さく */
+      line-height: 1.6; /* 行間を少し広げる */
+      margin: 10px; /* 余白を減らす */
+  }
+}
+
+/* ウィンドウ幅が480px以下の場合（スマホ向け） */
+@media screen and (max-width: 480px) {
+  body {
+      font-size: 12px;
+      margin: 5px;
+  }
+}
