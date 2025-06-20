@@ -1,27 +1,14 @@
 <?php
-// login.php（1から構築するログイン画面）
 session_start();
+require 'db.php';
 
-// データベース接続
-$ホスト = 'localhost';
-$データベース = 'piano';
-$ユーザー = 'root';
-$パスワード = '';
-
-try {
-    $接続 = new PDO("mysql:host=$ホスト;dbname=$データベース;charset=utf8", $ユーザー, $パスワード);
-} catch (PDOException $エラー内容) {
-    die('データベース接続エラー: ' . $エラー内容->getMessage());
-}
-
-// ログイン処理
 $エラーメッセージ = '';
 if (isset($_POST['ログイン'])) {
-    $受講者番号 = $_POST['受講者番号'] ?? '';
-    $入力パスワード = $_POST['パスワード'] ?? '';
+    $受講者番号 = $_POST['受講者番号'];
+    $パスワード = $_POST['パスワード'];
 
     $照合 = $接続->prepare("SELECT * FROM mst_students WHERE student_id = ? AND password = ?");
-    $照合->execute([$受講者番号, $入力パスワード]);
+    $照合->execute([$受講者番号, $パスワード]);
 
     if ($照合->fetch()) {
         $_SESSION['student_id'] = $受講者番号;
@@ -35,66 +22,80 @@ if (isset($_POST['ログイン'])) {
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>ログイン | ピアノ個人レッスン予約</title>
-    <style>
-        body {
-            background-color: #f0f8ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        .login-form {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            width: 300px;
-            text-align: center;
-        }
-        h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-        button {
-            background-color: #4682b4;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            width: 100%;
-            border-radius: 6px;
-            font-size: 1em;
-            cursor: pointer;
-        }
-        .error {
-            color: red;
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>ログイン | ピアノ個人レッスン予約</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: linear-gradient(to right, #fbeff5, #e6f0ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      width: 320px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 16px;
+      color: #d63384;
+    }
+    label {
+      display: block;
+      margin: 12px 0 4px;
+      text-align: left;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff69b4;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ff85c1;
+    }
+    .error {
+      margin-top: 10px;
+      color: #d80073;
+      font-size: 0.9em;
+    }
+  </style>
 </head>
 <body>
-<div class="login-form">
+  <div class="login-container">
     <h2>ピアノ個人レッスン予約</h2>
-    <p>ユーザーIDとパスワードを入力して下さい。</p>
     <form method="post">
-        <input type="text" name="受講者番号" placeholder="受講者番号" required>
-        <input type="password" name="パスワード" placeholder="パスワード" required>
-        <button type="submit" name="ログイン">ログイン</button>
-        <?php if ($エラーメッセージ): ?>
-            <div class="error"> <?= htmlspecialchars($エラーメッセージ) ?> </div>
-        <?php endif; ?>
+      <label for="student_id">受講者番号</label>
+      <input type="text" name="受講者番号" id="student_id" placeholder="例: 1234567" required>
+
+      <label for="password">パスワード</label>
+      <input type="password" name="パスワード" id="password" placeholder="パスワード" required>
+
+      <button type="submit" name="ログイン">ログイン</button>
+      <?php if ($エラーメッセージ): ?>
+        <div class="error"> <?= htmlspecialchars($エラーメッセージ) ?> </div>
+      <?php endif; ?>
     </form>
-</div>
+  </div>
 </body>
 </html>
