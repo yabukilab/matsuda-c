@@ -7,5 +7,131 @@
 </head>
 <body>
   <h1>kkk</h1>
+  <?php
+// db.php（DB接続設定）
+$dsn = 'mysql:host=localhost;dbname=piano;charset=utf8';
+$user = 'root';
+$password = '';
+try {
+    $pdo = new PDO($dsn, $user, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die('DB接続失敗: ' . $e->getMessage());
+}
+
+session_start();
+
+function h($str) {
+    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+}
+
+// HTMLヘッダーとCSS
+function print_header($title) {
+    echo '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">';
+    echo "<title>{$title}</title>";
+    echo '<style>
+        body { font-family: "Hiragino Maru Gothic Pro", sans-serif; background: #fff0f5; color: #333; padding: 20px; }
+        h2, h3 { color: #d66ba0; }
+        form { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #eee; }
+        input, button { margin: 10px 0; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        input[type="text"], input[type="password"], input[type="date"], input[type="time"] { width: 100%; max-width: 300px; }
+        button { background-color: #ff99cc; color: white; cursor: pointer; }
+        button:hover { background-color: #ff66aa; }
+        a { margin-right: 10px; color: #d66ba0; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .message { padding: 10px; margin: 10px 0; background: #ffe0ec; border-left: 5px solid #d66ba0; }
+    </style></head><body>';
+}
+
+function print_footer() {
+    echo '</body></html>';
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['student_number'], $_POST['password'])) {
+    require 'db.php';
+    $stmt = $pdo->prepare('SELECT * FROM mst_students WHERE student_number = ? AND password = ?');
+    $stmt->execute([$_POST['student_number'], $_POST['password']]);
+    $user = $stmt->fetch();
+    if ($user) {
+        $_SESSION['student_number'] = $user['student_number'];
+        header('Location: index.php');
+        exit;
+    } else {
+        print_header('ログインエラー');
+        echo "<div class='message'>ログインに失敗しました</div>";
+        print_footer();
+        exit;
+    }
+}
+
+if (!isset($_SESSION['student_number'])) {
+    print_header('ログイン');
+    echo '<h2>ログイン</h2><form method="POST">';
+    echo '受講者番号: <input type="text" name="student_number" required><br>';
+    echo 'パスワード: <input type="password" name="password" required><br>';
+    echo '<button type="submit">ログイン</button></form>';
+    print_footer();
+    exit;
+}
+
+print_header('ダッシュボード');
+echo "<h2>ようこそ {$_SESSION['student_number']} さん</h2>";
+echo '<a href="?page=reserve">予約する</a> | <a href="?page=confirm">予約確認</a> | <a href="?page=delete">予約削除</a> | <a href="?logout">ログアウト</a><hr>';
+
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: index.php');
+    exit;
+}
+
+if (isset($_GET['page']) && $_GET['page'] === 'reserve') {
+    echo '<h3>予約画面</h3>';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM comments WHERE lesson_date = ? AND lesson_time = ?');
+        $stmt->execute([$_POST['date'], $_POST['time']]);
+        if ($stmt->fetchColumn() == 0) {
+            $stmt = $pdo->prepare('INSERT INTO comments (lesson_date, lesson_time, teacher_name, lesson_type, student_number) VALUES (?, ?, ?, ?, ?)');
+            $stmt->execute([
+                $_POST['date'], $_POST['time'], $_POST['teacher'], $_POST['type'], $_SESSION['student_number']
+            ]);
+            echo "<div class='message'>予約が完了しました</div>";
+        } else {
+            echo "<div class='message'>満枠です。他の時間を選んでください</div>";
+        }
+    }
+    echo '<form method="POST">';
+    echo '日付: <input type="date" name="date" required><br>';
+    echo '時間: <input type="time" name="time" required><br>';
+    echo '講師名: <input type="text" name="teacher"><br>';
+    echo 'レッスン種別: <input type="text" name="type"><br>';
+    echo '<button type="submit">予約</button></form>';
+}
+
+if (isset($_GET['page']) && $_GET['page'] === 'confirm') {
+    echo '<h3>予約確認</h3>';
+    $stmt = $pdo->prepare('SELECT * FROM comments WHERE student_number = ?');
+    $stmt->execute([$_SESSION['student_number']]);
+    foreach ($stmt as $row) {
+        echo "<div class='message'>日付: " . h($row['lesson_date']) . " 時間: " . h($row['lesson_time']) . " 講師: " . h($row['teacher_name']) . " 種別: " . h($row['lesson_type']) . "</div>";
+    }
+}
+
+if (isset($_GET['page']) && $_GET['page'] === 'delete') {
+    echo '<h3>予約削除</h3>';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $stmt = $pdo->prepare('DELETE FROM comments WHERE student_number = ? AND lesson_date = ? AND lesson_time = ?');
+        $stmt->execute([
+            $_SESSION['student_number'], $_POST['date'], $_POST['time']
+        ]);
+        echo '<div class="message">予約を削除しました</div>';
+    }
+    echo '<form method="POST">';
+    echo '日付: <input type="date" name="date" required><br>';
+    echo '時間: <input type="time" name="time" required><br>';
+    echo '<button type="submit">削除</button></form>';
+}
+
+print_footer();
+?>
 </body>
 </html>
