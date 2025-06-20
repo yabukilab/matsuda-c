@@ -1,5 +1,5 @@
 <?php
-// piano_app.php
+// login.php（ログイン画面のみ）
 session_start();
 
 // DB接続（MySQLが必要）
@@ -22,145 +22,78 @@ if (isset($_POST['login'])) {
     $stmt->execute([$id, $pw]);
     if ($stmt->fetch()) {
         $_SESSION['student_id'] = $id;
+        header("Location: home.php"); // ログイン後の画面へ遷移
+        exit;
     } else {
-        $error = 'ログイン失敗';
+        $error = 'ログインに失敗しました。受講者番号とパスワードを確認してください。';
     }
-}
-
-// ログアウト処理
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header("Location: piano_app.php");
-    exit;
-}
-
-// 予約処理
-$reserve_msg = '';
-if (isset($_POST['reserve'])) {
-    $date = $_POST['date'];
-    $time = $_POST['time'];
-    $teacher = $_POST['teacher'];
-    $type = $_POST['type'];
-    $sid = $_SESSION['student_id'];
-
-    $check = $db->prepare("SELECT * FROM comments WHERE lesson_date=? AND lesson_time=? AND teacher=?");
-    $check->execute([$date, $time, $teacher]);
-    if ($check->rowCount() == 0) {
-        $ins = $db->prepare("INSERT INTO comments (student_id, lesson_date, lesson_time, teacher, type) VALUES (?, ?, ?, ?, ?)");
-        $ins->execute([$sid, $date, $time, $teacher, $type]);
-        $reserve_msg = '予約完了';
-    } else {
-        $reserve_msg = 'その時間は予約できません';
-    }
-}
-
-// 削除処理
-$delete_msg = '';
-if (isset($_POST['delete'])) {
-    $stmt = $db->prepare("DELETE FROM comments WHERE student_id = ? AND lesson_date = ? AND lesson_time = ?");
-    $stmt->execute([$_SESSION['student_id'], $_POST['date'], $_POST['time']]);
-    $delete_msg = '予約を削除しました';
-}
-
-// 予約確認処理
-$my_reserves = [];
-if (isset($_SESSION['student_id'])) {
-    $stmt = $db->prepare("SELECT * FROM comments WHERE student_id = ?");
-    $stmt->execute([$_SESSION['student_id']]);
-    $my_reserves = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ピアノレッスン予約</title>
+    <title>ログイン - ピアノ予約</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: #fceef3;
-            color: #333;
-            padding: 20px;
+            background-color: #fff0f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
-        .container {
-            max-width: 500px;
-            margin: auto;
-            background: #fff0f5;
-            padding: 30px;
+        .login-box {
+            background: #ffffff;
+            padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
         }
-        h2, h3 {
-            color: #c71585;
+        .login-box h2 {
+            color: #d63384;
+            margin-bottom: 20px;
         }
-        input, button {
-            padding: 10px;
-            margin: 8px 0;
+        input[type="text"], input[type="password"] {
             width: 100%;
+            padding: 10px;
+            margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 8px;
-            font-size: 1em;
         }
         button {
             background-color: #ff69b4;
             color: white;
+            padding: 10px;
+            width: 100%;
             border: none;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 1em;
         }
         button:hover {
             background-color: #ff85c1;
         }
-        .message {
-            margin: 10px 0;
-            color: #d80073;
-        }
-        .reserves {
-            background-color: #ffe4ec;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
+        .error {
+            color: #e60073;
+            font-size: 0.9em;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-<div class="container">
-<?php if (!isset($_SESSION['student_id'])): ?>
+<div class="login-box">
     <h2>ログイン</h2>
     <form method="post">
-        <input name="student_id" placeholder="受講者番号" required>
-        <input name="password" type="password" placeholder="パスワード" required>
-        <button name="login">ログイン</button>
+        <input type="text" name="student_id" placeholder="受講者番号" required>
+        <input type="password" name="password" placeholder="パスワード" required>
+        <button type="submit" name="login">ログイン</button>
+        <?php if ($error): ?>
+            <div class="error"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
     </form>
-    <div class="message"> <?= $error ?> </div>
-<?php else: ?>
-    <h2>こんにちは <?= htmlspecialchars($_SESSION['student_id']) ?> さん</h2>
-    <a href="?logout=1">ログアウト</a>
-
-    <h3>予約フォーム</h3>
-    <form method="post">
-        <input type="date" name="date" required>
-        <input type="time" name="time" required>
-        <input name="teacher" placeholder="講師名" required>
-        <input name="type" placeholder="レッスン種別" required>
-        <button name="reserve">予約する</button>
-    </form>
-    <div class="message"> <?= $reserve_msg ?> </div>
-
-    <h3>予約削除</h3>
-    <form method="post">
-        <input type="date" name="date" required>
-        <input type="time" name="time" required>
-        <button name="delete">予約削除</button>
-    </form>
-    <div class="message"> <?= $delete_msg ?> </div>
-
-    <h3>予約確認</h3>
-    <?php foreach ($my_reserves as $r): ?>
-        <div class="reserves">
-            <?= $r['lesson_date'] ?> <?= $r['lesson_time'] ?> / <?= htmlspecialchars($r['teacher']) ?> / <?= htmlspecialchars($r['type']) ?>
-        </div>
-    <?php endforeach; ?>
-<?php endif; ?>
 </div>
 </body>
 </html>
