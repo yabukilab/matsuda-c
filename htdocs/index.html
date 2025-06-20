@@ -1,31 +1,31 @@
 <?php
-// login.php（新しいログイン画面）
+// ログイン画面（日本語バージョン）
 session_start();
 
-// DB接続設定
-$host = 'localhost';
-$dbname = 'piano';
-$user = 'root';
-$pass = '';
+// データベース接続設定
+$ホスト名 = 'localhost';
+$データベース名 = 'piano';
+$ユーザー名 = 'root';
+$パスワード = '';
 try {
-    $db = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
-} catch (PDOException $e) {
-    die("DB接続失敗: " . $e->getMessage());
+    $データベース = new PDO("mysql:host=$ホスト名;dbname=$データベース名;charset=utf8", $ユーザー名, $パスワード);
+} catch (PDOException $例外) {
+    die("データベース接続失敗: " . $例外->getMessage());
 }
 
 // ログイン処理
-$error = '';
-if (isset($_POST['login'])) {
-    $id = $_POST['student_id'];
-    $pw = $_POST['password'];
-    $stmt = $db->prepare("SELECT * FROM mst_students WHERE student_id = ? AND password = ?");
-    $stmt->execute([$id, $pw]);
-    if ($stmt->fetch()) {
-        $_SESSION['student_id'] = $id;
+$エラー = '';
+if (isset($_POST['ログイン'])) {
+    $受講者番号 = $_POST['受講者番号'];
+    $パスワード入力 = $_POST['パスワード'];
+    $問い合わせ = $データベース->prepare("SELECT * FROM mst_students WHERE student_id = ? AND password = ?");
+    $問い合わせ->execute([$受講者番号, $パスワード入力]);
+    if ($問い合わせ->fetch()) {
+        $_SESSION['student_id'] = $受講者番号;
         header("Location: home.php");
         exit;
     } else {
-        $error = 'ログインに失敗しました。';
+        $エラー = 'ログインに失敗しました。';
     }
 }
 ?>
@@ -33,7 +33,7 @@ if (isset($_POST['login'])) {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ログイン | Piano Lesson</title>
+    <title>ログイン | ピアノ予約</title>
     <style>
         body {
             margin: 0;
@@ -89,11 +89,11 @@ if (isset($_POST['login'])) {
 <div class="login-box">
     <h2>ログイン</h2>
     <form method="post">
-        <input type="text" name="student_id" placeholder="受講者番号" required>
-        <input type="password" name="password" placeholder="パスワード" required>
-        <button type="submit" name="login">ログイン</button>
-        <?php if ($error): ?>
-            <div class="error"><?= htmlspecialchars($error) ?></div>
+        <input type="text" name="受講者番号" placeholder="受講者番号" required>
+        <input type="password" name="パスワード" placeholder="パスワード" required>
+        <button type="submit" name="ログイン">ログイン</button>
+        <?php if ($エラー): ?>
+            <div class="error"><?= htmlspecialchars($エラー) ?></div>
         <?php endif; ?>
     </form>
 </div>
