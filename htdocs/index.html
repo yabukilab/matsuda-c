@@ -1,101 +1,705 @@
-<?php
-session_start();
-require 'db.php';
-
-$エラーメッセージ = '';
-if (isset($_POST['ログイン'])) {
-    $受講者番号 = $_POST['受講者番号'];
-    $パスワード = $_POST['パスワード'];
-
-    $照合 = $接続->prepare("SELECT * FROM mst_students WHERE student_id = ? AND password = ?");
-    $照合->execute([$受講者番号, $パスワード]);
-
-    if ($照合->fetch()) {
-        $_SESSION['student_id'] = $受講者番号;
-        header("Location: home.php");
-        exit;
-    } else {
-        $エラーメッセージ = '受講者番号またはパスワードが違います。';
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>ログイン | ピアノ個人レッスン予約</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      background: linear-gradient(to right, #fbeff5, #e6f0ff);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .login-container {
-      background: #ffffff;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      width: 320px;
-      text-align: center;
-    }
-    h2 {
-      margin-bottom: 16px;
-      color: #d63384;
-    }
-    label {
-      display: block;
-      margin: 12px 0 4px;
-      text-align: left;
-      font-weight: bold;
-    }
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #ff69b4;
-      border: none;
-      color: white;
-      border-radius: 8px;
-      font-size: 16px;
-      margin-top: 20px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #ff85c1;
-    }
-    .error {
-      margin-top: 10px;
-      color: #d80073;
-      font-size: 0.9em;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ピアノレッスン予約システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #f0e6ff 100%);
+            min-height: 100vh;
+            color: #5a4b7c;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #8b5fb5;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(139, 95, 181, 0.2);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(139, 95, 181, 0.2);
+            margin-bottom: 20px;
+            border: 3px solid #e8d5f2;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #8b5fb5;
+        }
+
+        input[type="text"], input[type="password"], input[type="date"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e8d5f2;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, input[type="date"]:focus, select:focus {
+            outline: none;
+            border-color: #8b5fb5;
+            box-shadow: 0 0 10px rgba(139, 95, 181, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 154, 158, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #a8e6cf 0%, #dcedc1 100%);
+            color: #5a4b7c;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ffb3ba 0%, #ffdfba 100%);
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-nav {
+            background: #8b5fb5;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .calendar-nav:hover {
+            background: #7a4fa3;
+        }
+
+        .calendar-month {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #8b5fb5;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            border: 2px solid transparent;
+        }
+
+        .calendar-day.weekday-name {
+            background: #8b5fb5;
+            color: white;
+            cursor: default;
+            font-size: 0.9em;
+        }
+
+        .calendar-day.available {
+            background: #d4f8d4;
+            color: #2d5a2d;
+            border-color: #a8e6cf;
+        }
+
+        .calendar-day.available:hover {
+            background: #a8e6cf;
+            transform: scale(1.1);
+        }
+
+        .calendar-day.booked {
+            background: #ffb3ba;
+            color: #7a4fa3;
+        }
+
+        .calendar-day.selected {
+            background: #ff9a9e;
+            color: white;
+            border-color: #8b5fb5;
+            transform: scale(1.1);
+        }
+
+        .calendar-day.other-month {
+            color: #ccc;
+            cursor: default;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .time-slot {
+            padding: 10px;
+            background: #d4f8d4;
+            border: 2px solid #a8e6cf;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .time-slot:hover {
+            background: #a8e6cf;
+            transform: translateY(-2px);
+        }
+
+        .time-slot.selected {
+            background: #ff9a9e;
+            color: white;
+            border-color: #8b5fb5;
+        }
+
+        .time-slot.booked {
+            background: #ffb3ba;
+            color: #7a4fa3;
+            cursor: not-allowed;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .error-message {
+            background: #ffb3ba;
+            color: #8b5fb5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #ff9a9e;
+        }
+
+        .success-message {
+            background: #d4f8d4;
+            color: #2d5a2d;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #a8e6cf;
+        }
+
+        .lesson-info {
+            background: #f8f4ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #e8d5f2;
+        }
+
+        .teacher-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .teacher-card {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #e8d5f2;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .teacher-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(139, 95, 181, 0.2);
+        }
+
+        .teacher-card.selected {
+            border-color: #8b5fb5;
+            background: #f8f4ff;
+        }
+
+        .piano-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>ピアノ個人レッスン予約</h2>
-    <form method="post">
-      <label for="student_id">受講者番号</label>
-      <input type="text" name="受講者番号" id="student_id" placeholder="例: 1234567" required>
+    <div class="container">
+        <div class="header">
+            <h1>🎹 ピアノレッスン予約システム</h1>
+        </div>
 
-      <label for="password">パスワード</label>
-      <input type="password" name="パスワード" id="password" placeholder="パスワード" required>
+        <!-- ログイン画面 -->
+        <div id="loginScreen" class="screen active">
+            <div class="card">
+                <div class="login-form">
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #8b5fb5;">ログイン</h2>
+                    <div class="form-group">
+                        <label for="studentId">受講者番号（7桁）</label>
+                        <input type="text" id="studentId" maxlength="7" placeholder="1234567">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">パスワード</label>
+                        <input type="password" id="password" maxlength="36" placeholder="パスワードを入力">
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="btn" onclick="login()">ログイン</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      <button type="submit" name="ログイン">ログイン</button>
-      <?php if ($エラーメッセージ): ?>
-        <div class="error"> <?= htmlspecialchars($エラーメッセージ) ?> </div>
-      <?php endif; ?>
-    </form>
-  </div>
+        <!-- ログインエラー画面 -->
+        <div id="loginErrorScreen" class="screen">
+            <div class="card">
+                <div class="error-message">
+                    <h3 style="text-align: center;">ログインエラー</h3>
+                    <p style="text-align: center; margin-top: 10px;">ログインに失敗しました。<br>正しい受講者番号とパスワードを入れてください</p>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn btn-secondary" onclick="showScreen('loginScreen')">TOPへ戻る</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 予約画面 -->
+        <div id="reservationScreen" class="screen">
+            <div class="card">
+                <h2 style="text-align: center; margin-bottom: 30px; color: #8b5fb5;">🎹 ピアノレッスン予約</h2>
+                
+                <div class="lesson-info">
+                    <h3>レッスン選択</h3>
+                    <div class="teacher-list">
+                        <div class="teacher-card" onclick="selectTeacher('田中先生')">
+                            <div class="piano-icon">👩‍🏫</div>
+                            <div>田中先生</div>
+                            <div style="font-size: 0.9em; color: #8b5fb5;">クラシック</div>
+                        </div>
+                        <div class="teacher-card" onclick="selectTeacher('佐藤先生')">
+                            <div class="piano-icon">👨‍🏫</div>
+                            <div>佐藤先生</div>
+                            <div style="font-size: 0.9em; color: #8b5fb5;">ポップス</div>
+                        </div>
+                        <div class="teacher-card" onclick="selectTeacher('山田先生')">
+                            <div class="piano-icon">👩‍🏫</div>
+                            <div>山田先生</div>
+                            <div style="font-size: 0.9em; color: #8b5fb5;">ジャズ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 15px; color: #8b5fb5;">📅 レッスン日選択</h3>
+                <div class="calendar-header">
+                    <button class="calendar-nav" onclick="changeMonth(-1)">◀</button>
+                    <div class="calendar-month" id="currentMonth"></div>
+                    <button class="calendar-nav" onclick="changeMonth(1)">▶</button>
+                </div>
+                <div class="calendar" id="calendar"></div>
+
+                <div id="timeSelection" style="display: none;">
+                    <h3 style="margin-bottom: 15px; color: #8b5fb5;">⏰ 時間帯選択</h3>
+                    <div class="time-slots" id="timeSlots"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reservationStudentId">受講者番号</label>
+                    <input type="text" id="reservationStudentId" maxlength="7" placeholder="1234567">
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="btn btn-secondary" onclick="showScreen('loginScreen')">戻る</button>
+                    <button class="btn" onclick="makeReservation()">予約</button>
+                    <button class="btn btn-secondary" onclick="showScreen('confirmationScreen')">予約確認</button>
+                    <button class="btn btn-danger" onclick="showScreen('deleteScreen')">予約削除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 予約エラー画面 -->
+        <div id="reservationErrorScreen" class="screen">
+            <div class="card">
+                <div class="error-message">
+                    <h3 style="text-align: center;">予約エラー</h3>
+                    <div id="errorMessages"></div>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn btn-secondary" onclick="showScreen('reservationScreen')">戻る</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 予約確定画面 -->
+        <div id="reservationConfirmScreen" class="screen">
+            <div class="card">
+                <div class="success-message">
+                    <h3 style="text-align: center;">🎉 予約が確定しました！</h3>
+                    <div id="confirmationDetails" style="text-align: center; margin-top: 15px;"></div>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn" onclick="showScreen('loginScreen')">TOPへ戻る</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 予約削除画面 -->
+        <div id="deleteScreen" class="screen">
+            <div class="card">
+                <h2 style="text-align: center; margin-bottom: 30px; color: #8b5fb5;">予約削除</h2>
+                <div class="form-group">
+                    <label for="deleteStudentId">受講者番号</label>
+                    <input type="text" id="deleteStudentId" maxlength="7" placeholder="1234567">
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn btn-secondary" onclick="showScreen('reservationScreen')">戻る</button>
+                    <button class="btn btn-danger" onclick="deleteReservation()">削除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 削除確定画面 -->
+        <div id="deleteConfirmScreen" class="screen">
+            <div class="card">
+                <div class="success-message">
+                    <h3 style="text-align: center;">予約を削除しました</h3>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn" onclick="showScreen('loginScreen')">TOPへ戻る</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 予約確認画面 -->
+        <div id="confirmationScreen" class="screen">
+            <div class="card">
+                <h2 style="text-align: center; margin-bottom: 30px; color: #8b5fb5;">予約確認</h2>
+                <div class="form-group">
+                    <label for="confirmStudentId">受講者番号</label>
+                    <input type="text" id="confirmStudentId" maxlength="7" placeholder="1234567">
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn btn-secondary" onclick="showScreen('reservationScreen')">戻る</button>
+                    <button class="btn" onclick="confirmReservation()">確認</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 予約情報画面 -->
+        <div id="reservationInfoScreen" class="screen">
+            <div class="card">
+                <h2 style="text-align: center; margin-bottom: 30px; color: #8b5fb5;">予約情報</h2>
+                <div id="reservationInfo" class="lesson-info"></div>
+                <div style="text-align: center;">
+                    <button class="btn btn-secondary" onclick="showScreen('reservationScreen')">予約画面へ</button>
+                    <button class="btn" onclick="showScreen('loginScreen')">TOPへ戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // グローバル変数
+        let currentDate = new Date();
+        let selectedDate = null;
+        let selectedTime = null;
+        let selectedTeacher = null;
+        let reservations = {}; // 予約データを保存
+
+        // デモ用の予約データ
+        const demoReservations = {
+            '1234567': {
+                teacher: '田中先生',
+                date: '2025-06-25',
+                time: '10:00-11:00'
+            }
+        };
+
+        // 画面表示切り替え
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // ログイン処理
+        function login() {
+            const studentId = document.getElementById('studentId').value;
+            const password = document.getElementById('password').value;
+
+            if (studentId.length === 7 && password.length > 0) {
+                document.getElementById('reservationStudentId').value = studentId;
+                showScreen('reservationScreen');
+                initCalendar();
+            } else {
+                showScreen('loginErrorScreen');
+            }
+        }
+
+        // カレンダー初期化
+        function initCalendar() {
+            updateCalendar();
+        }
+
+        // カレンダー更新
+        function updateCalendar() {
+            const monthNames = [
+                '1月', '2月', '3月', '4月', '5月', '6月',
+                '7月', '8月', '9月', '10月', '11月', '12月'
+            ];
+            
+            document.getElementById('currentMonth').textContent = 
+                `${currentDate.getFullYear()}年 ${monthNames[currentDate.getMonth()]}`;
+
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+
+            // 曜日ヘッダー
+            const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+            dayNames.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('calendar-day', 'weekday-name');
+                dayElement.textContent = day;
+                calendar.appendChild(dayElement);
+            });
+
+            // 月の最初の日と最後の日
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+            // 最初の週の空白
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.classList.add('calendar-day', 'other-month');
+                calendar.appendChild(emptyDay);
+            }
+
+            // 日付を追加
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('calendar-day');
+                dayElement.textContent = day;
+
+                const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // 過去の日付は選択不可
+                const today = new Date();
+                const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+                
+                if (dayDate >= today) {
+                    dayElement.classList.add('available');
+                    dayElement.onclick = () => selectDate(dateStr);
+                } else {
+                    dayElement.classList.add('other-month');
+                }
+
+                calendar.appendChild(dayElement);
+            }
+        }
+
+        // 月変更
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            updateCalendar();
+        }
+
+        // 日付選択
+        function selectDate(dateStr) {
+            // 以前の選択をクリア
+            document.querySelectorAll('.calendar-day.selected').forEach(day => {
+                day.classList.remove('selected');
+            });
+
+            // 新しい選択をハイライト
+            event.target.classList.add('selected');
+            selectedDate = dateStr;
+
+            // 時間帯選択を表示
+            showTimeSlots();
+        }
+
+        // 時間帯表示
+        function showTimeSlots() {
+            const timeSelection = document.getElementById('timeSelection');
+            const timeSlots = document.getElementById('timeSlots');
+            
+            timeSelection.style.display = 'block';
+            timeSlots.innerHTML = '';
+
+            const times = [
+                '09:00-10:00', '10:00-11:00', '11:00-12:00',
+                '13:00-14:00', '14:00-15:00', '15:00-16:00',
+                '16:00-17:00', '17:00-18:00', '18:00-19:00'
+            ];
+
+            times.forEach(time => {
+                const timeSlot = document.createElement('div');
+                timeSlot.classList.add('time-slot');
+                timeSlot.textContent = time;
+                timeSlot.onclick = () => selectTime(time);
+                timeSlots.appendChild(timeSlot);
+            });
+        }
+
+        // 時間選択
+        function selectTime(time) {
+            document.querySelectorAll('.time-slot.selected').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+
+            event.target.classList.add('selected');
+            selectedTime = time;
+        }
+
+        // 先生選択
+        function selectTeacher(teacher) {
+            document.querySelectorAll('.teacher-card.selected').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            event.target.classList.add('selected');
+            selectedTeacher = teacher;
+        }
+
+        // 予約処理
+        function makeReservation() {
+            const studentId = document.getElementById('reservationStudentId').value;
+            const errors = [];
+
+            if (!selectedDate) errors.push('レッスン日が選択されていません。');
+            if (!selectedTime) errors.push('時間帯が選択されていません。');
+            if (!studentId || studentId.length !== 7) errors.push('受講者番号が正しく入力されていません。');
+            if (!selectedTeacher) errors.push('講師が選択されていません。');
+
+            if (errors.length > 0) {
+                document.getElementById('errorMessages').innerHTML = errors.map(error => `<p>• ${error}</p>`).join('');
+                showScreen('reservationErrorScreen');
+                return;
+            }
+
+            // 予約完了
+            reservations[studentId] = {
+                teacher: selectedTeacher,
+                date: selectedDate,
+                time: selectedTime
+            };
+
+            document.getElementById('confirmationDetails').innerHTML = `
+                <p><strong>受講者番号:</strong> ${studentId}</p>
+                <p><strong>講師:</strong> ${selectedTeacher}</p>
+                <p><strong>予約日時:</strong> ${selectedDate} ${selectedTime}</p>
+            `;
+
+            showScreen('reservationConfirmScreen');
+        }
+
+        // 予約削除
+        function deleteReservation() {
+            const studentId = document.getElementById('deleteStudentId').value;
+            
+            if (reservations[studentId] || demoReservations[studentId]) {
+                delete reservations[studentId];
+                showScreen('deleteConfirmScreen');
+            } else {
+                alert('該当する予約が見つかりません。');
+            }
+        }
+
+        // 予約確認
+        function confirmReservation() {
+            const studentId = document.getElementById('confirmStudentId').value;
+            const reservation = reservations[studentId] || demoReservations[studentId];
+            
+            if (reservation) {
+                document.getElementById('reservationInfo').innerHTML = `
+                    <p><strong>受講者番号:</strong> ${studentId}</p>
+                    <p><strong>講師:</strong> ${reservation.teacher}</p>
+                    <p><strong>予約日時:</strong> ${reservation.date} ${reservation.time}</p>
+                `;
+                showScreen('reservationInfoScreen');
+            } else {
+                alert('該当する予約が見つかりません。');
+            }
+        }
+
+        // エンターキーでログイン
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('studentId').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+            
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
