@@ -1,8 +1,8 @@
 <?php
-// login.php（ログイン画面のみ）
+// login.php（新しいログイン画面）
 session_start();
 
-// DB接続（MySQLが必要）
+// DB接続設定
 $host = 'localhost';
 $dbname = 'piano';
 $user = 'root';
@@ -22,10 +22,10 @@ if (isset($_POST['login'])) {
     $stmt->execute([$id, $pw]);
     if ($stmt->fetch()) {
         $_SESSION['student_id'] = $id;
-        header("Location: home.php"); // ログイン後の画面へ遷移
+        header("Location: home.php");
         exit;
     } else {
-        $error = 'ログインに失敗しました。受講者番号とパスワードを確認してください。';
+        $error = 'ログインに失敗しました。';
     }
 }
 ?>
@@ -33,51 +33,53 @@ if (isset($_POST['login'])) {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ログイン - ピアノ予約</title>
+    <title>ログイン | Piano Lesson</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #fff0f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
             margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to right, #fce3ec, #f9f0ff);
+            font-family: 'Helvetica Neue', sans-serif;
         }
         .login-box {
-            background: #ffffff;
+            background: white;
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 320px;
             text-align: center;
         }
-        .login-box h2 {
+        h2 {
             color: #d63384;
             margin-bottom: 20px;
         }
         input[type="text"], input[type="password"] {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 8px;
+            font-size: 14px;
         }
         button {
-            background-color: #ff69b4;
-            color: white;
-            padding: 10px;
             width: 100%;
+            padding: 12px;
+            background-color: #ff69b4;
             border: none;
             border-radius: 8px;
+            color: white;
+            font-size: 16px;
             cursor: pointer;
-            font-size: 1em;
         }
         button:hover {
             background-color: #ff85c1;
         }
         .error {
-            color: #e60073;
+            color: #e63946;
             font-size: 0.9em;
             margin-top: 10px;
         }
