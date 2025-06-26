@@ -149,6 +149,7 @@
             transition: all 0.3s ease;
             font-weight: bold;
             border: 2px solid transparent;
+            position: relative;
         }
 
         .calendar-day.weekday-name {
@@ -169,9 +170,27 @@
             transform: scale(1.1);
         }
 
-        .calendar-day.booked {
+        .calendar-day.fully-booked {
             background: #ffb3ba;
-            color: #7a4fa3;
+            color: #8b4545;
+            cursor: not-allowed;
+            border-color: #ff9a9e;
+        }
+
+        .calendar-day.fully-booked::after {
+            content: '満';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.7em;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .calendar-day.selected {
@@ -280,11 +299,42 @@
         .teacher-card.selected {
             border-color: #8b5fb5;
             background: #f8f4ff;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(139, 95, 181, 0.3);
+        }
+
+        .teacher-card.selected.beginner {
+            background: linear-gradient(135deg, #d4f8d4 0%, #a8e6cf 100%);
+            border-color: #4caf50;
+            color: #2d5a2d;
+        }
+
+        .teacher-card.selected.intermediate {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-color: #ff9800;
+            color: #8b6914;
+        }
+
+        .teacher-card.selected.advanced {
+            background: linear-gradient(135deg, #ffb3ba 0%, #ff9a9e 100%);
+            border-color: #e91e63;
+            color: #8b4545;
         }
 
         .piano-icon {
             font-size: 2em;
             margin-bottom: 10px;
+        }
+
+        .selected-teacher-info {
+            background: #f0f8ff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #8b5fb5;
+            text-align: center;
+            font-weight: bold;
+            color: #8b5fb5;
         }
     </style>
 </head>
@@ -335,22 +385,23 @@
                 <div class="lesson-info">
                     <h3>レッスン選択</h3>
                     <div class="teacher-list">
-                        <div class="teacher-card" onclick="selectTeacher('田中先生')">
-                            <div class="piano-icon">👩‍🏫</div>
+                        <div class="teacher-card" onclick="selectTeacher('田中先生', 'beginner')">
+                            <div class="piano-icon">🌱</div>
                             <div>田中先生</div>
-                            <div style="font-size: 0.9em; color: #8b5fb5;">クラシック</div>
+                            <div style="font-size: 0.9em; color: #8b5fb5;">初級</div>
                         </div>
-                        <div class="teacher-card" onclick="selectTeacher('佐藤先生')">
-                            <div class="piano-icon">👨‍🏫</div>
+                        <div class="teacher-card" onclick="selectTeacher('佐藤先生', 'intermediate')">
+                            <div class="piano-icon">🎵</div>
                             <div>佐藤先生</div>
-                            <div style="font-size: 0.9em; color: #8b5fb5;">ポップス</div>
+                            <div style="font-size: 0.9em; color: #8b5fb5;">中級</div>
                         </div>
-                        <div class="teacher-card" onclick="selectTeacher('山田先生')">
-                            <div class="piano-icon">👩‍🏫</div>
+                        <div class="teacher-card" onclick="selectTeacher('山田先生', 'advanced')">
+                            <div class="piano-icon">🎶</div>
                             <div>山田先生</div>
-                            <div style="font-size: 0.9em; color: #8b5fb5;">ジャズ</div>
+                            <div style="font-size: 0.9em; color: #8b5fb5;">上級</div>
                         </div>
                     </div>
+                    <div id="selectedTeacherInfo" class="selected-teacher-info" style="display: none;"></div>
                 </div>
 
                 <h3 style="margin-bottom: 15px; color: #8b5fb5;">📅 レッスン日選択</h3>
@@ -469,12 +520,45 @@
         let selectedTeacher = null;
         let reservations = {}; // 予約データを保存
 
-        // デモ用の予約データ
+        // デモ用の予約データ（満枠のデモデータを追加）
         const demoReservations = {
             '1234567': {
                 teacher: '田中先生',
                 date: '2025-06-25',
                 time: '10:00-11:00'
+            }
+        };
+
+        // 満枠の日付データ（デモ用）
+        const fullyBookedDates = {
+            '2025-06-30': true,
+            '2025-07-01': true,
+            '2025-07-05': true
+        };
+
+        // 時間帯別の予約状況（デモ用）
+        const timeSlotBookings = {
+            '2025-06-27': {
+                '09:00-10:00': true,
+                '10:00-11:00': false,
+                '11:00-12:00': true,
+                '13:00-14:00': false,
+                '14:00-15:00': true,
+                '15:00-16:00': false,
+                '16:00-17:00': true,
+                '17:00-18:00': false,
+                '18:00-19:00': true
+            },
+            '2025-06-28': {
+                '09:00-10:00': false,
+                '10:00-11:00': true,
+                '11:00-12:00': false,
+                '13:00-14:00': true,
+                '14:00-15:00': false,
+                '15:00-16:00': true,
+                '16:00-17:00': false,
+                '17:00-18:00': true,
+                '18:00-19:00': false
             }
         };
 
@@ -551,8 +635,13 @@
                 const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
                 
                 if (dayDate >= today) {
-                    dayElement.classList.add('available');
-                    dayElement.onclick = () => selectDate(dateStr);
+                    // 満枠チェック
+                    if (fullyBookedDates[dateStr]) {
+                        dayElement.classList.add('fully-booked');
+                    } else {
+                        dayElement.classList.add('available');
+                        dayElement.onclick = () => selectDate(dateStr);
+                    }
                 } else {
                     dayElement.classList.add('other-month');
                 }
@@ -569,6 +658,11 @@
 
         // 日付選択
         function selectDate(dateStr) {
+            // 満枠の日付は選択不可
+            if (fullyBookedDates[dateStr]) {
+                return;
+            }
+
             // 以前の選択をクリア
             document.querySelectorAll('.calendar-day.selected').forEach(day => {
                 day.classList.remove('selected');
@@ -600,13 +694,30 @@
                 const timeSlot = document.createElement('div');
                 timeSlot.classList.add('time-slot');
                 timeSlot.textContent = time;
-                timeSlot.onclick = () => selectTime(time);
+                
+                // 選択した日付の予約状況をチェック
+                const dayBookings = timeSlotBookings[selectedDate];
+                if (dayBookings && dayBookings[time]) {
+                    // 予約済みの時間帯
+                    timeSlot.classList.add('booked');
+                    timeSlot.style.cursor = 'not-allowed';
+                } else {
+                    // 予約可能な時間帯
+                    timeSlot.onclick = () => selectTime(time);
+                }
+                
                 timeSlots.appendChild(timeSlot);
             });
         }
 
         // 時間選択
         function selectTime(time) {
+            // 予約済みの時間帯は選択不可
+            const dayBookings = timeSlotBookings[selectedDate];
+            if (dayBookings && dayBookings[time]) {
+                return;
+            }
+
             document.querySelectorAll('.time-slot.selected').forEach(slot => {
                 slot.classList.remove('selected');
             });
@@ -616,13 +727,19 @@
         }
 
         // 先生選択
-        function selectTeacher(teacher) {
+        function selectTeacher(teacher, level) {
             document.querySelectorAll('.teacher-card.selected').forEach(card => {
-                card.classList.remove('selected');
+                card.classList.remove('selected', 'beginner', 'intermediate', 'advanced');
             });
 
-            event.target.classList.add('selected');
+            event.target.classList.add('selected', level);
             selectedTeacher = teacher;
+
+            // 選択した先生の情報を表示
+            const selectedInfo = document.getElementById('selectedTeacherInfo');
+            const levelText = level === 'beginner' ? '初級' : level === 'intermediate' ? '中級' : '上級';
+            selectedInfo.innerHTML = `選択中：${teacher} （${levelText}）`;
+            selectedInfo.style.display = 'block';
         }
 
         // 予約処理
