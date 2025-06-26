@@ -786,7 +786,7 @@
             }
         }
 
-        // 予約確認 
+        // 予約確認
         function confirmReservation() {
             const studentId = document.getElementById('confirmStudentId').value;
             const reservation = reservations[studentId] || demoReservations[studentId];
@@ -796,6 +796,7 @@
                     <p><strong>受講者番号:</strong> ${studentId}</p>
                     <p><strong>講師:</strong> ${reservation.teacher}</p>
                     <p><strong>予約日時:</strong> ${reservation.date} ${reservation.time}</p>
+                `;
                 showScreen('reservationInfoScreen');
             } else {
                 alert('該当する予約が見つかりません。');
@@ -818,4 +819,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
