@@ -61,7 +61,7 @@
             color: #8b5fb5;
         }
 
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"], input[type="date"], select {
             width: 100%;
             padding: 12px;
             border: 2px solid #e8d5f2;
@@ -71,7 +71,7 @@
             transition: all 0.3s ease;
         }
 
-        input[type="text"]:focus, input[type="password"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus, input[type="date"]:focus, select:focus {
             outline: none;
             border-color: #8b5fb5;
             box-shadow: 0 0 10px rgba(139, 95, 181, 0.3);
@@ -103,7 +103,6 @@
 
         .btn-danger {
             background: linear-gradient(45deg, #ffb3ba 0%, #ffdfba 100%);
-            color: #8b4545;
         }
 
         .calendar {
@@ -201,6 +200,11 @@
             transform: scale(1.1);
         }
 
+        .calendar-day.other-month {
+            color: #ccc;
+            cursor: default;
+        }
+
         .time-slots {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -217,12 +221,17 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
-            position: relative;
         }
 
         .time-slot:hover {
             background: #a8e6cf;
             transform: translateY(-2px);
+        }
+
+        .time-slot.selected {
+            background: #ff9a9e;
+            color: white;
+            border-color: #8b5fb5;
         }
 
         .time-slot.booked {
@@ -255,6 +264,40 @@
             border-radius: 10px;
             margin-bottom: 20px;
             border: 2px solid #a8e6cf;
+        }
+
+        .lesson-info {
+            background: #f8f4ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #e8d5f2;
+        }
+
+        .teacher-card {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 15px;
+            border: 3px solid #8b5fb5;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f8f4ff 0%, #e8d5f2 100%);
+        }
+
+        .piano-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .selected-teacher-info {
+            background: #f0f8ff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #8b5fb5;
+            text-align: center;
+            font-weight: bold;
+            color: #8b5fb5;
         }
     </style>
 </head>
@@ -301,6 +344,15 @@
         <div id="teacherScreen" class="screen">
             <div class="card">
                 <h2 style="text-align: center; margin-bottom: 30px; color: #8b5fb5;">講師選択</h2>
+                
+                <div class="teacher-card">
+                    <div class="piano-icon">🎹</div>
+                    <h3 style="color: #8b5fb5; margin-bottom: 10px;">田中先生</h3>
+                    <p style="margin-bottom: 10px;">🎵 クラシック・ポピュラー対応</p>
+                    <p style="margin-bottom: 10px;">📚 初心者から上級者まで</p>
+                    <p style="color: #666; font-size: 0.9em;">経験豊富な講師です</p>
+                </div>
+                
                 <div style="text-align: center;">
                     <button class="btn" onclick="selectTeacher('田中先生')">田中先生を選択</button>
                     <button class="btn btn-secondary" onclick="logout()">ログアウト</button>
@@ -312,16 +364,24 @@
         <div id="bookingScreen" class="screen">
             <div class="card">
                 <h2 style="text-align: center; margin-bottom: 20px; color: #8b5fb5;">レッスン予約</h2>
+                
+                <div class="selected-teacher-info">
+                    選択された講師: <span id="selectedTeacherName">田中先生</span>
+                </div>
+
                 <div class="calendar-header">
                     <button class="calendar-nav" onclick="changeMonth(-1)">◀</button>
                     <div class="calendar-month" id="currentMonth"></div>
                     <button class="calendar-nav" onclick="changeMonth(1)">▶</button>
                 </div>
+
                 <div class="calendar" id="calendar"></div>
+
                 <div id="timeSlotSection" style="display: none;">
                     <h3 style="color: #8b5fb5; margin-bottom: 15px;">時間選択</h3>
                     <div class="time-slots" id="timeSlots"></div>
                 </div>
+
                 <div style="text-align: center;">
                     <button class="btn" id="confirmBooking" onclick="confirmBooking()" style="display: none;">予約確定</button>
                     <button class="btn btn-secondary" onclick="showScreen('teacherScreen')">戻る</button>
@@ -335,6 +395,14 @@
                 <div class="success-message">
                     <h3 style="text-align: center;">予約が完了しました！</h3>
                 </div>
+                
+                <div class="lesson-info">
+                    <h4 style="color: #8b5fb5; margin-bottom: 15px;">予約詳細</h4>
+                    <p><strong>講師:</strong> <span id="confirmedTeacher"></span></p>
+                    <p><strong>日時:</strong> <span id="confirmedDateTime"></span></p>
+                    <p><strong>受講者番号:</strong> <span id="confirmedStudentId"></span></p>
+                </div>
+                
                 <div style="text-align: center;">
                     <button class="btn" onclick="showScreen('bookingScreen')">新しい予約</button>
                     <button class="btn btn-secondary" onclick="logout()">ログアウト</button>
@@ -344,22 +412,29 @@
     </div>
 
     <script>
+        // グローバル変数
         let currentUser = null;
         let currentDate = new Date();
         let selectedDate = null;
         let selectedTime = null;
         let selectedTeacher = '田中先生';
 
+        // サンプルデータ
         const users = {
             '1234567': { password: 'password123', name: '山田太郎' },
             '2345678': { password: 'mypassword', name: '佐藤花子' },
             '3456789': { password: 'lesson2024', name: '田中次郎' }
         };
 
+        // 予約データ（実際のアプリでは外部データベースを使用）
         let bookings = {};
 
-        const timeSlots = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+        // 利用可能な時間スロット
+        const timeSlots = [
+            '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'
+        ];
 
+        // 画面切り替え
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.classList.remove('active');
@@ -367,6 +442,7 @@
             document.getElementById(screenId).classList.add('active');
         }
 
+        // ログイン処理
         function login() {
             const studentId = document.getElementById('studentId').value;
             const password = document.getElementById('password').value;
@@ -379,28 +455,32 @@
             }
         }
 
+        // 講師選択
         function selectTeacher(teacherName) {
             selectedTeacher = teacherName;
+            document.getElementById('selectedTeacherName').textContent = teacherName;
             showScreen('bookingScreen');
             renderCalendar();
         }
 
+        // カレンダー表示
         function renderCalendar() {
             const calendar = document.getElementById('calendar');
             const monthElement = document.getElementById('currentMonth');
-
+            
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
-
+            
             monthElement.textContent = `${year}年${month + 1}月`;
-
+            
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
             const startDate = new Date(firstDay);
             startDate.setDate(startDate.getDate() - firstDay.getDay());
-
+            
             calendar.innerHTML = '';
-
+            
+            // 曜日ヘッダー
             const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
             weekdays.forEach(day => {
                 const dayElement = document.createElement('div');
@@ -408,21 +488,22 @@
                 dayElement.textContent = day;
                 calendar.appendChild(dayElement);
             });
-
+            
+            // 日付
             for (let i = 0; i < 42; i++) {
                 const date = new Date(startDate);
                 date.setDate(startDate.getDate() + i);
-
+                
                 const dayElement = document.createElement('div');
                 dayElement.classList.add('calendar-day');
                 dayElement.textContent = date.getDate();
-
+                
                 if (date.getMonth() !== month) {
                     dayElement.classList.add('other-month');
                 } else if (date >= new Date()) {
                     const dateStr = date.toISOString().split('T')[0];
                     const bookedSlots = bookings[dateStr] || [];
-
+                    
                     if (bookedSlots.length >= timeSlots.length) {
                         dayElement.classList.add('fully-booked');
                     } else {
@@ -430,100 +511,92 @@
                         dayElement.onclick = () => selectDate(date);
                     }
                 }
-
+                
                 calendar.appendChild(dayElement);
             }
         }
 
+        // 日付選択
         function selectDate(date) {
             selectedDate = date;
             document.querySelectorAll('.calendar-day.selected').forEach(day => {
                 day.classList.remove('selected');
             });
             event.target.classList.add('selected');
-
+            
             renderTimeSlots();
             document.getElementById('timeSlotSection').style.display = 'block';
         }
 
+        // 時間スロット表示
         function renderTimeSlots() {
             const timeSlotsContainer = document.getElementById('timeSlots');
             const dateStr = selectedDate.toISOString().split('T')[0];
             const bookedSlots = bookings[dateStr] || [];
-
+            
             timeSlotsContainer.innerHTML = '';
-
+            
             timeSlots.forEach(time => {
                 const slot = document.createElement('div');
                 slot.classList.add('time-slot');
                 slot.textContent = time;
-
-                const booking = bookedSlots.find(b => b.time === time);
-                if (booking) {
+                
+                if (bookedSlots.includes(time)) {
                     slot.classList.add('booked');
-                    if (booking.user === currentUser.id) {
-                        const deleteBtn = document.createElement('button');
-                        deleteBtn.textContent = '削除';
-                        deleteBtn.classList.add('btn', 'btn-danger');
-                        deleteBtn.style.marginTop = '5px';
-                        deleteBtn.onclick = () => cancelBooking(dateStr, time);
-                        slot.appendChild(deleteBtn);
-                    }
                 } else {
                     slot.onclick = () => selectTime(time);
                 }
-
+                
                 timeSlotsContainer.appendChild(slot);
             });
         }
 
+        // 時間選択
         function selectTime(time) {
             selectedTime = time;
             document.querySelectorAll('.time-slot.selected').forEach(slot => {
                 slot.classList.remove('selected');
             });
             event.target.classList.add('selected');
-
+            
             document.getElementById('confirmBooking').style.display = 'inline-block';
         }
 
+        // 予約確定
         function confirmBooking() {
             if (!selectedDate || !selectedTime) {
                 alert('日時を選択してください。');
                 return;
             }
-
+            
             const dateStr = selectedDate.toISOString().split('T')[0];
             if (!bookings[dateStr]) {
                 bookings[dateStr] = [];
             }
-            bookings[dateStr].push({
-                time: selectedTime,
-                user: currentUser.id
-            });
-
+            bookings[dateStr].push(selectedTime);
+            
+            // 確認画面に情報を表示
+            document.getElementById('confirmedTeacher').textContent = selectedTeacher;
+            document.getElementById('confirmedDateTime').textContent = 
+                `${selectedDate.getFullYear()}年${selectedDate.getMonth() + 1}月${selectedDate.getDate()}日 ${selectedTime}`;
+            document.getElementById('confirmedStudentId').textContent = currentUser.id;
+            
             showScreen('confirmationScreen');
-
+            
+            // 選択をリセット
             selectedDate = null;
             selectedTime = null;
             document.getElementById('confirmBooking').style.display = 'none';
             document.getElementById('timeSlotSection').style.display = 'none';
         }
 
-        function cancelBooking(dateStr, time) {
-            if (confirm(`${dateStr} の ${time} の予約を削除しますか？`)) {
-                bookings[dateStr] = bookings[dateStr].filter(b => !(b.time === time && b.user === currentUser.id));
-                renderTimeSlots();
-                renderCalendar();
-                alert('予約を削除しました');
-            }
-        }
-
+        // 月変更
         function changeMonth(direction) {
             currentDate.setMonth(currentDate.getMonth() + direction);
             renderCalendar();
         }
 
+        // ログアウト
         function logout() {
             currentUser = null;
             selectedDate = null;
@@ -534,6 +607,7 @@
             showScreen('loginScreen');
         }
 
+        // 初期化
         document.addEventListener('DOMContentLoaded', function() {
             renderCalendar();
         });
