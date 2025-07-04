@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -103,6 +103,42 @@
 
         .btn-danger {
             background: linear-gradient(45deg, #ffb3ba 0%, #ffdfba 100%);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        .teacher-section {
+            background: linear-gradient(135deg, #f8f4ff 0%, #e8d5f2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #8b5fb5;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .piano-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .booking-section {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .calendar-section {
+            flex: 1;
+            min-width: 400px;
+        }
+
+        .bookings-section {
+            flex: 1;
+            min-width: 350px;
         }
 
         .calendar {
@@ -274,30 +310,69 @@
             border: 2px solid #e8d5f2;
         }
 
-        .teacher-card {
+        .booking-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #e8d5f2;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .booking-item {
             background: #ffffff;
             padding: 15px;
-            border-radius: 15px;
-            border: 3px solid #8b5fb5;
-            text-align: center;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #f8f4ff 0%, #e8d5f2 100%);
-        }
-
-        .piano-icon {
-            font-size: 2em;
             margin-bottom: 10px;
+            border-radius: 10px;
+            border: 2px solid #e8d5f2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .selected-teacher-info {
-            background: #f0f8ff;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 2px solid #8b5fb5;
-            text-align: center;
+        .booking-item:hover {
+            border-color: #8b5fb5;
+            transform: translateY(-2px);
+        }
+
+        .booking-item .btn {
+            pointer-events: auto;
+            z-index: 10;
+            position: relative;
+        }
+
+        .booking-details {
+            flex: 1;
+        }
+
+        .booking-date {
             font-weight: bold;
             color: #8b5fb5;
+            margin-bottom: 5px;
+        }
+
+        .booking-time {
+            color: #5a4b7c;
+            font-size: 0.9em;
+        }
+
+        .no-bookings {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .booking-section {
+                flex-direction: column;
+            }
+            
+            .calendar-section,
+            .bookings-section {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
@@ -340,51 +415,53 @@
             </div>
         </div>
 
-        <!-- 講師選択画面 -->
-        <div id="teacherScreen" class="screen">
+        <!-- 予約画面（講師情報統合） -->
+        <div id="bookingScreen" class="screen">
             <div class="card">
-                <h2 style="text-align: center; margin-bottom: 30px; color: #8b5fb5;">講師選択</h2>
+                <h2 style="text-align: center; margin-bottom: 30px; color: #8b5fb5;">レッスン予約</h2>
                 
-                <div class="teacher-card">
+                <!-- 講師情報 -->
+                <div class="teacher-section">
                     <div class="piano-icon">🎹</div>
                     <h3 style="color: #8b5fb5; margin-bottom: 10px;">田中先生</h3>
                     <p style="margin-bottom: 10px;">🎵 クラシック・ポピュラー対応</p>
                     <p style="margin-bottom: 10px;">📚 初心者から上級者まで</p>
                     <p style="color: #666; font-size: 0.9em;">経験豊富な講師です</p>
                 </div>
-                
-                <div style="text-align: center;">
-                    <button class="btn" onclick="selectTeacher('田中先生')">田中先生を選択</button>
-                    <button class="btn btn-secondary" onclick="logout()">ログアウト</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- 予約画面 -->
-        <div id="bookingScreen" class="screen">
-            <div class="card">
-                <h2 style="text-align: center; margin-bottom: 20px; color: #8b5fb5;">レッスン予約</h2>
-                
-                <div class="selected-teacher-info">
-                    選択された講師: <span id="selectedTeacherName">田中先生</span>
-                </div>
+                <div class="booking-section">
+                    <!-- カレンダー・予約セクション -->
+                    <div class="calendar-section">
+                        <h3 style="color: #8b5fb5; margin-bottom: 15px;">📅 新しい予約</h3>
+                        
+                        <div class="calendar-header">
+                            <button class="calendar-nav" onclick="changeMonth(-1)">◀</button>
+                            <div class="calendar-month" id="currentMonth"></div>
+                            <button class="calendar-nav" onclick="changeMonth(1)">▶</button>
+                        </div>
 
-                <div class="calendar-header">
-                    <button class="calendar-nav" onclick="changeMonth(-1)">◀</button>
-                    <div class="calendar-month" id="currentMonth"></div>
-                    <button class="calendar-nav" onclick="changeMonth(1)">▶</button>
-                </div>
+                        <div class="calendar" id="calendar"></div>
 
-                <div class="calendar" id="calendar"></div>
+                        <div id="timeSlotSection" style="display: none;">
+                            <h4 style="color: #8b5fb5; margin-bottom: 15px;">時間選択</h4>
+                            <div class="time-slots" id="timeSlots"></div>
+                        </div>
 
-                <div id="timeSlotSection" style="display: none;">
-                    <h3 style="color: #8b5fb5; margin-bottom: 15px;">時間選択</h3>
-                    <div class="time-slots" id="timeSlots"></div>
-                </div>
+                        <div style="text-align: center;">
+                            <button class="btn" id="confirmBooking" onclick="confirmBooking()" style="display: none;">予約確定</button>
+                        </div>
+                    </div>
 
-                <div style="text-align: center;">
-                    <button class="btn" id="confirmBooking" onclick="confirmBooking()" style="display: none;">予約確定</button>
-                    <button class="btn btn-secondary" onclick="showScreen('teacherScreen')">戻る</button>
+                    <!-- 予約一覧セクション -->
+                    <div class="bookings-section">
+                        <h3 style="color: #8b5fb5; margin-bottom: 15px;">📋 予約一覧</h3>
+                        <div class="booking-list" id="bookingList">
+                            <div class="no-bookings">予約がありません</div>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn btn-secondary" onclick="logout()">ログアウト</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -404,8 +481,7 @@
                 </div>
                 
                 <div style="text-align: center;">
-                    <button class="btn" onclick="showScreen('bookingScreen')">新しい予約</button>
-                    <button class="btn btn-secondary" onclick="logout()">ログアウト</button>
+                    <button class="btn" onclick="showScreen('bookingScreen')">戻る</button>
                 </div>
             </div>
         </div>
@@ -426,8 +502,8 @@
             '3456789': { password: 'lesson2024', name: '田中次郎' }
         };
 
-        // 予約データ（実際のアプリでは外部データベースを使用）
-        let bookings = {};
+        // 予約データ（受講者別）
+        let userBookings = {};
 
         // 利用可能な時間スロット
         const timeSlots = [
@@ -440,6 +516,11 @@
                 screen.classList.remove('active');
             });
             document.getElementById(screenId).classList.add('active');
+            
+            if (screenId === 'bookingScreen') {
+                renderCalendar();
+                renderBookingList();
+            }
         }
 
         // ログイン処理
@@ -449,18 +530,16 @@
 
             if (users[studentId] && users[studentId].password === password) {
                 currentUser = { id: studentId, name: users[studentId].name };
-                showScreen('teacherScreen');
+                
+                // ユーザーの予約データを初期化
+                if (!userBookings[studentId]) {
+                    userBookings[studentId] = {};
+                }
+                
+                showScreen('bookingScreen');
             } else {
                 showScreen('loginErrorScreen');
             }
-        }
-
-        // 講師選択
-        function selectTeacher(teacherName) {
-            selectedTeacher = teacherName;
-            document.getElementById('selectedTeacherName').textContent = teacherName;
-            showScreen('bookingScreen');
-            renderCalendar();
         }
 
         // カレンダー表示
@@ -502,7 +581,7 @@
                     dayElement.classList.add('other-month');
                 } else if (date >= new Date()) {
                     const dateStr = date.toISOString().split('T')[0];
-                    const bookedSlots = bookings[dateStr] || [];
+                    const bookedSlots = getUserBookedSlots(dateStr);
                     
                     if (bookedSlots.length >= timeSlots.length) {
                         dayElement.classList.add('fully-booked');
@@ -514,6 +593,20 @@
                 
                 calendar.appendChild(dayElement);
             }
+        }
+
+        // 指定日の予約済みスロットを取得
+        function getUserBookedSlots(dateStr) {
+            const allUsersBookings = Object.values(userBookings);
+            const bookedSlots = [];
+            
+            allUsersBookings.forEach(userBooking => {
+                if (userBooking[dateStr]) {
+                    bookedSlots.push(...userBooking[dateStr]);
+                }
+            });
+            
+            return bookedSlots;
         }
 
         // 日付選択
@@ -532,7 +625,7 @@
         function renderTimeSlots() {
             const timeSlotsContainer = document.getElementById('timeSlots');
             const dateStr = selectedDate.toISOString().split('T')[0];
-            const bookedSlots = bookings[dateStr] || [];
+            const bookedSlots = getUserBookedSlots(dateStr);
             
             timeSlotsContainer.innerHTML = '';
             
@@ -570,10 +663,10 @@
             }
             
             const dateStr = selectedDate.toISOString().split('T')[0];
-            if (!bookings[dateStr]) {
-                bookings[dateStr] = [];
+            if (!userBookings[currentUser.id][dateStr]) {
+                userBookings[currentUser.id][dateStr] = [];
             }
-            bookings[dateStr].push(selectedTime);
+            userBookings[currentUser.id][dateStr].push(selectedTime);
             
             // 確認画面に情報を表示
             document.getElementById('confirmedTeacher').textContent = selectedTeacher;
@@ -588,6 +681,76 @@
             selectedTime = null;
             document.getElementById('confirmBooking').style.display = 'none';
             document.getElementById('timeSlotSection').style.display = 'none';
+        }
+
+        // 予約一覧表示
+        function renderBookingList() {
+            const bookingListContainer = document.getElementById('bookingList');
+            const userBookingData = userBookings[currentUser.id] || {};
+            
+            bookingListContainer.innerHTML = '';
+            
+            const bookings = [];
+            Object.keys(userBookingData).forEach(dateStr => {
+                userBookingData[dateStr].forEach(time => {
+                    bookings.push({ date: dateStr, time: time });
+                });
+            });
+            
+            // 日付順にソート
+            bookings.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            if (bookings.length === 0) {
+                bookingListContainer.innerHTML = '<div class="no-bookings">予約がありません</div>';
+                return;
+            }
+            
+            bookings.forEach(booking => {
+                const bookingDate = new Date(booking.date);
+                const bookingItem = document.createElement('div');
+                bookingItem.classList.add('booking-item');
+                
+                const bookingDetails = document.createElement('div');
+                bookingDetails.classList.add('booking-details');
+                bookingDetails.innerHTML = `
+                    <div class="booking-date">${bookingDate.getFullYear()}年${bookingDate.getMonth() + 1}月${bookingDate.getDate()}日</div>
+                    <div class="booking-time">${booking.time} - ${selectedTeacher}</div>
+                `;
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('btn', 'btn-danger', 'btn-small');
+                deleteButton.textContent = '削除';
+                // onclickを直接設定
+                deleteButton.onclick = () => deleteBooking(booking.date, booking.time);
+                
+                bookingItem.appendChild(bookingDetails);
+                bookingItem.appendChild(deleteButton);
+                bookingListContainer.appendChild(bookingItem);
+            });
+        }
+
+        // 予約削除
+        function deleteBooking(dateStr, time) {
+            console.log('削除ボタンが押されました:', dateStr, time); // デバッグ用
+            
+            if (confirm(`${dateStr} ${time}の予約を削除しますか？`)) {
+                const userBookingData = userBookings[currentUser.id];
+                if (userBookingData && userBookingData[dateStr]) {
+                    const index = userBookingData[dateStr].indexOf(time);
+                    if (index > -1) {
+                        userBookingData[dateStr].splice(index, 1);
+                        
+                        // 該当日の予約がすべて削除された場合、日付エントリも削除
+                        if (userBookingData[dateStr].length === 0) {
+                            delete userBookingData[dateStr];
+                        }
+                        
+                        console.log('削除完了'); // デバッグ用
+                        renderBookingList();
+                        renderCalendar();
+                    }
+                }
+            }
         }
 
         // 月変更
