@@ -328,18 +328,11 @@
             justify-content: space-between;
             align-items: center;
             transition: all 0.3s ease;
-            position: relative;
         }
 
         .booking-item:hover {
             border-color: #8b5fb5;
             transform: translateY(-2px);
-        }
-
-        .booking-item .btn {
-            pointer-events: auto;
-            z-index: 10;
-            position: relative;
         }
 
         .booking-details {
@@ -710,32 +703,23 @@
                 const bookingItem = document.createElement('div');
                 bookingItem.classList.add('booking-item');
                 
-                const bookingDetails = document.createElement('div');
-                bookingDetails.classList.add('booking-details');
-                bookingDetails.innerHTML = `
-                    <div class="booking-date">${bookingDate.getFullYear()}年${bookingDate.getMonth() + 1}月${bookingDate.getDate()}日</div>
-                    <div class="booking-time">${booking.time} - ${selectedTeacher}</div>
+                bookingItem.innerHTML = `
+                    <div class="booking-details">
+                        <div class="booking-date">${bookingDate.getFullYear()}年${bookingDate.getMonth() + 1}月${bookingDate.getDate()}日</div>
+                        <div class="booking-time">${booking.time} - ${selectedTeacher}</div>
+                    </div>
+                    <button class="btn btn-danger btn-small" onclick="deleteBooking('${booking.date}', '${booking.time}')">削除</button>
                 `;
                 
-                const deleteButton = document.createElement('button');
-                deleteButton.classList.add('btn', 'btn-danger', 'btn-small');
-                deleteButton.textContent = '削除';
-                // onclickを直接設定
-                deleteButton.onclick = () => deleteBooking(booking.date, booking.time);
-                
-                bookingItem.appendChild(bookingDetails);
-                bookingItem.appendChild(deleteButton);
                 bookingListContainer.appendChild(bookingItem);
             });
         }
 
         // 予約削除
         function deleteBooking(dateStr, time) {
-            console.log('削除ボタンが押されました:', dateStr, time); // デバッグ用
-            
             if (confirm(`${dateStr} ${time}の予約を削除しますか？`)) {
                 const userBookingData = userBookings[currentUser.id];
-                if (userBookingData && userBookingData[dateStr]) {
+                if (userBookingData[dateStr]) {
                     const index = userBookingData[dateStr].indexOf(time);
                     if (index > -1) {
                         userBookingData[dateStr].splice(index, 1);
@@ -745,7 +729,6 @@
                             delete userBookingData[dateStr];
                         }
                         
-                        console.log('削除完了'); // デバッグ用
                         renderBookingList();
                         renderCalendar();
                     }
