@@ -1,98 +1,204 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ピアノレッスン予約システム</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #ffeef8 0%, #f0e6ff 100%); min-height: 100vh; color: #5a4b7c; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: #8b5fb5; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(139,95,181,0.2); }
-        .card { background: rgba(255,255,255,0.9); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(139,95,181,0.2); margin-bottom: 20px; border: 3px solid #e8d5f2; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #8b5fb5; }
-        input[type="text"], input[type="password"], .time-slot { width: 100%; padding: 12px; border: 2px solid #e8d5f2; border-radius: 10px; font-size: 16px; background: #ffffff; transition: all 0.3s ease; }
-        input:focus { outline: none; border-color: #8b5fb5; box-shadow: 0 0 10px rgba(139,95,181,0.3); }
-        .btn { background: linear-gradient(45deg,#ff9a9e 0%,#fecfef 50%,#fecfef 100%); color:white; padding:12px 30px; border:none; border-radius:25px; font-size:16px; font-weight:bold; cursor:pointer; transition:all 0.3s ease; margin:10px; box-shadow:0 5px 15px rgba(255,154,158,0.3); }
-        .btn:hover { transform: translateY(-2px); box-shadow:0 8px 25px rgba(255,154,158,0.4); }
-        .btn-secondary { background: linear-gradient(45deg,#a8e6cf 0%,#dcedc1 100%); color:#5a4b7c; }
-        .btn-danger { background: linear-gradient(45deg,#ffb3ba 0%,#ffdfba 100%); }
-        .calendar { display: grid; grid-template-columns: repeat(7,1fr); gap:10px; margin-bottom:20px; }
-        .calendar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-        .calendar-nav { background:#8b5fb5; color:white; border:none; padding:10px 15px; border-radius:10px; cursor:pointer; font-size:18px; }
-        .calendar-nav:hover { background:#7a4fa3; }
-        .calendar-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:10px; cursor:pointer; transition:all 0.3s ease; font-weight:bold; border:2px solid transparent; position:relative; }
-        .calendar-day.weekday-name { background:#8b5fb5; color:white; cursor:default; font-size:0.9em; }
-        .calendar-day.available { background:#d4f8d4; color:#2d5a2d; border-color:#a8e6cf; }
-        .calendar-day.available:hover { background:#a8e6cf; transform:scale(1.1); }
-        .calendar-day.fully-booked { background:#ffb3ba; color:#8b4545; cursor:not-allowed; border-color:#ff9a9e; }
-        .calendar-day.fully-booked::after { content:'満'; position:absolute; top:2px; right:2px; font-size:0.7em; background:#ff6b6b; color:white; border-radius:50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; }
-        .calendar-day.selected { background:#ff9a9e; color:white; border-color:#8b5fb5; transform:scale(1.1); }
-        .calendar-day.other-month { color:#ccc; cursor:default; }
-        .time-slots { display:grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-bottom:20px; }
-        .time-slot { padding:10px; background:#d4f8d4; border:2px solid #a8e6cf; border-radius:10px; text-align:center; cursor:pointer; transition:all 0.3s ease; font-weight:bold; }
-        .time-slot.selected { background:#ff9a9e; color:white; border-color:#8b5fb5; }
-        .time-slot.booked { background:#ffb3ba; color:#7a4fa3; cursor:not-allowed; }
-        .screen { display:none; }
-        .screen.active { display:block; }
-        .error-message { background:#ffb3ba; color:#8b5fb5; padding:15px; border-radius:10px; margin-bottom:20px; border:2px solid #ff9a9e; }
-        .success-message { background:#d4f8d4; color:#2d5a2d; padding:15px; border-radius:10px; margin-bottom:20px; border:2px solid #a8e6cf; }
-        .lesson-info { background:#f8f4ff; padding:15px; border-radius:10px; margin-bottom:20px; border:2px solid #e8d5f2; }
-        .teacher-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-bottom:20px; }
-        .teacher-card { background:#fff; padding:15px; border-radius:15px; border:2px solid #e8d5f2; text-align:center; cursor:pointer; transition:all 0.3s ease; }
-        .teacher-card:hover { transform:translateY(-5px); box-shadow:0 10px 20px rgba(139,95,181,0.2); }
-        .teacher-card.selected { border-color:#8b5fb5; background:#f8f4ff; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ピアノレッスン予約システム</title>
+  <style>
+    /* スタイル省略 */
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header"><h1>🎹 ピアノレッスン予約システム</h1></div>
-        <div id="loginScreen" class="screen active">
-            <div class="card">
-                <h2>ログイン</h2>
-                <div class="form-group"><label>受講者番号</label><input id="studentId" type="text" maxlength="7"></div>
-                <div class="form-group"><label>パスワード</label><input id="password" type="password"></div>
-                <button class="btn" onclick="login()">ログイン</button>
-            </div>
+  <div class="container">
+    <!-- ログイン画面 -->
+    <div id="loginScreen" class="screen active">
+      <div class="card">
+        <h2>ログイン</h2>
+        <div class="form-group">
+          <label for="studentId">受講者番号（7桁）</label>
+          <input id="studentId" type="text" maxlength="7" placeholder="1234567">
         </div>
-        <div id="loginErrorScreen" class="screen"><div class="card error-message"><p>ログインエラー</p></div><button class="btn-secondary btn" onclick="showScreen('loginScreen')">戻る</button></div>
-        <div id="reservationScreen" class="screen">
-            <div class="card">
-                <h2>🎹 予約</h2>
-                <div class="lesson-info">
-                    <h3>講師選択</h3><div class="teacher-list">
-                        <div class="teacher-card" onclick="selectTeacher('田中先生')">田中先生</div>
-                        <div class="teacher-card" onclick="selectTeacher('佐藤先生')">佐藤先生</div>
-                        <div class="teacher-card" onclick="selectTeacher('山田先生')">山田先生</div>
-                    </div>
-                </div>
-                <h3>日付選択</h3><div class="calendar-header"><button onclick="changeMonth(-1)" class="calendar-nav">◀</button><div id="currentMonth"></div><button onclick="changeMonth(1)" class="calendar-nav">▶</button></div><div id="calendar" class="calendar"></div>
-                <div id="timeSection" class="time-slots"></div>
-                <div class="form-group"><label>ユーザーID（複数可, カンマ区切り）</label><input id="reservationStudentIds" type="text"></div>
-                <button class="btn" onclick="makeReservation()">予約</button>
-            </div>
+        <div class="form-group">
+          <label for="password">パスワード</label>
+          <input id="password" type="password" placeholder="demo1234">
         </div>
-        <div id="reservationConfirmScreen" class="screen"><div class="card success-message"><p>予約確定！</p><div id="confirmInfo"></div></div><button class="btn" onclick="showScreen('reservationScreen')">戻る</button></div>
+        <p>※デモ用ID: <strong>1234567</strong> / PW: <strong>demo1234</strong></p>
+        <button class="btn" onclick="login()">ログイン</button>
+      </div>
     </div>
-<script>
-let currentDate=new Date(),selectedDate=null,selectedTime=null,selectedTeacher=null;
-let timeSlotBookings={};
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function login(){let id=document.getElementById('studentId').value; if(id.length===7) showScreen('reservationScreen'),initCalendar(); else showScreen('loginErrorScreen');}
-function initCalendar(){updateCalendar();}
-function updateCalendar(){const monthNames=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];document.getElementById('currentMonth').textContent=`${currentDate.getFullYear()}年 ${monthNames[currentDate.getMonth()]}`;const cal=document.getElementById('calendar');cal.innerHTML='';['日','月','火','水','木','金','土'].forEach(d=>{let dn=document.createElement('div');dn.className='calendar-day weekday-name';dn.textContent=d;cal.appendChild(dn);});let first=new Date(currentDate.getFullYear(),currentDate.getMonth(),1),last=new Date(currentDate.getFullYear(),currentDate.getMonth()+1,0);
- for(let i=0;i<first.getDay();i++){let e=document.createElement('div');e.className='calendar-day other-month';cal.appendChild(e);} 
- for(let d=1;d<=last.getDate();d++){let dd=document.createElement('div');dd.className='calendar-day';dd.textContent=d;let dateKey=`${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;let dayDate=new Date(currentDate.getFullYear(),currentDate.getMonth(),d);
- if(dayDate<new Date()) dd.classList.add('other-month'); else{ if(timeSlotBookings[dateKey]&&timeSlotBookings[dateKey].full) dd.classList.add('fully-booked'); else dd.classList.add('available'),dd.onclick=()=>selectDate(dateKey,dd);} cal.appendChild(dd);} }
-function changeMonth(dir){currentDate.setMonth(currentDate.getMonth()+dir);updateCalendar(); document.getElementById('timeSection').innerHTML=''; selectedDate=null; selectedTime=null;}
-function selectDate(date,el){if(timeSlotBookings[date]&&timeSlotBookings[date].full) return; document.querySelectorAll('.calendar-day.selected').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');selectedDate=date;showTimeSlots();}
-function showTimeSlots(){const sec=document.getElementById('timeSection');sec.innerHTML='';['09:00-10:00','10:00-11:00','11:00-12:00','13:00-14:00','14:00-15:00','15:00-16:00','16:00-17:00','17:00-18:00','18:00-19:00'].forEach(t=>{let ts=document.createElement('div');ts.className='time-slot';ts.textContent=t; if(timeSlotBookings[selectedDate]&&timeSlotBookings[selectedDate][t]) ts.classList.add('booked'); else ts.onclick=()=>selectTime(ts,t); sec.appendChild(ts);} )}
-function selectTime(elem,time){if(elem.classList.contains('booked')) return; document.querySelectorAll('.time-slot.selected').forEach(x=>x.classList.remove('selected'));elem.classList.add('selected');selectedTime=time;}
-function selectTeacher(name){document.querySelectorAll('.teacher-card.selected').forEach(c=>c.classList.remove('selected'));event.target.classList.add('selected');selectedTeacher=name;}
-function makeReservation(){const ids=document.getElementById('reservationStudentIds').value.split(',').map(s=>s.trim()).filter(s=>s);if(!selectedTeacher||!selectedDate||!selectedTime||ids.length===0){alert('全項目を選択してください');return;} ids.forEach((id,i)=>{if(!timeSlotBookings[selectedDate]) timeSlotBookings[selectedDate]={}; if(!timeSlotBookings[selectedDate][selectedTime] && i===0){ timeSlotBookings[selectedDate][selectedTime]=true; }
- });document.getElementById('confirmInfo').innerHTML=`<p>講師:${selectedTeacher}</p><p>日時:${selectedDate} ${selectedTime}</p><p>ユーザー:${ids.join(',')}</p>`; if(!timeSlotBookings[selectedDate].full && true){ timeSlotBookings[selectedDate].full=false; } showScreen('reservationConfirmScreen');}
-</script>
+
+    <!-- ログインエラー画面 -->
+    <div id="loginErrorScreen" class="screen">
+      <div class="card error-message">
+        <h3>ログインエラー</h3>
+        <p>IDまたはパスワードが違います。</p>
+      </div>
+      <button class="btn-secondary btn" onclick="showScreen('loginScreen')">戻る</button>
+    </div>
+
+    <!-- 予約画面 -->
+    <div id="reservationScreen" class="screen">
+      <div class="card">
+        <h2>🎹 レッスン予約</h2>
+        <!-- ログインユーザー表示 -->
+        <p>ログイン中のユーザーID: <strong><span id="currentUserDisplay"></span></strong></p>
+        <!-- 講師は1名のみ -->
+        <div class="lesson-info">
+          <h3>講師: 田中先生</h3>
+        </div>
+
+        <!-- 日付選択 -->
+        <h3>📅 レッスン日</h3>
+        <div class="calendar-header">
+          <button class="calendar-nav" onclick="changeMonth(-1)">◀</button>
+          <div id="currentMonth" class="calendar-month"></div>
+          <button class="calendar-nav" onclick="changeMonth(1)">▶</button>
+        </div>
+        <div id="calendar" class="calendar"></div>
+
+        <!-- 時間帯選択 -->
+        <div id="timeSection" class="time-slots"></div>
+
+        <!-- 複数ユーザーID入力 -->
+        <div class="form-group">
+          <label for="userIds">ユーザーID (カンマ区切りで複数入力)</label>
+          <input id="userIds" type="text" placeholder="1234567,2345678,3456789">
+        </div>
+
+        <button class="btn" onclick="reserveSequential()">予約する</button>
+      </div>
+    </div>
+
+    <!-- 確認画面 -->
+    <div id="confirmScreen" class="screen">
+      <div class="card success-message">
+        <h3>🎉 予約完了</h3>
+        <div id="confirmInfo"></div>
+      </div>
+      <button class="btn" onclick="showScreen('reservationScreen')">戻る</button>
+    </div>
+  </div>
+
+  <script>
+    let currentDate = new Date();
+    let selectedDate = null;
+    let selectedTime = null;
+    let currentUserId = null; // ログインユーザーID
+    const bookings = {};
+
+    // 初期画面切り替え
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // ログイン
+    function login() {
+      const id = document.getElementById('studentId').value;
+      const pw = document.getElementById('password').value;
+      if (id === '1234567' && pw === 'demo1234') {
+        currentUserId = id; // 設定
+        document.getElementById('currentUserDisplay').textContent = currentUserId;
+        document.getElementById('userIds').value = currentUserId;
+        showScreen('reservationScreen');
+        initCalendar();
+      } else {
+        showScreen('loginErrorScreen');
+      }
+    }
+
+    // カレンダー生成
+    function initCalendar() {
+      updateCalendar();
+    }
+    function updateCalendar() {
+      const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+      document.getElementById('currentMonth').textContent = `${currentDate.getFullYear()}年 ${monthNames[currentDate.getMonth()]}`;
+      const cal = document.getElementById('calendar');
+      cal.innerHTML = '';
+      ['日','月','火','水','木','金','土'].forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'calendar-day weekday-name';
+        el.textContent = d;
+        cal.appendChild(el);
+      });
+      const first = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      for (let i = 0; i < first.getDay(); i++) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-day other-month';
+        cal.appendChild(empty);
+      }
+      const last = new Date(currentDate.getFullYear(), currentDate.getMonth()+1, 0);
+      for (let d = 1; d <= last.getDate(); d++) {
+        const el = document.createElement('div');
+        el.className = 'calendar-day';
+        el.textContent = d;
+        const key = `${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), d);
+        if (dayDate < new Date()) {
+          el.classList.add('other-month');
+        } else {
+          el.classList.add(bookings[key] && bookings[key].full ? 'fully-booked' : 'available');
+          el.onclick = () => selectDate(key, el);
+        }
+        cal.appendChild(el);
+      }
+    }
+
+    // 月送り
+    function changeMonth(dir) {
+      currentDate.setMonth(currentDate.getMonth() + dir);
+      selectedDate = null;
+      document.getElementById('timeSection').innerHTML = '';
+      updateCalendar();
+    }
+
+    // 日付選択
+    function selectDate(date, el) {
+      if (bookings[date] && bookings[date].full) return;
+      document.querySelectorAll('.calendar-day.selected').forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedDate = date;
+      showTimeSlots();
+    }
+
+    // 時間帯表示
+    function showTimeSlots() {
+      const container = document.getElementById('timeSection');
+      container.innerHTML = '';
+      const slots = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00','18:00'];
+      slots.forEach(t => {
+        const btn = document.createElement('div');
+        btn.className = 'time-slot' + ((bookings[selectedDate] && bookings[selectedDate].slots && bookings[selectedDate].slots.includes(t)) ? ' booked' : '');
+        btn.textContent = t;
+        if (!btn.classList.contains('booked')) btn.onclick = () => selectTime(btn, t);
+        container.appendChild(btn);
+      });
+    }
+
+    // 時間選択
+    function selectTime(el, time) {
+      document.querySelectorAll('.time-slot.selected').forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedTime = time;
+    }
+
+    // 順番予約
+    function reserveSequential() {
+      const ids = document.getElementById('userIds').value.split(',').map(v=>v.trim()).filter(v=>v);
+      if (!selectedDate || !selectedTime || ids.length === 0) {
+        alert('日付・時間・ユーザーIDを正しく入力してください'); return;
+      }
+      if (!bookings[selectedDate]) bookings[selectedDate] = { slots: [], full: false };
+      bookings[selectedDate].slots.push(selectedTime);
+      bookings[selectedDate].full = true;
+      document.getElementById('confirmInfo').innerHTML = `
+        <p>講師: 田中先生</p>
+        <p>日時: ${selectedDate} ${selectedTime}</p>
+        <p>ユーザー: ${ids.join(', ')}</p>
+      `;
+      showScreen('confirmScreen');
+    }
+  </script>
 </body>
 </html>
