@@ -528,4 +528,15 @@
             currentUser = null;
             selectedDate = null;
             selectedTime = null;
-            selectedTeacher =
+            selectedTeacher = '田中先生';
+            document.getElementById('studentId').value = '';
+            document.getElementById('password').value = '';
+            showScreen('loginScreen');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCalendar();
+        });
+    </script>
+</body>
+</html>
