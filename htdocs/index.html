@@ -276,6 +276,26 @@
             cursor: not-allowed;
         }
 
+        .time-slot.already-booked {
+            background: #e0e0e0;
+            color: #888;
+            cursor: not-allowed;
+            border-color: #bbb;
+        }
+
+        .time-slot.already-booked::after {
+            content: '予約済み';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8em;
+            background: #888;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
         .screen {
             display: none;
         }
@@ -574,7 +594,7 @@
                     dayElement.classList.add('other-month');
                 } else if (date >= new Date()) {
                     const dateStr = date.toISOString().split('T')[0];
-                    const bookedSlots = getUserBookedSlots(dateStr);
+                    const bookedSlots = getAllBookedSlots(dateStr);
                     
                     if (bookedSlots.length >= timeSlots.length) {
                         dayElement.classList.add('fully-booked');
@@ -588,8 +608,8 @@
             }
         }
 
-        // 指定日の予約済みスロットを取得
-        function getUserBookedSlots(dateStr) {
+        // 指定日の全体の予約済みスロットを取得（全ユーザー）
+        function getAllBookedSlots(dateStr) {
             const allUsersBookings = Object.values(userBookings);
             const bookedSlots = [];
             
@@ -600,6 +620,12 @@
             });
             
             return bookedSlots;
+        }
+
+        // 指定日の現在ユーザーの予約済みスロットを取得
+        function getCurrentUserBookedSlots(dateStr) {
+            const userBookingData = userBookings[currentUser.id] || {};
+            return userBookingData[dateStr] || [];
         }
 
         // 日付選択
@@ -618,7 +644,8 @@
         function renderTimeSlots() {
             const timeSlotsContainer = document.getElementById('timeSlots');
             const dateStr = selectedDate.toISOString().split('T')[0];
-            const bookedSlots = getUserBookedSlots(dateStr);
+            const allBookedSlots = getAllBookedSlots(dateStr);
+            const currentUserBookedSlots = getCurrentUserBookedSlots(dateStr);
             
             timeSlotsContainer.innerHTML = '';
             
@@ -627,9 +654,15 @@
                 slot.classList.add('time-slot');
                 slot.textContent = time;
                 
-                if (bookedSlots.includes(time)) {
+                if (currentUserBookedSlots.includes(time)) {
+                    // 現在のユーザーが既に予約している時間
+                    slot.classList.add('already-booked');
+                    slot.style.position = 'relative';
+                } else if (allBookedSlots.includes(time)) {
+                    // 他のユーザーが予約している時間
                     slot.classList.add('booked');
                 } else {
+                    // 予約可能な時間
                     slot.onclick = () => selectTime(time);
                 }
                 
@@ -656,6 +689,15 @@
             }
             
             const dateStr = selectedDate.toISOString().split('T')[0];
+            const currentUserBookedSlots = getCurrentUserBookedSlots(dateStr);
+            
+            // 重複チェック
+            if (currentUserBookedSlots.includes(selectedTime)) {
+                alert('既にその時間は予約済みです。');
+                return;
+            }
+            
+            // 予約を追加
             if (!userBookings[currentUser.id][dateStr]) {
                 userBookings[currentUser.id][dateStr] = [];
             }
@@ -731,6 +773,11 @@
                         
                         renderBookingList();
                         renderCalendar();
+                        
+                        // 現在選択中の日付と同じ場合、時間スロットも更新
+                        if (selectedDate && selectedDate.toISOString().split('T')[0] === dateStr) {
+                            renderTimeSlots();
+                        }
                     }
                 }
             }
