@@ -36,31 +36,6 @@
             text-shadow: 2px 2px 4px rgba(139, 95, 181, 0.2);
         }
 
-        .sync-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin-bottom: 20px;
-        }
-
-        .sync-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4CAF50;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
         .card {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 20px;
@@ -282,7 +257,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
-            position: relative;
         }
 
         .time-slot:hover {
@@ -403,23 +377,6 @@
             padding: 20px;
         }
 
-        .refresh-btn {
-            background: linear-gradient(45deg, #6c5ce7 0%, #a29bfe 100%);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 15px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 10px;
-        }
-
-        .refresh-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
-        }
-
         @media (max-width: 768px) {
             .booking-section {
                 flex-direction: column;
@@ -436,11 +393,6 @@
     <div class="container">
         <div class="header">
             <h1>🎹 ピアノレッスン予約システム</h1>
-            <div class="sync-status">
-                <div class="sync-indicator"></div>
-                <span>リアルタイム同期中</span>
-                <button class="refresh-btn" onclick="refreshData()">🔄 更新</button>
-            </div>
         </div>
 
         <!-- ログイン画面 -->
@@ -555,7 +507,6 @@
         let selectedDate = null;
         let selectedTime = null;
         let selectedTeacher = '田中先生';
-        let lastSyncTime = 0;
 
         // サンプルデータ
         const users = {
@@ -564,161 +515,16 @@
             '3456789': { password: 'lesson2024', name: '田中次郎' }
         };
 
-        // 予約データ管理のキー
-        const BOOKING_DATA_KEY = 'piano_lesson_bookings';
-        const SYNC_TIME_KEY = 'piano_lesson_sync_time';
+        // 予約データ（受講者別）
+        let userBookings = {};
 
         // 利用可能な時間スロット
         const timeSlots = [
             '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'
         ];
 
-        // データストレージ管理
-        class BookingStorage {
-            static saveData(data) {
-                const timestamp = Date.now();
-                const storageData = {
-                    bookings: data,
-                    lastUpdated: timestamp
-                };
-                
-                // 複数のストレージ方法を試行
-                try {
-                    // 1. sessionStorage（推奨）
-                    if (typeof sessionStorage !== 'undefined') {
-                        sessionStorage.setItem(BOOKING_DATA_KEY, JSON.stringify(storageData));
-                        sessionStorage.setItem(SYNC_TIME_KEY, timestamp.toString());
-                    }
-                    
-                    // 2. 共有オブジェクト（フォールバック）
-                    window.sharedBookingData = storageData;
-                    
-                    // 3. カスタムイベントでの同期
-                    window.dispatchEvent(new CustomEvent('bookingDataUpdated', {
-                        detail: storageData
-                    }));
-                    
-                    lastSyncTime = timestamp;
-                    return true;
-                } catch (e) {
-                    console.warn('データ保存に失敗しました:', e);
-                    return false;
-                }
-            }
-            
-            static loadData() {
-                try {
-                    let data = null;
-                    let timestamp = 0;
-                    
-                    // 1. sessionStorageから読み込み
-                    if (typeof sessionStorage !== 'undefined') {
-                        const stored = sessionStorage.getItem(BOOKING_DATA_KEY);
-                        const storedTime = sessionStorage.getItem(SYNC_TIME_KEY);
-                        
-                        if (stored && storedTime) {
-                            const parsedData = JSON.parse(stored);
-                            data = parsedData.bookings || parsedData; // 後方互換性
-                            timestamp = parseInt(storedTime);
-                        }
-                    }
-                    
-                    // 2. 共有オブジェクトから読み込み（フォールバック）
-                    if (!data && window.sharedBookingData) {
-                        data = window.sharedBookingData.bookings;
-                        timestamp = window.sharedBookingData.lastUpdated;
-                    }
-                    
-                    return {
-                        bookings: data || {},
-                        lastUpdated: timestamp
-                    };
-                } catch (e) {
-                    console.warn('データ読み込みに失敗しました:', e);
-                    return { bookings: {}, lastUpdated: 0 };
-                }
-            }
-            
-            static syncData() {
-                const currentData = this.loadData();
-                
-                // 他のタブ/ウィンドウからのデータ更新をチェック
-                if (currentData.lastUpdated > lastSyncTime) {
-                    lastSyncTime = currentData.lastUpdated;
-                    
-                    // UIを更新
-                    if (currentUser && document.getElementById('bookingScreen').classList.contains('active')) {
-                        renderCalendar();
-                        renderBookingList();
-                        
-                        // 現在選択中の日付の時間スロットも更新
-                        if (selectedDate) {
-                            renderTimeSlots();
-                        }
-                    }
-                }
-            }
-        }
-
-        // 自動同期の設定
-        function setupAutoSync() {
-            // 定期的にデータを同期
-            setInterval(() => {
-                BookingStorage.syncData();
-            }, 2000); // 2秒ごと
-            
-            // ストレージイベントリスナー
-            window.addEventListener('storage', (e) => {
-                if (e.key === BOOKING_DATA_KEY) {
-                    BookingStorage.syncData();
-                }
-            });
-            
-            // カスタムイベントリスナー
-            window.addEventListener('bookingDataUpdated', (e) => {
-                if (e.detail.lastUpdated > lastSyncTime) {
-                    BookingStorage.syncData();
-                }
-            });
-        }
-
-        // 予約データの取得
-        function getUserBookings() {
-            const data = BookingStorage.loadData();
-            return data.bookings;
-        }
-
-        // 予約データの保存
-        function saveUserBookings(bookings) {
-            BookingStorage.saveData(bookings);
-        }
-
-        // データの手動更新
-        function refreshData() {
-            BookingStorage.syncData();
-            
-            // 視覚的フィードバック
-            const refreshBtn = document.querySelector('.refresh-btn');
-            const originalText = refreshBtn.textContent;
-            refreshBtn.textContent = '🔄 更新中...';
-            refreshBtn.disabled = true;
-            
-            setTimeout(() => {
-                refreshBtn.textContent = originalText;
-                refreshBtn.disabled = false;
-            }, 1000);
-        }
-
-        // 日付を文字列に変換（タイムゾーンを考慮）
-        function dateToString(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        // 文字列を日付に変換
-        function stringToDate(dateStr) {
+        // 日付文字列を正しい日付に変換する関数
+        function parseDate(dateStr) {
             const parts = dateStr.split('-');
             const year = parseInt(parts[0], 10);
             const month = parseInt(parts[1], 10) - 1; // 月は0ベース
@@ -731,15 +537,6 @@
             return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
         }
 
-        // 日付が今日以降かチェック
-        function isDateAvailable(date) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const checkDate = new Date(date);
-            checkDate.setHours(0, 0, 0, 0);
-            return checkDate >= today;
-        }
-
         // 画面切り替え
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => {
@@ -750,7 +547,6 @@
             if (screenId === 'bookingScreen') {
                 renderCalendar();
                 renderBookingList();
-                BookingStorage.syncData(); // 画面切り替え時にデータを同期
             }
         }
 
@@ -761,6 +557,12 @@
 
             if (users[studentId] && users[studentId].password === password) {
                 currentUser = { id: studentId, name: users[studentId].name };
+                
+                // ユーザーの予約データを初期化
+                if (!userBookings[studentId]) {
+                    userBookings[studentId] = {};
+                }
+                
                 showScreen('bookingScreen');
             } else {
                 showScreen('loginErrorScreen');
@@ -804,8 +606,8 @@
                 
                 if (date.getMonth() !== month) {
                     dayElement.classList.add('other-month');
-                } else if (isDateAvailable(date)) {
-                    const dateStr = dateToString(date);
+                } else if (date >= new Date()) {
+                    const dateStr = date.toISOString().split('T')[0];
                     const bookedSlots = getAllBookedSlots(dateStr);
                     
                     if (bookedSlots.length >= timeSlots.length) {
@@ -822,7 +624,6 @@
 
         // 指定日の全体の予約済みスロットを取得（全ユーザー）
         function getAllBookedSlots(dateStr) {
-            const userBookings = getUserBookings();
             const allUsersBookings = Object.values(userBookings);
             const bookedSlots = [];
             
@@ -837,7 +638,6 @@
 
         // 指定日の現在ユーザーの予約済みスロットを取得
         function getCurrentUserBookedSlots(dateStr) {
-            const userBookings = getUserBookings();
             const userBookingData = userBookings[currentUser.id] || {};
             return userBookingData[dateStr] || [];
         }
