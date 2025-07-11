@@ -523,8 +523,16 @@
             '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'
         ];
 
-        // 日付文字列を正しい日付に変換する関数
-        function parseDate(dateStr) {
+        // 日付を文字列に変換（タイムゾーンを考慮）
+        function dateToString(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // 文字列を日付に変換
+        function stringToDate(dateStr) {
             const parts = dateStr.split('-');
             const year = parseInt(parts[0], 10);
             const month = parseInt(parts[1], 10) - 1; // 月は0ベース
@@ -535,6 +543,15 @@
         // 日付を表示用の文字列に変換する関数
         function formatDate(date) {
             return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+        }
+
+        // 日付が今日以降かチェック
+        function isDateAvailable(date) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const checkDate = new Date(date);
+            checkDate.setHours(0, 0, 0, 0);
+            return checkDate >= today;
         }
 
         // 画面切り替え
@@ -606,8 +623,8 @@
                 
                 if (date.getMonth() !== month) {
                     dayElement.classList.add('other-month');
-                } else if (date >= new Date()) {
-                    const dateStr = date.toISOString().split('T')[0];
+                } else if (isDateAvailable(date)) {
+                    const dateStr = dateToString(date);
                     const bookedSlots = getAllBookedSlots(dateStr);
                     
                     if (bookedSlots.length >= timeSlots.length) {
@@ -657,7 +674,7 @@
         // 時間スロット表示
         function renderTimeSlots() {
             const timeSlotsContainer = document.getElementById('timeSlots');
-            const dateStr = selectedDate.toISOString().split('T')[0];
+            const dateStr = dateToString(selectedDate);
             const allBookedSlots = getAllBookedSlots(dateStr);
             const currentUserBookedSlots = getCurrentUserBookedSlots(dateStr);
             
@@ -702,7 +719,7 @@
                 return;
             }
             
-            const dateStr = selectedDate.toISOString().split('T')[0];
+            const dateStr = dateToString(selectedDate);
             const currentUserBookedSlots = getCurrentUserBookedSlots(dateStr);
             
             // 重複チェック
@@ -755,7 +772,7 @@
             }
             
             bookings.forEach(booking => {
-                const bookingDate = parseDate(booking.date);
+                const bookingDate = stringToDate(booking.date);
                 const bookingItem = document.createElement('div');
                 bookingItem.classList.add('booking-item');
                 
@@ -773,7 +790,7 @@
 
         // 予約削除
         function deleteBooking(dateStr, time) {
-            if (confirm(`${formatDate(parseDate(dateStr))} ${time}の予約を削除しますか？`)) {
+            if (confirm(`${formatDate(stringToDate(dateStr))} ${time}の予約を削除しますか？`)) {
                 const userBookingData = userBookings[currentUser.id];
                 if (userBookingData[dateStr]) {
                     const index = userBookingData[dateStr].indexOf(time);
@@ -789,7 +806,7 @@
                         renderCalendar();
                         
                         // 現在選択中の日付と同じ場合、時間スロットも更新
-                        if (selectedDate && selectedDate.toISOString().split('T')[0] === dateStr) {
+                        if (selectedDate && dateToString(selectedDate) === dateStr) {
                             renderTimeSlots();
                         }
                     }
