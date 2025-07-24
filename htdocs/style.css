@@ -1,0 +1,240 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #ffeef8 0%, #f0e6ff 100%);
+    min-height: 100vh;
+    color: #5a4b7c;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #8b5fb5;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(139, 95, 181, 0.2);
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(139, 95, 181, 0.2);
+    margin-bottom: 20px;
+    border: 3px solid #e8d5f2;
+}
+
+.login-form, .error-card {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form-group { margin-bottom: 20px; }
+label { display: block; margin-bottom: 8px; font-weight: bold; color: #8b5fb5; }
+input[type="text"], input[type="password"] { width: 100%; padding: 12px; border: 2px solid #e8d5f2; border-radius: 10px; font-size: 16px; background: #fff; transition: all 0.3s ease; }
+input:focus { outline: none; border-color: #8b5fb5; box-shadow: 0 0 10px rgba(139,95,181,0.3); }
+
+.btn { background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%); color: #fff; padding: 12px 30px; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(255,154,158,0.3); margin-top: 10px;}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,154,158,0.4); }
+
+.btn-danger { background: linear-gradient(45deg, #ffb3ba 0%, #ffdfba 100%); }
+.btn-small { padding: 8px 16px; font-size: 14px; margin: 0 auto; }
+
+/*各予約の枠線*/
+.booking-item {
+    border: 2px solid #8819c5;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  /*各予約にカーソル合わせた時の変色*/
+  .booking-item:hover {
+    background-color: rgba(245, 185, 238, 0.2);
+    transition: background-color 0.3s ease;
+  }
+
+  /* フォーム内の .btn（予約確定・更新確定）を横並びで中央寄せ */
+.card form {
+    text-align: center;
+  }
+  .card form .btn {
+    display: inline-block;
+    margin: 10px 8px;
+  }
+  
+  /* ヘッダー内のセカンダリボタン（Home／Back）を横並びで中央寄せ */
+  .header {
+    text-align: center;
+  }
+  .header .btn-secondary {
+    display: inline-block;
+    margin: 10px 8px;
+  }
+    
+  /* ―― カレンダー周り ―― */
+/* カレンダーナビゲーション */
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  /* カレンダー本体 */
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+  }
+  /* 日付セル */
+  .calendar-day {
+    padding: 8px;
+    background: rgba(248, 244, 255, 0.9);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+  }
+  /* 曜日ヘッダー */
+  .calendar-day.weekday-name {
+    background: #8b5fb5;
+    color: white;
+    cursor: default;
+  }
+  /* 他月・過去・3ヶ月以上先 */
+  .calendar-day.other-month {
+    color: #ccc;
+    cursor: default;
+  }
+  /* 他ユーザー予約済 */
+  .calendar-day.user-booked {
+    background: #eee;
+    color: #999;
+    cursor: default;
+  }
+  /* 選択可能セルの hover */
+  .calendar-day.available:hover {
+    background: #d4f8d4;
+  }
+  /* 選択セル */
+  .calendar-day.selected {
+    background: #ff9a9e;
+    color: white;
+  }
+  
+  /* ―― 時間スロット周り ―― */
+  .time-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .time-slot {
+    padding: 8px;
+    border: 2px solid #e8d5f2;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .time-slot.selected {
+    background: #ff9a9e;
+    color: white;
+    border-color: #8b5fb5;
+  }
+  
+  /* ―― セレクトボックス ―― */
+  select {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 2px solid #e8d5f2;
+    border-radius: 8px;
+  }
+  
+  /* ―― 見出し ―― */
+  .card h2 {
+    text-align: center;
+  }
+  
+  /* ―― 予約アイテム hover ―― */
+  .booking-item:hover {
+    background-color: rgba(255, 154, 158, 0.2);
+    transition: background-color 0.3s ease;
+  }
+  
+  /* ―― ハンバーガーメニュー ―― */
+  .menu-btn {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  .menu-btn span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #5a4b7c;
+    border-radius: 2px;
+    transition: 0.3s;
+  }
+  .menu-btn span:nth-child(1) { top: 4px; }
+  .menu-btn span:nth-child(2) { top: 10px; }
+  .menu-btn span:nth-child(3) { top: 16px; }
+  .dropdown-menu {
+    position: absolute;
+    top: 50px;
+    left: 20px;
+    background: white;
+    border: 1px solid #e8d5f2;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 100;
+  }
+  .dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: #5a4b7c;
+    text-decoration: none;
+  }
+  .dropdown-menu a:hover {
+    background: #f8f4ff;
+  }
+  
+  /* ―― フォーム内ボタンの横並び中央寄せ ―― */
+  .card form {
+    text-align: center;
+  }
+  .card form .btn {
+    display: inline-block;
+    margin: 10px 8px;
+  }
+  
+  /* ―― ヘッダーのセカンダリボタン横並び中央寄せ ―― */
+  .header {
+    text-align: center;
+  }
+  .header .btn-secondary {
+    display: inline-block;
+    margin: 10px 8px;
+  }
+  /* ボタンリンクの下線を消す */
+a.btn {
+    text-decoration: none !important;
+  }
+  
